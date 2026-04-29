@@ -28,14 +28,14 @@ class PengujiIndex extends Component
         // Pendaftaran yang sudah disetujui kaprodi (siap ditambahkan penguji)
         $pendaftarans = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pengujis.dosen.kepakaran'])
             ->where('jurusan_id', $jurusanId)
-            ->whereIn('status', ['disetujui_kaprodi', 'disetujui_kajur', 'dijadwalkan'])
+            ->whereIn('status', ['disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('judul_penelitian', 'like', '%' . $this->search . '%')
-                      ->orWhereHas('mahasiswa', function ($mq) {
-                          $mq->where('name', 'like', '%' . $this->search . '%')
-                             ->orWhere('nim', 'like', '%' . $this->search . '%');
-                      });
+                        ->orWhereHas('mahasiswa', function ($mq) {
+                            $mq->where('name', 'like', '%' . $this->search . '%')
+                                ->orWhere('nim', 'like', '%' . $this->search . '%');
+                        });
                 });
             })
             ->when($this->statusFilter, function ($query) {

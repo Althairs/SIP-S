@@ -5,6 +5,7 @@ namespace App\Livewire\Panitia\Verifikasi;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Pendaftaran;
+use Illuminate\Support\Facades\Auth;
 
 class VerifikasiBerkas extends Component
 {
@@ -26,7 +27,7 @@ class VerifikasiBerkas extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = Auth::user()->jurusan_id;
 
         $pendaftarans = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'dosens.dosen'])
             ->where('jurusan_id', $jurusanId)

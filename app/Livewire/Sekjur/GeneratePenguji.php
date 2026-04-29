@@ -199,13 +199,13 @@ class GeneratePenguji extends Component
             }
         }
 
-        // Update status pendaftaran ke disetujui_kajur
+        // Update status pendaftaran ke disetujui
         $this->pendaftaran->update([
-            'status' => 'disetujui_kajur',
+            'status' => 'disetujui_sekjur',
             'approved_at' => now(),
         ]);
 
-        session()->flash('success', 'Penguji berhasil ditentukan dan diteruskan ke Panitia Penjadwalan.');
+        session()->flash('success', 'Penguji berhasil ditentukan dan diteruskan ke Kajur.');
         return redirect()->route('sekjur.data-master.penguji');
     }
 
