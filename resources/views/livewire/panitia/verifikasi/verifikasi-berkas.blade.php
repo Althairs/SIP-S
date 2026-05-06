@@ -2,7 +2,7 @@
     @section('title', 'Verifikasi Berkas')
     @section('page-title', 'Verifikasi Berkas Pendaftaran')
 
-    @if($p->status === 'pending')
+    {{-- @if($p->status === 'pending')
         <div class="mt-4 flex items-center gap-3 pt-4 border-t">
             <button wire:click="updateStatus({{ $p->id }}, 'disetujui_panitia')"
                 wire:confirm="Setujui pendaftaran ini dan teruskan ke Sekjur?"
@@ -14,7 +14,7 @@
                 Tolak
             </button>
         </div>
-    @endif
+    @endif --}}
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
         <div class="flex flex-col md:flex-row gap-3">
@@ -81,11 +81,11 @@
 
                 @if($p->status === 'pending')
                     <div class="mt-4 flex items-center gap-3 pt-4 border-t">
-                        <button wire:click="updateStatus({{ $p->id }}, 'disetujui_kaprodi')"
+                        <button wire:click="updateStatus({{ $p->id }}, 'disetujui_panitia')"
                             wire:confirm="Setujui pendaftaran ini?"
                             class="px-4 py-2 bg-green-700 text-white rounded-xl hover:bg-green-800 text-sm font-medium">Setujui
                             & Lanjutkan ke Sekjur</button>
-                        <button wire:click="updateStatus({{ $p->id }}, 'ditolak_kaprodi')" wire:confirm="Tolak pendaftaran ini?"
+                        <button wire:click="updateStatus({{ $p->id }}, 'ditolak_panitia')" wire:confirm="Tolak pendaftaran ini?"
                             class="px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-xl hover:bg-red-100 text-sm font-medium">Tolak</button>
                     </div>
                 @endif

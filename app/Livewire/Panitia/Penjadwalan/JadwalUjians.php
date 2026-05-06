@@ -5,42 +5,47 @@ namespace App\Livewire\Panitia\Penjadwalan;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Pendaftaran;
+use App\Models\UjianPenguji;
+use App\Models\Ruangan;
+use App\Models\PengaturanJadwal;
 use Carbon\Carbon;
-// use Illuminate\Container\Attributes\Auth;
-use Illuminate\Support\Facades\Auth;
 
 class JadwalUjians extends Component
 {
     use WithPagination;
 
     public $search = '';
-    public $statusFilter = '';
     public $jenisFilter = '';
-    public $tab = 'siap'; // siap, scheduled, completed
+    public $tab = 'siap';
     public $showScheduleModal = false;
+    public $showBatchModal = false;
     public $selectedPendaftaran;
+    public $selectedIds = [];
+    public $selectAll = false;
+
     public $tanggal_ujian;
+    public $tanggal_minimal;
     public $ruangan = '';
     public $sesi = 1;
     public $catatan = '';
-    public $scheduleMode = 'auto'; // auto atau manual
+    public $scheduleMode = 'manual'; // UBAH default ke manual
+    public $tanggalDaftar;
+    public $batchMode = false;
 
-    public $ruanganOptions = [
-        'Ruang Seminar 1',
-        'Ruang Seminar 2',
-        'Ruang Sidang 1',
-        'Ruang Sidang 2',
-        'Aula Fakultas',
-        'Ruang Rapat Jurusan',
-    ];
+    public $ruanganOptions = [];
+    public $jamMulaiOptions = [];
+    public $jamSelesaiOptions = [];
+    public $labelSesiOptions = [];
 
-    protected $queryString = ['search', 'statusFilter', 'jenisFilter', 'tab'];
+    protected $queryString = ['search', 'jenisFilter', 'tab'];
 
     public function mount()
     {
         if (request()->has('tab')) {
             $this->tab = request()->get('tab');
         }
+        $this->loadRuanganOptions();
+        $this->loadSesiOptions();
     }
 
     public function updatingSearch()
@@ -52,90 +57,279 @@ class JadwalUjians extends Component
     {
         $this->tab = $tab;
         $this->resetPage();
+        $this->selectedIds = [];
+        $this->selectAll = false;
+    }
+
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->selectedIds = $this->getSiapList()->pluck('id')->toArray();
+        } else {
+            $this->selectedIds = [];
+        }
+    }
+
+    private function loadRuanganOptions()
+    {
+        $jurusanId = auth()->user()->jurusan_id;
+        $this->ruanganOptions = Ruangan::where('jurusan_id', $jurusanId)
+            ->active()
+            ->pluck('nama_ruangan')
+            ->toArray();
+
+        if (empty($this->ruanganOptions)) {
+            $this->ruanganOptions = ['Ruang Seminar 1', 'Ruang Seminar 2', 'Ruang Sidang 1', 'Aula Fakultas'];
+        }
+    }
+
+    private function loadSesiOptions()
+    {
+        $jurusanId = auth()->user()->jurusan_id;
+        $pengaturan = PengaturanJadwal::where('jurusan_id', $jurusanId)->where('is_active', true)->first();
+
+        if ($pengaturan) {
+            $this->jamMulaiOptions = $pengaturan->jam_mulai;
+            $this->jamSelesaiOptions = $pengaturan->jam_selesai;
+            $this->labelSesiOptions = $pengaturan->label_sesi;
+        } else {
+            $this->jamMulaiOptions = ['08:00', '10:00', '13:00', '15:00'];
+            $this->jamSelesaiOptions = ['10:00', '12:00', '15:00', '17:00'];
+            $this->labelSesiOptions = ['Sesi 1', 'Sesi 2', 'Sesi 3', 'Sesi 4'];
+        }
     }
 
     public function openScheduleModal($id)
     {
-        $this->selectedPendaftaran = Pendaftaran::with(['mahasiswa', 'bidangKeahlians'])->findOrFail($id);
+        $this->batchMode = false;
+        $this->selectedPendaftaran = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen'])->findOrFail($id);
 
-        // Auto-generate jadwal: minimal 1 minggu ke depan
-        $minDate = Carbon::now()->addWeek()->startOfDay();
-        $suggestedDate = $minDate->copy()->setHour(9)->setMinute(0);
+        $tanggalDaftar = $this->selectedPendaftaran->first_registered_at
+            ?? $this->selectedPendaftaran->created_at;
+        $this->tanggalDaftar = Carbon::parse($tanggalDaftar);
+        $this->tanggal_minimal = $this->tanggalDaftar->copy()->addDays(7)->startOfDay();
 
-        $this->tanggal_ujian = $this->selectedPendaftaran->tanggal_ujian
-            ? Carbon::parse($this->selectedPendaftaran->tanggal_ujian)->format('Y-m-d\TH:i')
-            : $suggestedDate->format('Y-m-d\TH:i');
+        if ($this->tanggal_minimal->isPast()) {
+            $this->tanggal_minimal = Carbon::tomorrow()->startOfDay();
+        }
+
+        // Gunakan data existing jika ada
+        if ($this->selectedPendaftaran->tanggal_ujian) {
+            $this->tanggal_ujian = Carbon::parse($this->selectedPendaftaran->tanggal_ujian)->format('Y-m-d');
+        } else {
+            $this->tanggal_ujian = $this->tanggal_minimal->copy()->addDays(rand(0, 7))->format('Y-m-d');
+        }
+
         $this->ruangan = $this->selectedPendaftaran->ruangan ?? '';
         $this->sesi = $this->selectedPendaftaran->sesi ?? 1;
-        $this->scheduleMode = 'auto';
+        $this->scheduleMode = 'manual'; // Default manual
         $this->showScheduleModal = true;
     }
 
     public function closeScheduleModal()
     {
         $this->showScheduleModal = false;
-        $this->reset(['selectedPendaftaran', 'tanggal_ujian', 'ruangan', 'sesi', 'catatan']);
+        $this->resetValidation();
     }
 
+    public function openBatchModal()
+    {
+        if (empty($this->selectedIds)) {
+            session()->flash('error', 'Pilih minimal satu pendaftaran.');
+            return;
+        }
+
+        $notReady = Pendaftaran::whereIn('id', $this->selectedIds)
+            ->where('status', '!=', 'disetujui_kajur')
+            ->count();
+
+        if ($notReady > 0) {
+            session()->flash('error', 'Beberapa pendaftaran belum siap.');
+            return;
+        }
+
+        $oldestDate = Pendaftaran::whereIn('id', $this->selectedIds)->min('first_registered_at');
+        $this->tanggalDaftar = Carbon::parse($oldestDate);
+        $this->tanggal_minimal = $this->tanggalDaftar->copy()->addDays(7)->startOfDay();
+
+        if ($this->tanggal_minimal->isPast()) {
+            $this->tanggal_minimal = Carbon::tomorrow()->startOfDay();
+        }
+
+        $this->tanggal_ujian = $this->tanggal_minimal->format('Y-m-d');
+        $this->ruangan = '';
+        $this->sesi = 1;
+        $this->batchMode = true;
+        $this->showBatchModal = true;
+    }
+
+    public function closeBatchModal()
+    {
+        $this->showBatchModal = false;
+    }
+
+    // Method auto generate
     public function autoGenerateJadwal()
     {
-        // Generate jadwal acak 1-2 minggu ke depan
-        $daysAhead = rand(7, 14);
-        $hour = [8, 10, 13, 15][array_rand([8, 10, 13, 15])];
-        $minute = [0, 30][array_rand([0, 30])];
-
-        $autoDate = Carbon::now()->addDays($daysAhead)->setHour($hour)->setMinute($minute);
-
-        $this->tanggal_ujian = $autoDate->format('Y-m-d\TH:i');
-        $this->ruangan = $this->ruanganOptions[array_rand($this->ruanganOptions)];
-        $this->sesi = rand(1, 4);
+        $this->tanggal_ujian = $this->tanggal_minimal->copy()->addDays(rand(0, 7))->format('Y-m-d');
+        $this->ruangan = $this->ruanganOptions[array_rand($this->ruanganOptions)] ?? 'Ruang Seminar 1';
+        $this->sesi = rand(1, count($this->labelSesiOptions));
         $this->scheduleMode = 'auto';
+    }
+
+    // Method untuk switch ke manual (reset mode)
+    public function setManualMode()
+    {
+        $this->scheduleMode = 'manual';
     }
 
     public function scheduleUjian()
     {
         $this->validate([
-            'tanggal_ujian' => 'required|date|after:now',
+            'tanggal_ujian' => [
+                'required',
+                'date',
+                'date_format:Y-m-d',
+                'after_or_equal:' . $this->tanggal_minimal->format('Y-m-d'),
+            ],
             'ruangan' => 'required|string',
-            'sesi' => 'required|integer|min:1|max:4',
+            'sesi' => 'required|integer|min:1|max:' . count($this->labelSesiOptions),
+        ], [
+            'tanggal_ujian.after_or_equal' => 'Tanggal ujian harus minimal ' . $this->tanggal_minimal->format('d M Y') . ' (H+7 dari pendaftaran).',
         ]);
 
+        $sesiIndex = $this->sesi - 1;
+        $jamMulai = $this->jamMulaiOptions[$sesiIndex] ?? '08:00';
+        $tanggalUjian = Carbon::parse($this->tanggal_ujian . ' ' . $jamMulai);
+
         $this->selectedPendaftaran->update([
-            'tanggal_ujian' => Carbon::parse($this->tanggal_ujian),
+            'tanggal_ujian' => $tanggalUjian,
             'ruangan' => $this->ruangan,
             'sesi' => $this->sesi,
             'status' => 'dijadwalkan',
             'scheduled_at' => now(),
         ]);
 
-        session()->flash('success', 'Jadwal ujian berhasil ditetapkan.');
+        $sesiLabel = $this->labelSesiOptions[$sesiIndex] ?? 'Sesi ' . $this->sesi;
+        session()->flash('success', 'Ujian dijadwalkan pada ' . $tanggalUjian->format('d M Y') . ', ' . $sesiLabel . ' (' . $jamMulai . ' - ' . ($this->jamSelesaiOptions[$sesiIndex] ?? 'selesai') . ').');
         $this->closeScheduleModal();
     }
 
-    public function updateStatus($id, $status)
+    public function scheduleBatchUjian()
+    {
+        $this->validate([
+            'tanggal_ujian' => [
+                'required',
+                'date',
+                'date_format:Y-m-d',
+                'after_or_equal:' . $this->tanggal_minimal->format('Y-m-d'),
+            ],
+            'ruangan' => 'required|string',
+            'sesi' => 'required|integer|min:1|max:' . count($this->labelSesiOptions),
+        ], [
+            'tanggal_ujian.after_or_equal' => 'Tanggal ujian harus minimal ' . $this->tanggal_minimal->format('d M Y') . '.',
+        ]);
+
+        $sesiIndex = $this->sesi - 1;
+        $jamMulai = $this->jamMulaiOptions[$sesiIndex] ?? '08:00';
+        $tanggalUjian = Carbon::parse($this->tanggal_ujian . ' ' . $jamMulai);
+
+        $count = Pendaftaran::whereIn('id', $this->selectedIds)
+            ->where('status', 'disetujui_kajur')
+            ->update([
+                'tanggal_ujian' => $tanggalUjian,
+                'ruangan' => $this->ruangan,
+                'sesi' => $this->sesi,
+                'status' => 'dijadwalkan',
+                'scheduled_at' => now(),
+            ]);
+
+        $this->selectedIds = [];
+        $this->selectAll = false;
+
+        session()->flash('success', "$count ujian dijadwalkan pada " . $tanggalUjian->format('d M Y') . '.');
+        $this->closeBatchModal();
+    }
+
+    public function rescheduleUjian($id)
+    {
+        $this->openScheduleModal($id);
+    }
+
+    public function cancelJadwal($id)
     {
         $pendaftaran = Pendaftaran::findOrFail($id);
-        $pendaftaran->update(['status' => $status]);
-        session()->flash('success', 'Status berhasil diperbarui.');
+        $pendaftaran->update([
+            'status' => 'disetujui_kajur',
+            'tanggal_ujian' => null,
+            'ruangan' => null,
+            'sesi' => null,
+            'scheduled_at' => null,
+        ]);
+        session()->flash('success', 'Jadwal dibatalkan.');
+    }
+
+    public function markAsCompleted($id)
+    {
+        $pendaftaran = Pendaftaran::findOrFail($id);
+        $pendaftaran->update([
+            'status' => 'selesai',
+            'completed_at' => now(),
+        ]);
+        session()->flash('success', 'Ujian ditandai selesai.');
+    }
+
+    public function checkCompletedUjian()
+    {
+        $jurusanId = auth()->user()->jurusan_id;
+        Pendaftaran::where('jurusan_id', $jurusanId)
+            ->where('status', 'dijadwalkan')
+            ->where('tanggal_ujian', '<', now())
+            ->update([
+                'status' => 'selesai',
+                'completed_at' => now(),
+            ]);
+    }
+
+    private function getSiapList()
+    {
+        $jurusanId = auth()->user()->jurusan_id;
+        return Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen'])
+            ->where('jurusan_id', $jurusanId)
+            ->where('status', 'disetujui_kajur')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('judul_penelitian', 'like', '%' . $this->search . '%')
+                      ->orWhereHas('mahasiswa', function ($mq) {
+                          $mq->where('name', 'like', '%' . $this->search . '%')
+                             ->orWhere('nim', 'like', '%' . $this->search . '%');
+                      });
+                });
+            })
+            ->when($this->jenisFilter, function ($query) {
+                $query->where('jenis_ujian', $this->jenisFilter);
+            })
+            ->orderBy('first_registered_at')
+            ->get();
     }
 
     public function render()
     {
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = auth()->user()->jurusan_id;
+        $this->checkCompletedUjian();
 
         $query = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen'])
             ->where('jurusan_id', $jurusanId);
 
         switch ($this->tab) {
             case 'siap':
-                // Yang sudah disetujui kajur (sudah ada penguji) dan siap dijadwalkan
-                $query->where('status', 'disetujui_kajur');
+                $query->where('status', 'disetujui_kajur')->orderBy('first_registered_at');
                 break;
             case 'scheduled':
-                $query->whereIn('status', ['dijadwalkan']);
+                $query->where('status', 'dijadwalkan')->orderBy('tanggal_ujian');
                 break;
             case 'completed':
-                $query->where('status', 'selesai');
+                $query->where('status', 'selesai')->orderBy('completed_at', 'desc');
                 break;
         }
 
@@ -153,16 +347,13 @@ class JadwalUjians extends Component
             $query->where('jenis_ujian', $this->jenisFilter);
         }
 
-        $pendaftarans = $query->latest()->paginate(10);
+        $pendaftarans = $query->paginate(10);
 
-        $countSiap = Pendaftaran::where('jurusan_id', $jurusanId)
-            ->where('status', 'disetujui_kajur')->count();
-        $countScheduled = Pendaftaran::where('jurusan_id', $jurusanId)
-            ->where('status', 'dijadwalkan')->count();
-        $countCompleted = Pendaftaran::where('jurusan_id', $jurusanId)
-            ->where('status', 'selesai')->count();
+        $countSiap = Pendaftaran::where('jurusan_id', $jurusanId)->where('status', 'disetujui_kajur')->count();
+        $countScheduled = Pendaftaran::where('jurusan_id', $jurusanId)->where('status', 'dijadwalkan')->count();
+        $countCompleted = Pendaftaran::where('jurusan_id', $jurusanId)->where('status', 'selesai')->count();
 
-        return view('livewire.panitia.penjadwalan.jadwal-ujian', [
+        return view('livewire.panitia.penjadwalan.jadwal-ujians', [
             'pendaftarans' => $pendaftarans,
             'countSiap' => $countSiap,
             'countScheduled' => $countScheduled,

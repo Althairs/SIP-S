@@ -4,8 +4,8 @@ namespace App\Livewire\Mahasiswa;
 
 use Livewire\Component;
 use App\Models\Pendaftaran;
+use App\Models\UjianPenguji;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class JadwalUjian extends Component
 {
@@ -16,10 +16,15 @@ class JadwalUjian extends Component
 
     public function mount()
     {
-        $userId = Auth::id();
+        $userId = auth()->id();
 
         // Ujian yang akan datang
-        $this->upcomingUjian = Pendaftaran::with(['dosens.dosen', 'jurusan'])
+        $this->upcomingUjian = Pendaftaran::with([
+            'dosens.dosen.kepakaran',
+            'bidangKeahlians',
+            'jurusan',
+            'prodi'
+        ])
             ->where('mahasiswa_id', $userId)
             ->where('status', 'dijadwalkan')
             ->where('tanggal_ujian', '>=', now())
@@ -27,7 +32,10 @@ class JadwalUjian extends Component
             ->get();
 
         // Riwayat ujian (selesai atau sudah lewat)
-        $this->riwayatUjian = Pendaftaran::with(['dosens.dosen', 'jurusan'])
+        $this->riwayatUjian = Pendaftaran::with([
+            'dosens.dosen.kepakaran',
+            'bidangKeahlians'
+        ])
             ->where('mahasiswa_id', $userId)
             ->where(function ($query) {
                 $query->where('status', 'selesai')
@@ -42,8 +50,17 @@ class JadwalUjian extends Component
 
     public function showDetailUjian($id)
     {
-        $this->selectedUjian = Pendaftaran::with(['dosens.dosen', 'jurusan', 'prodi'])
-            ->where('mahasiswa_id', Auth::id())
+        $this->selectedUjian = Pendaftaran::with([
+            'mahasiswa',
+            'dosens.dosen.kepakaran',
+            'bidangKeahlians',
+            'jurusan',
+            'prodi',
+            'pengujis.dosen.kepakaran',
+            'pembimbing1.dosen.kepakaran',
+            'pembimbing2.dosen.kepakaran'
+        ])
+            ->where('mahasiswa_id', auth()->id())
             ->findOrFail($id);
         $this->showDetail = true;
     }

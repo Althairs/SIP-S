@@ -21,11 +21,19 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = auth()->user()->jurusan_id;
 
-        // Statistik
+        // Auto-check ujian yang sudah lewat
+        Pendaftaran::where('jurusan_id', $jurusanId)
+            ->where('status', 'dijadwalkan')
+            ->where('tanggal_ujian', '<', now())
+            ->update([
+                'status' => 'selesai',
+                'completed_at' => now(),
+            ]);
+
         $this->totalDisetujui = Pendaftaran::where('jurusan_id', $jurusanId)
-            ->whereIn('status', ['disetujui_kajur'])
+            ->where('status', 'disetujui_kajur')
             ->count();
 
         $this->totalDijadwalkan = Pendaftaran::where('jurusan_id', $jurusanId)
@@ -40,13 +48,14 @@ class Dashboard extends Component
             $q->where('jurusan_id', $jurusanId);
         })->count();
 
-        // Pending approval (disetujui kaprodi, belum di-generate penguji)
+        // Yang bisa dijadwalkan (minimal 7 hari sudah terlewati dari first_registered_at)
         $this->pendingApproval = Pendaftaran::where('jurusan_id', $jurusanId)
-            ->where('status', 'disetujui_kaprodi')
+            ->where('status', 'disetujui_kajur')
+            ->where('first_registered_at', '<=', now()->subDays(7))
             ->count();
 
         // Jadwal hari ini
-        $this->jadwalHariIni = Pendaftaran::with(['mahasiswa', 'ruangan'])
+        $this->jadwalHariIni = Pendaftaran::with(['mahasiswa'])
             ->where('jurusan_id', $jurusanId)
             ->where('status', 'dijadwalkan')
             ->whereDate('tanggal_ujian', Carbon::today())

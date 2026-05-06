@@ -87,7 +87,7 @@ class GeneratePenguji extends Component
 
         // 1. Kepakaran (hierarki tertinggi = score tertinggi)
         if ($dosen->kepakaran) {
-            $score += (10 - $dosen->kepakaran->hierarki_level) * 10;
+            $score += (10 - $dosen->kepakaran->hierarki_level) * 9;
         }
 
         // 2. Kuota (lebih banyak sisa = score lebih tinggi)

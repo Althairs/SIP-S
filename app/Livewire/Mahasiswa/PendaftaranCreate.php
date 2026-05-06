@@ -131,9 +131,9 @@ class PendaftaranCreate extends Component
         $validated = $this->validate();
 
         $data = [
-            'mahasiswa_id' => Auth::id(),
-            'jurusan_id' => Auth::user()->jurusan_id,
-            'prodi_id' => Auth::user()->prodi_id,
+            'mahasiswa_id' => auth()->id(),
+            'jurusan_id' => auth()->user()->jurusan_id,
+            'prodi_id' => auth()->user()->prodi_id,
             'jenis_ujian' => $this->jenis_ujian,
             'judul_penelitian' => $this->judul_penelitian,
             'abstrak' => $this->abstrak,
@@ -147,7 +147,7 @@ class PendaftaranCreate extends Component
                 if ($this->editMode && !empty($this->existingFiles[$field])) {
                     Storage::disk('public')->delete($this->existingFiles[$field]);
                 }
-                $data[$field] = $this->$field->store('pendaftaran/' . Auth::id(), 'public');
+                $data[$field] = $this->$field->store('pendaftaran/' . auth()->id(), 'public');
             } elseif (!$this->editMode) {
                 $data[$field] = null;
             }
@@ -155,19 +155,19 @@ class PendaftaranCreate extends Component
 
         if ($this->editMode) {
             $pendaftaran = Pendaftaran::findOrFail($this->pendaftaranId);
+
+            // JANGAN update first_registered_at saat edit
             $pendaftaran->update($data);
             $pendaftaran->dosens()->delete();
             $this->saveDosens($pendaftaran);
-
-            // TAMBAHAN: Sync bidang keahlian
             $pendaftaran->bidangKeahlians()->sync($this->selectedBidangKeahlian);
 
             session()->flash('success', 'Pendaftaran berhasil diperbarui.');
         } else {
+            // Set first_registered_at = created_at untuk pendaftaran baru
+            $data['first_registered_at'] = now();
             $pendaftaran = Pendaftaran::create($data);
             $this->saveDosens($pendaftaran);
-
-            // TAMBAHAN: Attach bidang keahlian
             $pendaftaran->bidangKeahlians()->attach($this->selectedBidangKeahlian);
 
             session()->flash('success', 'Pendaftaran berhasil disimpan.');

@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             JurusanUserSeeder::class,
             BidangKeahlianSeeder::class,
             KepakaranKuotaSeeder::class,
+            PengaturanJadwalSeeder::class,
         ]);
     }
 }

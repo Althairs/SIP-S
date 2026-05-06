@@ -6,8 +6,9 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
 use App\Models\Prodi;
-// use Illuminate\Container\Attributes\Auth;
-use Illuminate\Support\Facades\Auth;
+use App\Models\BidangKeahlian;
+use App\Models\Kepakaran;
+use App\Models\KuotaDosen;
 
 class DosenIndex extends Component
 {
@@ -32,7 +33,25 @@ class DosenIndex extends Component
     public $alamat = '';
     public $is_active = true;
 
+    // TAMBAHAN: Kepakaran & Bidang Keahlian
+    public $kepakaran_id = '';
+    public $selectedBidangKeahlian = [];
+    public $listBidangKeahlian = [];
+    public $listKepakaran = [];
+
     protected $queryString = ['search', 'prodiFilter', 'statusFilter'];
+
+    public function mount()
+    {
+        $this->loadMasterData();
+    }
+
+    public function loadMasterData()
+    {
+        $jurusanId = auth()->user()->jurusan_id;
+        $this->listBidangKeahlian = BidangKeahlian::active()->byJurusan($jurusanId)->orderBy('nama_bidang')->get();
+        $this->listKepakaran = Kepakaran::active()->orderBy('hierarki_level')->get();
+    }
 
     public function updatingSearch()
     {
@@ -52,7 +71,7 @@ class DosenIndex extends Component
         $this->editMode = true;
         $this->userId = $id;
 
-        $user = User::findOrFail($id);
+        $user = User::with(['bidangKeahlians', 'kepakaran', 'kuota'])->findOrFail($id);
         $this->name = $user->name;
         $this->email = $user->email;
         $this->nip = $user->nip;
@@ -60,6 +79,8 @@ class DosenIndex extends Component
         $this->nomor_hp = $user->nomor_hp;
         $this->alamat = $user->alamat;
         $this->is_active = $user->is_active;
+        $this->kepakaran_id = $user->kepakaran_id;
+        $this->selectedBidangKeahlian = $user->bidangKeahlians->pluck('id')->toArray();
 
         $this->showModal = true;
     }
@@ -75,7 +96,7 @@ class DosenIndex extends Component
         $this->reset([
             'name', 'email', 'password', 'password_confirmation',
             'nip', 'prodi_id', 'nomor_hp', 'alamat', 'is_active',
-            'userId', 'editMode'
+            'userId', 'editMode', 'kepakaran_id', 'selectedBidangKeahlian'
         ]);
     }
 
@@ -89,6 +110,9 @@ class DosenIndex extends Component
             'nomor_hp' => ['nullable', 'string', 'max:15'],
             'alamat' => ['nullable', 'string'],
             'is_active' => ['boolean'],
+            'kepakaran_id' => ['nullable', 'exists:kepakarans,id'],
+            'selectedBidangKeahlian' => ['nullable', 'array'],
+            'selectedBidangKeahlian.*' => ['exists:bidang_keahlians,id'],
         ];
 
         if (!$this->editMode) {
@@ -100,11 +124,20 @@ class DosenIndex extends Component
         return $rules;
     }
 
+    protected $messages = [
+        'name.required' => 'Nama wajib diisi.',
+        'email.unique' => 'Email sudah terdaftar.',
+        'password.min' => 'Password minimal 8 karakter.',
+        'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        'nip.required' => 'NIP wajib diisi.',
+        'nip.unique' => 'NIP sudah terdaftar.',
+    ];
+
     public function save()
     {
         $validated = $this->validate();
 
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = auth()->user()->jurusan_id;
 
         $data = [
             'name' => $this->name,
@@ -115,6 +148,7 @@ class DosenIndex extends Component
             'nomor_hp' => $this->nomor_hp,
             'alamat' => $this->alamat,
             'is_active' => $this->is_active,
+            'kepakaran_id' => $this->kepakaran_id ?: null,
         ];
 
         if ($this->password) {
@@ -124,10 +158,30 @@ class DosenIndex extends Component
         if ($this->editMode) {
             $user = User::findOrFail($this->userId);
             $user->update($data);
+
+            // Sync bidang keahlian
+            $user->bidangKeahlians()->sync($this->selectedBidangKeahlian);
+
             session()->flash('success', 'Dosen berhasil diperbarui.');
         } else {
             $user = User::create($data);
             $user->assignRole('dosen');
+
+            // Attach bidang keahlian
+            if (!empty($this->selectedBidangKeahlian)) {
+                $user->bidangKeahlians()->attach($this->selectedBidangKeahlian);
+            }
+
+            // Buat kuota default
+            KuotaDosen::create([
+                'dosen_id' => $user->id,
+                'jurusan_id' => $jurusanId,
+                'kuota_pembimbing' => 5,
+                'kuota_penguji' => 10,
+                'terpakai_pembimbing' => 0,
+                'terpakai_penguji' => 0,
+            ]);
+
             session()->flash('success', 'Dosen berhasil ditambahkan.');
         }
 
@@ -143,31 +197,17 @@ class DosenIndex extends Component
 
     public function deleteDosen($id)
     {
-        $user = User::findOrFail($id);
-
-        // Cek apakah dosen memiliki mahasiswa bimbingan (nanti bisa ditambahkan)
-        $user->delete();
+        User::findOrFail($id)->delete();
         session()->flash('success', 'Dosen berhasil dihapus.');
-    }
-
-    public function openImportModal()
-    {
-        $this->showImportModal = true;
-    }
-
-    public function exportExcel()
-    {
-        // Nanti implementasi export
-        session()->flash('info', 'Fitur export akan segera tersedia.');
     }
 
     public function render()
     {
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = auth()->user()->jurusan_id;
 
         $dosens = User::role('dosen')
             ->where('jurusan_id', $jurusanId)
-            ->with('prodi')
+            ->with(['prodi', 'bidangKeahlians', 'kepakaran', 'kuota'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')

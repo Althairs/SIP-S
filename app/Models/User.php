@@ -57,6 +57,7 @@ use Spatie\Permission\Traits\HasPermissions;
         'nomor_hp',
         'alamat',
         'foto',
+        'kepakaran_id',
         'is_active',
     ];
 
@@ -103,6 +104,12 @@ use Spatie\Permission\Traits\HasPermissions;
     public function kepakaran()
     {
         return $this->belongsTo(Kepakaran::class);
+    }
+
+    public function bidangKeahlians()
+    {
+        return $this->belongsToMany(BidangKeahlian::class, 'dosen_bidang_keahlian', 'user_id', 'bidang_keahlian_id')
+            ->withTimestamps();
     }
 
     public function kuota()

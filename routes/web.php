@@ -28,6 +28,7 @@ use App\Livewire\Kajur\Kepakaran;
 use App\Livewire\Kajur\VerifikasiSeminarProposal;
 use App\Livewire\Kajur\VerifikasiSeminarHasil;
 use App\Livewire\Kajur\VerifikasiSidangSkripsi;
+use App\Livewire\Kajur\AturAtributDosen;
 // Sekjur Components
 use App\Livewire\Sekjur\Dashboard as SekjurDashboard;
 use App\Livewire\Sekjur\PengujiIndex;
@@ -46,6 +47,8 @@ use App\Livewire\Panitia\Verifikasi\Dashboard as PanitiaVerifikasiDashboard;
 use App\Livewire\Panitia\Verifikasi\VerifikasiBerkas;
 use App\Livewire\Panitia\Penjadwalan\Dashboard as PanitiaPenjadwalanDashboard;
 use App\Livewire\Panitia\Penjadwalan\JadwalUjians;
+use App\Livewire\Panitia\Penjadwalan\SettingRuangan;
+use App\Livewire\Panitia\Penjadwalan\SettingWaktu;
 // use App\Livewire\Panitia\Penjadwalan\GeneratePenguji;
 use App\Livewire\Panitia\Administrasi\Dashboard as PanitiaAdminDashboard;
 
@@ -128,6 +131,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/kuota-dosen', KuotaDosen::class)->name('kuota-dosen');
             Route::get('/bidang-keahlian', BidangKeahlians::class)->name('bidang-keahlian');
             Route::get('/kepakaran', Kepakaran::class)->name('kepakaran');
+            Route::get('/atur-atribut-dosen', AturAtributDosen::class)->name('atur-atribut-dosen');
         });
 
         // Verifikasi
@@ -218,8 +222,9 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware(['role:panitia_penjadwalan'])->prefix('panitia/penjadwalan')->name('panitia.penjadwalan.')->group(function () {
         Route::get('/', PanitiaPenjadwalanDashboard::class)->name('dashboard');
-        Route::get('/jadwal', JadwalUjian::class)->name('jadwal');
-        // Route::get('/generate-penguji/{pendaftaran}', GeneratePenguji::class)->name('generate-penguji');
+        Route::get('/jadwal', JadwalUjians::class)->name('jadwal');
+        Route::get('/setting-waktu', SettingWaktu::class)->name('setting-waktu');
+        Route::get('/setting-ruangan', SettingRuangan::class)->name('setting-ruangan');
         Route::get('/profile', Profile::class)->name('profile');
     });
 

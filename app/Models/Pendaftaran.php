@@ -17,7 +17,6 @@ class Pendaftaran extends Model
         'jenis_ujian',
         'judul_penelitian',
         'abstrak',
-        // HAPUS 'bidang_keahlian' dari fillable karena sekarang jadi relasi
         'file_proposal',
         'file_skripsi',
         'file_persetujuan',
@@ -35,6 +34,7 @@ class Pendaftaran extends Model
         'approved_at',
         'scheduled_at',
         'completed_at',
+        'first_registered_at',
     ];
 
     protected $casts = [
@@ -43,6 +43,7 @@ class Pendaftaran extends Model
         'approved_at' => 'datetime',
         'scheduled_at' => 'datetime',
         'completed_at' => 'datetime',
+        'first_registered_at' => 'datetime',
     ];
 
     // Relasi ke Mahasiswa
@@ -63,14 +64,14 @@ class Pendaftaran extends Model
         return $this->belongsTo(Prodi::class);
     }
 
-    // TAMBAHAN: Relasi ke Bidang Keahlian (many-to-many)
+    // Relasi ke Bidang Keahlian (many-to-many)
     public function bidangKeahlians()
     {
         return $this->belongsToMany(BidangKeahlian::class, 'pendaftaran_bidang_keahlian')
             ->withTimestamps();
     }
 
-    // Relasi ke Dosen (many-to-many via pendaftaran_dosens)
+    // Relasi ke Dosen Pembimbing (via pendaftaran_dosens)
     public function dosens()
     {
         return $this->hasMany(PendaftaranDosen::class);
@@ -88,10 +89,10 @@ class Pendaftaran extends Model
         return $this->hasOne(PendaftaranDosen::class)->where('peran', 'pembimbing_2');
     }
 
-    // Get Penguji
+    // TAMBAHAN: Relasi ke UjianPenguji (penguji dari sekjur)
     public function pengujis()
     {
-        return $this->hasMany(PendaftaranDosen::class)->whereIn('peran', ['penguji_1', 'penguji_2', 'penguji_3']);
+        return $this->hasMany(UjianPenguji::class);
     }
 
     // Scope
@@ -108,7 +109,7 @@ class Pendaftaran extends Model
     // Helper untuk label status
     public function getStatusLabelAttribute()
     {
-        return match ($this->status) {
+        return match($this->status) {
             'draft' => 'Draft',
             'pending' => 'Menunggu Verifikasi',
             'disetujui_panitia' => 'Disetujui Panitia',
@@ -126,7 +127,7 @@ class Pendaftaran extends Model
 
     public function getStatusColorAttribute()
     {
-        return match ($this->status) {
+        return match($this->status) {
             'draft' => 'gray',
             'pending' => 'yellow',
             'disetujui_panitia' => 'blue',
