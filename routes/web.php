@@ -29,6 +29,7 @@ use App\Livewire\Kajur\VerifikasiSeminarProposal;
 use App\Livewire\Kajur\VerifikasiSeminarHasil;
 use App\Livewire\Kajur\VerifikasiSidangSkripsi;
 use App\Livewire\Kajur\AturAtributDosen;
+use App\Livewire\Kajur\PengaturanReminder;
 // Sekjur Components
 use App\Livewire\Sekjur\Dashboard as SekjurDashboard;
 use App\Livewire\Sekjur\PengujiIndex;
@@ -132,6 +133,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/bidang-keahlian', BidangKeahlians::class)->name('bidang-keahlian');
             Route::get('/kepakaran', Kepakaran::class)->name('kepakaran');
             Route::get('/atur-atribut-dosen', AturAtributDosen::class)->name('atur-atribut-dosen');
+            Route::get('/pengaturan-reminder', PengaturanReminder::class)->name('pengaturan-reminder');
         });
 
         // Verifikasi

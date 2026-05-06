@@ -4,30 +4,41 @@ namespace App\Livewire\Mahasiswa;
 
 use Livewire\Component;
 use App\Models\Pendaftaran;
+use App\Models\Reminder;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends Component
 {
     public $pendaftarans;
-    public $reminder;
+    public $reminders;
     public $tahapan;
+    public $reminderTerdekat;
 
     public function mount()
     {
-        $userId = Auth::id();
+        $userId = auth()->id();
 
-        // Ambil semua pendaftaran
-        $this->pendaftarans = Pendaftaran::with(['dosens.dosen', 'jurusan'])
+        $this->pendaftarans = Pendaftaran::with(['dosens.dosen', 'jurusan', 'pengujis'])
             ->where('mahasiswa_id', $userId)
             ->latest()
             ->get();
 
-        // Reminder (jadwal yang akan datang)
-        $this->reminder = Pendaftaran::where('mahasiswa_id', $userId)
-            ->where('status', 'dijadwalkan')
-            ->where('tanggal_ujian', '>=', now())
-            ->orderBy('tanggal_ujian')
+        // TAMBAHAN: Ambil reminder aktif
+        $this->reminders = Reminder::with('pendaftaran')
+            ->where('user_id', $userId)
+            ->active()
+            ->orderBy('prioritas')
+            ->orderBy('tanggal_tampil')
+            ->take(10)
+            ->get();
+
+        // TAMBAHAN: Reminder terdekat/terpenting
+        $this->reminderTerdekat = Reminder::with('pendaftaran')
+            ->where('user_id', $userId)
+            ->active()
+            ->unread()
+            ->orderBy('prioritas')
+            ->orderBy('tanggal_tampil')
             ->first();
 
         // Tahapan yang sudah dilalui
@@ -54,6 +65,15 @@ class Dashboard extends Component
                     ->exists(),
             ],
         ];
+    }
+
+    public function markReminderRead($reminderId)
+    {
+        $reminder = Reminder::findOrFail($reminderId);
+        if ($reminder->user_id === auth()->id()) {
+            $reminder->markAsRead();
+        }
+        $this->mount();
     }
 
     public function render()

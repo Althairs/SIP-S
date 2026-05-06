@@ -11,6 +11,35 @@
         </div>
     </div>
 
+    {{-- ============= REMINDER URGENT ============= --}}
+    @if($reminderTerdekat)
+    <div class="bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 rounded-2xl p-6 mb-6">
+        <div class="flex items-start justify-between">
+            <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <span class="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-medium">
+                        {{ $reminderTerdekat->prioritas === 'tinggi' ? '⚠️ Prioritas Tinggi' : 'ℹ️ Reminder' }}
+                    </span>
+                    <h3 class="text-lg font-bold text-gray-900 mt-2">{{ $reminderTerdekat->judul }}</h3>
+                    <p class="text-sm text-gray-600 mt-1">{{ $reminderTerdekat->pesan }}</p>
+                    <div class="flex items-center gap-3 mt-3">
+                        <span class="text-xs text-gray-500">📅 {{ $reminderTerdekat->tanggal_tampil->format('d M Y') }}</span>
+                        @if($reminderTerdekat->tanggal_kadaluarsa)
+                        <span class="text-xs text-red-500">⏰ Deadline: {{ $reminderTerdekat->tanggal_kadaluarsa->format('d M Y') }}</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <button wire:click="markReminderRead({{ $reminderTerdekat->id }})" class="text-sm text-gray-400 hover:text-gray-600 flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+    @endif
+
     <!-- Tahapan -->
     <div class="grid md:grid-cols-3 gap-6 mb-6">
         @foreach($tahapan as $key => $tahap)
@@ -32,48 +61,76 @@
         @endforeach
     </div>
 
-    <!-- Reminder -->
-    @if($reminder)
-    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-6">
-        <h3 class="font-semibold text-amber-900">Reminder Ujian</h3>
-        <p class="text-amber-700">{{ $reminder->jenis_ujian_label }} - {{ $reminder->tanggal_ujian?->format('d M Y, H:i') }}</p>
-    </div>
-    @endif
-
-    <!-- Daftar Pendaftaran -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold">Riwayat Pendaftaran</h2>
-            <a href="{{ route('mahasiswa.pendaftaran.create') }}" class="px-4 py-2 bg-blue-700 text-white rounded-xl hover:bg-blue-800 transition text-sm font-medium">
-                Daftar Ujian
-            </a>
+    <div class="grid lg:grid-cols-2 gap-6">
+        {{-- ============= DAFTAR REMINDER ============= --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-900">📬 Reminder & Notifikasi</h2>
+                @if($reminders->where('is_read', false)->count() > 0)
+                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">{{ $reminders->where('is_read', false)->count() }} baru</span>
+                @endif
+            </div>
+            <div class="p-4 max-h-96 overflow-y-auto">
+                @if($reminders->isEmpty())
+                <div class="text-center py-8 text-gray-500">
+                    <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                    <p>Tidak ada reminder</p>
+                </div>
+                @else
+                <div class="space-y-3">
+                    @foreach($reminders as $reminder)
+                    <div class="p-3 rounded-xl transition {{ $reminder->is_read ? 'bg-gray-50 opacity-60' : 'bg-blue-50 border border-blue-100' }}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $reminder->prioritas === 'tinggi' ? 'bg-red-100 text-red-800' : ($reminder->prioritas === 'sedang' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600') }}">
+                                        {{ $reminder->prioritas === 'tinggi' ? '⚠️' : '📌' }} {{ ucfirst($reminder->prioritas) }}
+                                    </span>
+                                    @if(!$reminder->is_read)
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                    @endif
+                                </div>
+                                <p class="text-sm font-medium text-gray-900 mt-1">{{ $reminder->judul }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ Str::limit($reminder->pesan, 100) }}</p>
+                                <div class="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                                    <span>{{ $reminder->tanggal_tampil->format('d M Y') }}</span>
+                                    @if($reminder->tanggal_kadaluarsa)
+                                    <span>Deadline: {{ $reminder->tanggal_kadaluarsa->format('d M Y') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                            @if(!$reminder->is_read)
+                            <button wire:click="markReminderRead({{ $reminder->id }})" class="text-xs text-blue-600 hover:text-blue-800 flex-shrink-0 ml-2">Tandai Dibaca</button>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @endif
+            </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Jenis</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Judul</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y">
-                    @forelse($pendaftarans as $p)
-                    <tr>
-                        <td class="px-4 py-3 text-sm">{{ str_replace('_', ' ', ucwords($p->jenis_ujian)) }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-700 truncate max-w-xs">{{ Str::limit($p->judul_penelitian, 40) }}</td>
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 bg-{{ $p->statusColor }}-100 text-{{ $p->statusColor }}-800 rounded-full text-xs">{{ $p->statusLabel }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-500">{{ $p->created_at->format('d M Y') }}</td>
-                    </tr>
+        {{-- ============= DAFTAR PENDAFTARAN ============= --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-900">Riwayat Pendaftaran</h2>
+                <a href="{{ route('mahasiswa.pendaftaran.create') }}" class="px-4 py-2 bg-blue-700 text-white rounded-xl hover:bg-blue-800 text-sm font-medium">Daftar Ujian</a>
+            </div>
+            <div class="p-4 max-h-96 overflow-y-auto">
+                <div class="space-y-3">
+                    @forelse($pendaftarans->take(5) as $p)
+                    <div class="p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 bg-{{ $p->statusColor }}-100 text-{{ $p->statusColor }}-800 rounded-full text-xs">{{ $p->statusLabel }}</span>
+                            <span class="text-xs text-gray-500">{{ $p->created_at->format('d M Y') }}</span>
+                        </div>
+                        <p class="text-sm font-medium text-gray-900 mt-1">{{ Str::limit($p->judul_penelitian, 50) }}</p>
+                    </div>
                     @empty
-                    <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Belum ada pendaftaran</td></tr>
+                    <p class="text-center py-8 text-gray-500">Belum ada pendaftaran</p>
                     @endforelse
-                </tbody>
-            </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
