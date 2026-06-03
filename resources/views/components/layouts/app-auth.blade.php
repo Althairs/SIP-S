@@ -34,8 +34,10 @@
         <x-navigation.sidebar-panitia-verifikasi />
     @elseif(Auth::user()->hasRole('panitia_penjadwalan'))
         <x-navigation.sidebar-panitia-penjadwalan />
-    {{-- @elseif(Auth::user()->hasRole('panitia_administrasi'))
-        <x-navigation.sidebar-panitia-administrasi /> --}}
+    @elseif(Auth::user()->hasRole('panitia_administrasi'))
+        <x-navigation.sidebar-panitia-administrasi />
+    @elseif(Auth::user()->hasRole('dosen'))
+        <x-navigation.sidebar-dosen />
     @endif
 
     <!-- Main Content -->

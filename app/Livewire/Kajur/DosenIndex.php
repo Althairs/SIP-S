@@ -9,10 +9,11 @@ use App\Models\Prodi;
 use App\Models\BidangKeahlian;
 use App\Models\Kepakaran;
 use App\Models\KuotaDosen;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DosenIndex extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     public $search = '';
     public $prodiFilter = '';
@@ -60,13 +61,16 @@ class DosenIndex extends Component
 
     public function openCreateModal()
     {
+        $this->authorize('create_dosen');
         $this->resetForm();
         $this->editMode = false;
         $this->showModal = true;
+
     }
 
     public function openEditModal($id)
     {
+        $this->authorize('edit_dosen');
         $this->resetForm();
         $this->editMode = true;
         $this->userId = $id;
@@ -94,9 +98,19 @@ class DosenIndex extends Component
     public function resetForm()
     {
         $this->reset([
-            'name', 'email', 'password', 'password_confirmation',
-            'nip', 'prodi_id', 'nomor_hp', 'alamat', 'is_active',
-            'userId', 'editMode', 'kepakaran_id', 'selectedBidangKeahlian'
+            'name',
+            'email',
+            'password',
+            'password_confirmation',
+            'nip',
+            'prodi_id',
+            'nomor_hp',
+            'alamat',
+            'is_active',
+            'userId',
+            'editMode',
+            'kepakaran_id',
+            'selectedBidangKeahlian'
         ]);
     }
 
@@ -135,6 +149,12 @@ class DosenIndex extends Component
 
     public function save()
     {
+        if ($this->editMode) {
+            $this->authorize('edit_dosen');
+        } else {
+            $this->authorize('create_dosen');
+        }
+
         $validated = $this->validate();
 
         $jurusanId = auth()->user()->jurusan_id;
@@ -190,6 +210,7 @@ class DosenIndex extends Component
 
     public function toggleStatus($id)
     {
+        $this->authorize('edit_dosen');
         $user = User::findOrFail($id);
         $user->update(['is_active' => !$user->is_active]);
         session()->flash('success', 'Status dosen berhasil diubah.');
@@ -197,6 +218,7 @@ class DosenIndex extends Component
 
     public function deleteDosen($id)
     {
+        $this->authorize('delete_dosen');
         User::findOrFail($id)->delete();
         session()->flash('success', 'Dosen berhasil dihapus.');
     }
@@ -211,8 +233,8 @@ class DosenIndex extends Component
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%')
-                      ->orWhere('nip', 'like', '%' . $this->search . '%');
+                        ->orWhere('email', 'like', '%' . $this->search . '%')
+                        ->orWhere('nip', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->prodiFilter, function ($query) {
@@ -229,6 +251,9 @@ class DosenIndex extends Component
         return view('livewire.kajur.dosen-index', [
             'dosens' => $dosens,
             'prodis' => $prodis,
+            'canCreate' => auth()->user()->can('create_dosen'),
+            'canEdit' => auth()->user()->can('edit_dosen'),
+            'canDelete' => auth()->user()->can('delete_dosen'),
         ])->layout('components.layouts.app-auth');
     }
 }

@@ -7,10 +7,11 @@ use Livewire\WithPagination;
 use App\Models\User;
 use App\Models\Prodi;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class MahasiswaIndex extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     public $search = '';
     public $prodiFilter = '';
@@ -40,6 +41,7 @@ class MahasiswaIndex extends Component
 
     public function openCreateModal()
     {
+        $this->authorize('create_mahasiswa');
         $this->resetForm();
         $this->editMode = false;
         $this->showModal = true;
@@ -47,6 +49,7 @@ class MahasiswaIndex extends Component
 
     public function openEditModal($id)
     {
+        $this->authorize('edit_mahasiswa');
         $this->resetForm();
         $this->editMode = true;
         $this->userId = $id;
@@ -102,6 +105,12 @@ class MahasiswaIndex extends Component
 
     public function save()
     {
+        if ($this->editMode) {
+            $this->authorize('edit_dosen');
+        } else {
+            $this->authorize('create_dosen');
+        }
+
         $validated = $this->validate();
 
         $jurusanId = Auth::user()->jurusan_id;
@@ -136,6 +145,7 @@ class MahasiswaIndex extends Component
 
     public function toggleStatus($id)
     {
+        $this->authorize('edit_mahasiswa');
         $user = User::findOrFail($id);
         $user->update(['is_active' => !$user->is_active]);
         session()->flash('success', 'Status mahasiswa berhasil diubah.');
@@ -143,6 +153,7 @@ class MahasiswaIndex extends Component
 
     public function deleteMahasiswa($id)
     {
+        $this->authorize('delete_mahasiswa');
         User::findOrFail($id)->delete();
         session()->flash('success', 'Mahasiswa berhasil dihapus.');
     }
@@ -183,6 +194,9 @@ class MahasiswaIndex extends Component
             'mahasiswas' => $mahasiswas,
             'prodis' => $prodis,
             'angkatans' => $angkatans,
+            'canCreate' => auth()->user()->can('create_mahasiswa'),
+            'canEdit' => auth()->user()->can('edit_mahasiswa'),
+            'canDelete' => auth()->user()->can('delete_mahasiswa'),
         ])->layout('components.layouts.app-auth');
     }
 }

@@ -53,6 +53,15 @@ use App\Livewire\Panitia\Penjadwalan\SettingWaktu;
 // use App\Livewire\Panitia\Penjadwalan\GeneratePenguji;
 use App\Livewire\Panitia\Administrasi\Dashboard as PanitiaAdminDashboard;
 
+// Dosen
+use App\Livewire\Dosen\Dashboard as DosenDashboard;
+use App\Livewire\Dosen\BerikanRevisi;
+use App\Livewire\Dosen\DaftarRevisi;
+use App\Livewire\Dosen\BerikanNilai;
+use App\Livewire\Dosen\KuotaSaya;
+use App\Livewire\Dosen\JadwalMenguji;
+use App\Livewire\Dosen\Profile as DosenProfile;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -241,6 +250,33 @@ Route::middleware('auth')->group(function () {
     });
 
     /*
+|--------------------------------------------------------------------------
+| Dosen Routes
+|--------------------------------------------------------------------------
+*/
+    Route::middleware(['role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
+        Route::get('/', DosenDashboard::class)->name('dashboard');
+
+        // Revisi
+        Route::prefix('revisi')->name('revisi.')->group(function () {
+            Route::get('/', DaftarRevisi::class)->name('index');
+            Route::get('/{pendaftaran}/berikan', BerikanRevisi::class)->name('berikan');
+        });
+
+        // Nilai
+        Route::get('/nilai', BerikanNilai::class)->name('nilai');
+
+        // Kuota
+        Route::get('/kuota', KuotaSaya::class)->name('kuota');
+
+        // Jadwal Menguji
+        Route::get('/jadwal', JadwalMenguji::class)->name('jadwal');
+
+        // Profile
+        Route::get('/profile', DosenProfile::class)->name('profile');
+    });
+
+    /*
     |--------------------------------------------------------------------------
     | Redirect berdasarkan role
     |--------------------------------------------------------------------------
@@ -263,6 +299,8 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('panitia.penjadwalan.dashboard');
         } elseif ($user->hasRole('panitia_administrasi')) {
             return redirect()->route('panitia.administrasi.dashboard');
+        } elseif ($user->hasRole('dosen')) {
+            return redirect()->route('dosen.dashboard');
         }
 
         return view('dashboard.index');
