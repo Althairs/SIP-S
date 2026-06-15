@@ -23,7 +23,11 @@ class BerikanRevisi extends Component
 
     public function mount($pendaftaran)
     {
-        $this->pendaftaran = Pendaftaran::with(['mahasiswa', 'revisis', 'pengujis.dosen'])->findOrFail($pendaftaran);
+        if ($pendaftaran instanceof Pendaftaran) {
+            $this->pendaftaran = $pendaftaran;
+        } else {
+            $this->pendaftaran = Pendaftaran::with(['mahasiswa', 'revisis', 'pengujis.dosen'])->findOrFail($pendaftaran);
+        }
 
         // Cari peran dosen ini di ujian ini
         $peran = UjianPenguji::where('pendaftaran_id', $this->pendaftaran->id)

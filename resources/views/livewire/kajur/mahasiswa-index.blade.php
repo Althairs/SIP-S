@@ -32,7 +32,7 @@
             <div class="flex-1 flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
                     <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari mahasiswa..."
-                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                     <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -40,14 +40,14 @@
                     </svg>
                 </div>
                 <select wire:model.change="prodiFilter"
-                    class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    class="px-4 py-2.5 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                     <option value="">Semua Prodi</option>
                     @foreach($prodis as $prodi)
                         <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
                 <select wire:model.change="statusFilter"
-                    class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    class="px-8 py-2.5 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
                     <option value="0">Nonaktif</option>
@@ -84,13 +84,13 @@
             <table class="w-full">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Mahasiswa</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">NIM</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Prodi</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Kontak</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Aksi</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">No</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">Mahasiswa</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">NIM</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">Prodi</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">Kontak</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -110,7 +110,7 @@
                             </td>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $mhs->nim ?? '-' }}</td>
                             <td class="px-6 py-4">
-                                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium whitespace-nowrap">
                                     {{ $mhs->prodi->nama_prodi ?? '-' }}
                                 </span>
                             </td>

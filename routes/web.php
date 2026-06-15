@@ -61,6 +61,8 @@ use App\Livewire\Dosen\BerikanNilai;
 use App\Livewire\Dosen\KuotaSaya;
 use App\Livewire\Dosen\JadwalMenguji;
 use App\Livewire\Dosen\Profile as DosenProfile;
+use App\Livewire\Dosen\InputNilaiSistem;
+use App\Livewire\Dosen\UploadNilaiBerkas;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +75,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::get('/beranda', [PublicController::class, 'index'])->name('beranda');
 Route::get('/jadwal', [PublicController::class, 'jadwal'])->name('jadwal');
+Route::get('/wire', [PublicController::class, 'wire'])->name('wire');
 
 /*
 |--------------------------------------------------------------------------
@@ -264,7 +267,11 @@ Route::middleware('auth')->group(function () {
         });
 
         // Nilai
-        Route::get('/nilai', BerikanNilai::class)->name('nilai');
+        Route::prefix('nilai')->name('nilai.')->group(function () {
+            Route::get('/', BerikanNilai::class)->name('index');
+            Route::get('/{pendaftaran}/input', InputNilaiSistem::class)->name('input');
+            Route::get('/{pendaftaran}/upload', UploadNilaiBerkas::class)->name('upload');
+        });
 
         // Kuota
         Route::get('/kuota', KuotaSaya::class)->name('kuota');

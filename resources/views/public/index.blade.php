@@ -34,14 +34,15 @@
 
                     <div class="mt-8 flex items-center space-x-4">
                         <div class="flex -space-x-2">
-                            <div class="w-10 h-10 rounded-full bg-green-200 border-2 border-white flex items-center justify-center text-green-800 font-semibold">M</div>
-                            <div class="w-10 h-10 rounded-full bg-amber-200 border-2 border-white flex items-center justify-center text-amber-800 font-semibold">D</div>
-                            <div class="w-10 h-10 rounded-full bg-emerald-200 border-2 border-white flex items-center justify-center text-emerald-800 font-semibold">A</div>
+                            <div class="w-10 h-10 rounded-full bg-green-200 border-2 border-white flex items-center justify-center text-green-800 font-semibold text-sm">M</div>
+                            <div class="w-10 h-10 rounded-full bg-amber-200 border-2 border-white flex items-center justify-center text-amber-800 font-semibold text-sm">D</div>
+                            <div class="w-10 h-10 rounded-full bg-emerald-200 border-2 border-white flex items-center justify-center text-emerald-800 font-semibold text-sm">A</div>
                         </div>
-                        <p class="text-gray-600">
-                            <span class="font-bold text-gray-900">500+</span> Mahasiswa •
-                            <span class="font-bold text-gray-900">50+</span> Dosen
-                        </p>
+                        <div class="text-gray-600 text-sm">
+                            <span class="font-bold text-gray-900">{{ $totalMahasiswa }}+</span> Mahasiswa •
+                            <span class="font-bold text-gray-900">{{ $totalDosen }}+</span> Dosen •
+                            <span class="font-bold text-gray-900">{{ $totalJurusans }}</span> Jurusan
+                        </div>
                     </div>
                 </div>
 
@@ -59,104 +60,89 @@
         </div>
     </section>
 
+    <!-- Stats Section -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center p-6 bg-green-50 rounded-2xl">
+                    <p class="text-4xl font-bold text-green-700">{{ $totalMahasiswa }}+</p>
+                    <p class="text-sm text-green-600 mt-2">Mahasiswa</p>
+                </div>
+                <div class="text-center p-6 bg-blue-50 rounded-2xl">
+                    <p class="text-4xl font-bold text-blue-700">{{ $totalDosen }}+</p>
+                    <p class="text-sm text-blue-600 mt-2">Dosen</p>
+                </div>
+                <div class="text-center p-6 bg-amber-50 rounded-2xl">
+                    <p class="text-4xl font-bold text-amber-700">{{ $totalJurusans }}</p>
+                    <p class="text-sm text-amber-600 mt-2">Jurusan</p>
+                </div>
+                <div class="text-center p-6 bg-purple-50 rounded-2xl">
+                    <p class="text-4xl font-bold text-purple-700">{{ $totalUjian }}+</p>
+                    <p class="text-sm text-purple-600 mt-2">Ujian Terlaksana</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Jadwal Minggu Ini Section -->
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-gradient-to-b from-white to-green-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                     Jadwal <span class="text-green-700">Minggu Ini</span>
                 </h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Informasi jadwal bimbingan, seminar proposal, dan sidang skripsi minggu ini
+                    Informasi jadwal seminar proposal, seminar hasil, dan sidang skripsi minggu ini
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Card 1 -->
-                <div class="bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 border border-green-100 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-3 py-1 bg-green-200 text-green-800 rounded-full text-sm font-medium">Seminar Proposal</span>
-                        <span class="text-green-700 font-bold">3 Jadwal</span>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Senin, 15 Jan 2024</p>
-                                <p class="text-sm text-gray-600">09:00 - 12:00 WIB</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Rabu, 17 Jan 2024</p>
-                                <p class="text-sm text-gray-600">13:00 - 16:00 WIB</p>
-                            </div>
-                        </div>
-                    </div>
+            @if($jadwalMingguIni->isEmpty())
+            <div class="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
                 </div>
-
-                <!-- Card 2 -->
-                <div class="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-6 border border-amber-100 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-3 py-1 bg-amber-200 text-amber-800 rounded-full text-sm font-medium">Sidang Skripsi</span>
-                        <span class="text-amber-700 font-bold">2 Jadwal</span>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Selasa, 16 Jan 2024</p>
-                                <p class="text-sm text-gray-600">10:00 - 12:00 WIB</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Kamis, 18 Jan 2024</p>
-                                <p class="text-sm text-gray-600">14:00 - 16:00 WIB</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-6 border border-emerald-100 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-3 py-1 bg-emerald-200 text-emerald-800 rounded-full text-sm font-medium">Bimbingan</span>
-                        <span class="text-emerald-700 font-bold">5 Jadwal</span>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Sepanjang Minggu</p>
-                                <p class="text-sm text-gray-600">Sesuai Kesepakatan</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak Ada Jadwal Minggu Ini</h3>
+                <p class="text-gray-500">Belum ada ujian yang dijadwalkan untuk minggu ini.</p>
             </div>
+            @else
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($jadwalMingguIni as $jadwal)
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-{{ $jadwal->jenis_ujian === 'seminar_proposal' ? 'blue' : ($jadwal->jenis_ujian === 'seminar_hasil' ? 'amber' : 'purple') }}-100 text-{{ $jadwal->jenis_ujian === 'seminar_proposal' ? 'blue' : ($jadwal->jenis_ujian === 'seminar_hasil' ? 'amber' : 'purple') }}-800 rounded-full text-xs font-medium">
+                            {{ ucwords(str_replace('_', ' ', $jadwal->jenis_ujian)) }}
+                        </span>
+                        <span class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($jadwal->tanggal_ujian)->format('d M Y') }}</span>
+                    </div>
+
+                    <h3 class="font-semibold text-gray-900 mb-3 line-clamp-2">{{ Str::limit($jadwal->judul_penelitian, 60) }}</h3>
+
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            {{ $jadwal->mahasiswa->name }}
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ \Carbon\Carbon::parse($jadwal->tanggal_ujian)->format('H:i') }} WIB
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            </svg>
+                            {{ $jadwal->ruangan ?? '-' }}
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
 
             <div class="text-center mt-10">
                 <a href="{{ route('jadwal') }}" class="inline-flex items-center px-6 py-3 bg-green-700 text-white rounded-full hover:bg-green-800 transition shadow-md shadow-green-200 font-medium">
@@ -170,7 +156,7 @@
     </section>
 
     <!-- Panduan Section -->
-    <section id="panduan" class="py-16 bg-gradient-to-b from-white to-green-50">
+    <section id="panduan" class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -192,33 +178,30 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-4">Mahasiswa</h3>
                     <ul class="space-y-3 text-gray-600">
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Pengajuan judul skripsi
+                            Pendaftaran ujian (seminar proposal, hasil, sidang)
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Bimbingan dengan dosen
+                            Upload berkas persyaratan
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Upload progress skripsi
+                            Lihat jadwal dan nilai ujian
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Pendaftaran seminar & sidang
+                            Terima reminder & notifikasi
                         </li>
                     </ul>
-                    <a href="#" class="inline-block mt-6 text-green-700 font-semibold hover:text-green-800">
-                        Selengkapnya →
-                    </a>
                 </div>
 
                 <!-- Dosen -->
@@ -231,36 +214,27 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-4">Dosen</h3>
                     <ul class="space-y-3 text-gray-600">
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Persetujuan judul skripsi
+                            Memberikan revisi dan penilaian
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Jadwal bimbingan
+                            Melihat jadwal menguji
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Review progress mahasiswa
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-amber-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Penilaian seminar & sidang
+                            Monitoring kuota bimbingan
                         </li>
                     </ul>
-                    <a href="#" class="inline-block mt-6 text-amber-700 font-semibold hover:text-amber-800">
-                        Selengkapnya →
-                    </a>
                 </div>
 
-                <!-- Admin -->
+                <!-- Admin/Panitia -->
                 <div class="bg-white rounded-2xl p-8 shadow-sm border border-emerald-100 hover:shadow-lg transition">
                     <div class="w-16 h-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center mb-6">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,36 +242,27 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Admin</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Admin & Panitia</h3>
                     <ul class="space-y-3 text-gray-600">
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Kelola data master
+                            Verifikasi berkas pendaftaran
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Manajemen pengguna
+                            Penjadwalan ujian
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            Penjadwalan kegiatan
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-emerald-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Laporan dan statistik
+                            Manajemen data master
                         </li>
                     </ul>
-                    <a href="#" class="inline-block mt-6 text-emerald-700 font-semibold hover:text-emerald-800">
-                        Selengkapnya →
-                    </a>
                 </div>
             </div>
         </div>

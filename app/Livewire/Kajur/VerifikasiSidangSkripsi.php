@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Livewire\Kajur;
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\Pendaftaran;
 
 // Sama, ganti jenis_ujian jadi 'sidang_skripsi'
 class VerifikasiSidangSkripsi extends VerifikasiSeminarProposal

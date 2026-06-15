@@ -102,13 +102,13 @@
                             <td class="px-4 py-4 text-sm text-gray-700">{{ $dosen->nip ?? '-' }}</td>
                             <td class="px-4 py-4">
                                 <span
-                                    class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">{{ $dosen->prodi?->nama_prodi ?? '-' }}</span>
+                                    class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium whitespace-nowrap">{{ $dosen->prodi?->nama_prodi ?? '-' }}</span>
                             </td>
                             <td class="px-4 py-4">
                                 @if($dosen->kepakaran)
                                     <span
-                                        class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">{{ $dosen->kepakaran->nama_kepakaran }}</span>
-                                    <span class="block text-xs text-gray-400 mt-0.5">Level
+                                        class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium whitespace-nowrap">{{ $dosen->kepakaran->nama_kepakaran }}</span>
+                                    <span class="block text-xs text-gray-400 mt-0.5 ">Level
                                         {{ $dosen->kepakaran->hierarki_level }}</span>
                                 @else
                                     <span class="text-xs text-gray-400">Belum diatur</span>
@@ -119,11 +119,11 @@
                                     <div class="flex flex-wrap gap-1 max-w-[180px]">
                                         @foreach($dosen->bidangKeahlians->take(2) as $bk)
                                             <span
-                                                class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs">{{ $bk->nama_bidang }}</span>
+                                                class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs font-medium whitespace-nowrap">{{ $bk->nama_bidang }}</span>
                                         @endforeach
                                         @if($dosen->bidangKeahlians->count() > 2)
                                             <span
-                                                class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">+{{ $dosen->bidangKeahlians->count() - 2 }}</span>
+                                                class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs font-medium whitespace-nowrap">+{{ $dosen->bidangKeahlians->count() - 2 }}</span>
                                         @endif
                                     </div>
                                 @else
@@ -144,7 +144,7 @@
                                         <button wire:click="deleteDosen({{ $dosen->id }})" wire:confirm="Hapus dosen ini?"
                                             class="px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 text-sm font-medium">Hapus</button>
                                     @endif
-                                    @if(!$canEdit && !$canDelete) 
+                                    @if(!$canEdit && !$canDelete)
                                         <span class="text-xs text-gray-400">Read only</span>
                                     @endif
 
@@ -246,7 +246,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Kepakaran (Hierarki
                                         Dosen)</label>
                                     <select wire:model="kepakaran_id"
-                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 ">
                                         <option value="">Pilih Kepakaran</option>
                                         @foreach($listKepakaran as $k)
                                             <option value="{{ $k->id }}">{{ $k->nama_kepakaran }} (Level
