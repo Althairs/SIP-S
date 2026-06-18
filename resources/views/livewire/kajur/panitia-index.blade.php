@@ -11,6 +11,26 @@
     </div>
     @endif
 
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p class="text-sm text-gray-500">Total Panitia</p>
+            <p class="text-3xl font-semibold text-gray-900 mt-3">{{ $summary['total'] ?? 0 }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p class="text-sm text-gray-500">Verifikasi</p>
+            <p class="text-3xl font-semibold text-amber-700 mt-3">{{ $summary['verifikasi'] ?? 0 }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p class="text-sm text-gray-500">Penjadwalan</p>
+            <p class="text-3xl font-semibold text-cyan-700 mt-3">{{ $summary['penjadwalan'] ?? 0 }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p class="text-sm text-gray-500">Administrasi</p>
+            <p class="text-3xl font-semibold text-green-700 mt-3">{{ $summary['administrasi'] ?? 0 }}</p>
+        </div>
+    </div>
+
     <!-- Action Bar -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -22,6 +42,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
+                <select wire:model="roleFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                    <option value="">Semua Role</option>
+                    <option value="panitia_verifikasi">Panitia Verifikasi</option>
+                    <option value="panitia_penjadwalan">Panitia Penjadwalan</option>
+                    <option value="panitia_administrasi">Panitia Administrasi</option>
+                </select>
+                <select wire:model="prodiFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                    <option value="">Semua Prodi</option>
+                    @foreach($prodis as $prodi)
+                        <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
+                    @endforeach
+                </select>
                 <select wire:model.change="statusFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
@@ -44,6 +76,7 @@
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Panitia</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">NIP</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Role</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Kontak</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Aksi</th>
@@ -63,6 +96,11 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $panitia->nip ?? '-' }}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 capitalize">
+                                {{ str_replace('_', ' ', $panitia->getRoleNames()->first() ?? '-') }}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $panitia->nomor_hp ?? '-' }}</td>
                         <td class="px-6 py-4">
                             <button wire:click="toggleStatus({{ $panitia->id }})"
@@ -134,16 +172,26 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">NIP <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="nip" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 @error('nip') border-red-500 @enderror">
+                            <input type="text" wire:model="nip" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400 @error('nip') border-red-500 @enderror" placeholder="Masukkan NIP">
                             @error('nip') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Role Panitia <span class="text-red-500">*</span></label>
+                            <select wire:model="role" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400 @error('role') border-red-500 @enderror {{ !$role ? 'text-gray-400' : 'text-gray-900' }}">
+                                <option value="">Pilih Role Panitia</option>
+                                <option value="panitia_verifikasi">Panitia Verifikasi</option>
+                                <option value="panitia_penjadwalan">Panitia Penjadwalan</option>
+                                <option value="panitia_administrasi">Panitia Administrasi</option>
+                            </select>
+                            @error('role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
-                            <input type="text" wire:model="nomor_hp" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                            <input type="text" wire:model="nomor_hp" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400" placeholder="Contoh: 081234567890">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
-                            <textarea wire:model="alamat" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500"></textarea>
+                            <textarea wire:model="alamat" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400" placeholder="Alamat lengkap..."></textarea>
                         </div>
                         <div class="flex items-center">
                             <input type="checkbox" wire:model="is_active" class="w-4 h-4 text-amber-700 border-gray-300 rounded focus:ring-amber-500">

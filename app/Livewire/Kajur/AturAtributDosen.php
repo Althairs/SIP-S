@@ -4,6 +4,7 @@ namespace App\Livewire\Kajur;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 use App\Models\User;
 use App\Models\BidangKeahlian;
 use App\Models\Kepakaran;
@@ -12,8 +13,13 @@ class AturAtributDosen extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url]
     public $kepakaranFilter = '';
+
+    #[Url]
     public $bidangFilter = '';
 
     public $showModal = false;
@@ -29,11 +35,11 @@ class AturAtributDosen extends Component
     public $selectedDosenIds = [];
     public $selectAll = false;
 
-    protected $queryString = ['search', 'kepakaranFilter', 'bidangFilter'];
-
-    public function updatingSearch()
+    public function updated($property)
     {
-        $this->resetPage();
+        if (in_array($property, ['search', 'kepakaranFilter', 'bidangFilter'])) {
+            $this->resetPage();
+        }
     }
 
     public function updatedSelectAll($value)

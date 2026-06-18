@@ -4,8 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,21 +11,6 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasPermissions;
 
-#[Fillable([
-    'name',
-    'email',
-    'password',
-    'jurusan_id',
-    'prodi_id',
-    'role',
-    'nip',
-    'nim',
-    'nomor_hp',
-    'alamat',
-    'foto',
-    'is_active'
-])]
-#[Hidden(['password', 'remember_token'])]
 
 
 /**

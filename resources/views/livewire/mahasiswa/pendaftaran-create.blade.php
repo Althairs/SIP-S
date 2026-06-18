@@ -51,19 +51,19 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Ujian <span class="text-red-500">*</span></label>
-                        <select wire:model="jenis_ujian" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('jenis_ujian') border-red-500 @enderror" {{ $editMode ? 'disabled' : '' }}>
+                        <select wire:model.live="form.jenis_ujian" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('form.jenis_ujian') border-red-500 @enderror" {{ $editMode ? 'disabled' : '' }}>
                             <option value="">Pilih Jenis Ujian</option>
                             <option value="seminar_proposal">Seminar Proposal</option>
                             <option value="seminar_hasil">Seminar Hasil</option>
                             <option value="sidang_skripsi">Sidang Skripsi</option>
                         </select>
-                        @error('jenis_ujian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @error('form.jenis_ujian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Judul Penelitian <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="judul_penelitian" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('judul_penelitian') border-red-500 @enderror" placeholder="Masukkan judul penelitian">
-                        @error('judul_penelitian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <input type="text" wire:model="form.judul_penelitian" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('form.judul_penelitian') border-red-500 @enderror" placeholder="Masukkan judul penelitian">
+                        @error('form.judul_penelitian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- BIDANG KEAHLIAN - VERSI CHECKBOX -->
@@ -83,9 +83,9 @@
                         @else
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-2 border border-gray-200 rounded-xl">
                             @foreach($listBidangKeahlian as $bidang)
-                            <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition {{ in_array($bidang->id, $selectedBidangKeahlian) ? 'bg-blue-50 border-blue-400 ring-1 ring-blue-400' : '' }}">
+                            <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition {{ in_array($bidang->id, $form->selectedBidangKeahlian) ? 'bg-blue-50 border-blue-400 ring-1 ring-blue-400' : '' }}">
                                 <input type="checkbox"
-                                       wire:model="selectedBidangKeahlian"
+                                       wire:model="form.selectedBidangKeahlian"
                                        value="{{ $bidang->id }}"
                                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                                 <div class="flex-1">
@@ -95,7 +95,7 @@
                                     <p class="text-xs text-gray-400 mt-0.5">{{ Str::limit($bidang->deskripsi, 60) }}</p>
                                     @endif
                                 </div>
-                                @if(in_array($bidang->id, $selectedBidangKeahlian))
+                                @if(in_array($bidang->id, $form->selectedBidangKeahlian))
                                 <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
@@ -105,19 +105,19 @@
                         </div>
                         @endif
 
-                        @error('selectedBidangKeahlian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @error('form.selectedBidangKeahlian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
 
                         <!-- Selected Count -->
-                        @if(count($selectedBidangKeahlian) > 0)
+                        @if(count($form->selectedBidangKeahlian) > 0)
                         <p class="mt-2 text-xs text-blue-600 font-medium">
-                            {{ count($selectedBidangKeahlian) }} bidang keahlian dipilih
+                            {{ count($form->selectedBidangKeahlian) }} bidang keahlian dipilih
                         </p>
                         @endif
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Abstrak</label>
-                        <textarea wire:model="abstrak" rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Abstrak penelitian..."></textarea>
+                        <textarea wire:model="form.abstrak" rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Abstrak penelitian..."></textarea>
                     </div>
                 </div>
             </div>
@@ -128,23 +128,23 @@
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Pembimbing 1 <span class="text-red-500">*</span></label>
-                        <select wire:model="dosen_pembimbing_1" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('dosen_pembimbing_1') border-red-500 @enderror">
+                        <select wire:model.live="form.dosen_pembimbing_1" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('form.dosen_pembimbing_1') border-red-500 @enderror">
                             <option value="">Pilih Dosen</option>
                             @foreach($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ $dosen->id == $dosen_pembimbing_2 ? 'disabled' : '' }}>{{ $dosen->name }} - {{ $dosen->nip }}</option>
+                            <option value="{{ $dosen->id }}" {{ $dosen->id == $form->dosen_pembimbing_2 ? 'disabled' : '' }}>{{ $dosen->name }} - {{ $dosen->nip }}</option>
                             @endforeach
                         </select>
-                        @error('dosen_pembimbing_1') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @error('form.dosen_pembimbing_1') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Pembimbing 2</label>
-                        <select wire:model="dosen_pembimbing_2" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('dosen_pembimbing_2') border-red-500 @enderror">
+                        <select wire:model.live="form.dosen_pembimbing_2" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 @error('form.dosen_pembimbing_2') border-red-500 @enderror">
                             <option value="">Pilih Dosen (Opsional)</option>
                             @foreach($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ $dosen->id == $dosen_pembimbing_1 ? 'disabled' : '' }}>{{ $dosen->name }} - {{ $dosen->nip }}</option>
+                            <option value="{{ $dosen->id }}" {{ $dosen->id == $form->dosen_pembimbing_1 ? 'disabled' : '' }}>{{ $dosen->name }} - {{ $dosen->nip }}</option>
                             @endforeach
                         </select>
-                        @error('dosen_pembimbing_2') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @error('form.dosen_pembimbing_2') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -157,39 +157,39 @@
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">File Proposal/Skripsi</label>
-                        <input type="file" wire:model="file_proposal" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
-                        @if($editMode && $existingFiles['file_proposal'] ?? false)
-                            <p class="text-xs text-gray-500 mt-1">File existing: {{ basename($existingFiles['file_proposal']) }}</p>
+                        <input type="file" wire:model="form.file_proposal" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
+                        @if($editMode && $form->existingFiles['file_proposal'] ?? false)
+                            <p class="text-xs text-gray-500 mt-1">File existing: {{ basename($form->existingFiles['file_proposal']) }}</p>
                         @endif
-                        @error('file_proposal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @error('form.file_proposal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                    @if($jenis_ujian != 'seminar_proposal')
+                    @if($form->jenis_ujian != 'seminar_proposal')
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">File Skripsi Lengkap</label>
-                        <input type="file" wire:model="file_skripsi" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
-                        @error('file_skripsi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <input type="file" wire:model="form.file_skripsi" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
+                        @error('form.file_skripsi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     @endif
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Surat Persetujuan Pembimbing</label>
-                        <input type="file" wire:model="file_persetujuan" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
+                        <input type="file" wire:model="form.file_persetujuan" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">KRS Terbaru</label>
-                        <input type="file" wire:model="file_krs" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
+                        <input type="file" wire:model="form.file_krs" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Transkrip Nilai</label>
-                        <input type="file" wire:model="file_transkrip" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
+                        <input type="file" wire:model="form.file_transkrip" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Bukti Bimbingan</label>
-                        <input type="file" wire:model="file_bukti_bimbingan" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
+                        <input type="file" wire:model="form.file_bukti_bimbingan" class="w-full text-sm border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:bg-blue-50 file:text-blue-700 file:border-0 file:rounded-lg hover:file:bg-blue-100">
                     </div>
                 </div>
             </div>

@@ -130,11 +130,15 @@ class UserCreate extends Component
         }
 
         if ($this->editMode) {
+            abort_unless(auth()->user()->can('edit_users'), 403);
+
             $user = User::findOrFail($this->userId);
             $user->update($data);
             $user->syncRoles([$this->role]);
             session()->flash('success', 'User berhasil diperbarui.');
         } else {
+            abort_unless(auth()->user()->can('create_users'), 403);
+
             $user = User::create($data);
             $user->assignRole($this->role);
             session()->flash('success', 'User berhasil ditambahkan.');

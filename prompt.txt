@@ -1,0 +1,13 @@
+buatkan issue.md, berisi planning memebuat ini:
+
+-sidebar superadmin bagian kajur & sekjur gabung dengan user agar tidak ada duplikasi
+-element input select dan type yang sejenis buat akar textnya tdk hitam melainkan text-gray-400 
+-bagian kajur: data panitia ubah konsep penambahan panitia sesuai role yang telah ada seperti panitia verifikasi
+-kemudian terapkan pembagian hak akases super admin agar sesuai karena banyak yang sudah di terapkan hak aksesnya tapi tetap bisa edit delete dan lainnya
+-gunakan context7
+
+jangan terlalu low level atau detail
+
+cukup instruksikan secara high level
+
+nanti document planning nya akan digunakan oleh proggramer atau model yang lebih murah untuk di implementasikan

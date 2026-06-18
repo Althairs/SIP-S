@@ -4,6 +4,7 @@ namespace App\Livewire\Panitia\Penjadwalan;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 use App\Models\Pendaftaran;
 use App\Models\UjianPenguji;
 use App\Models\Ruangan;
@@ -14,9 +15,15 @@ class JadwalUjians extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url]
     public $jenisFilter = '';
+
+    #[Url]
     public $tab = 'siap';
+
     public $showScheduleModal = false;
     public $showBatchModal = false;
     public $selectedPendaftaran;
@@ -37,8 +44,6 @@ class JadwalUjians extends Component
     public $jamSelesaiOptions = [];
     public $labelSesiOptions = [];
 
-    protected $queryString = ['search', 'jenisFilter', 'tab'];
-
     public function mount()
     {
         if (request()->has('tab')) {
@@ -46,6 +51,14 @@ class JadwalUjians extends Component
         }
         $this->loadRuanganOptions();
         $this->loadSesiOptions();
+        $this->checkCompletedUjian();
+    }
+
+    public function updated($property)
+    {
+        if (in_array($property, ['search', 'jenisFilter', 'tab'])) {
+            $this->resetPage();
+        }
     }
 
     public function updatingSearch()
@@ -316,7 +329,6 @@ class JadwalUjians extends Component
     public function render()
     {
         $jurusanId = auth()->user()->jurusan_id;
-        $this->checkCompletedUjian();
 
         $query = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen'])
             ->where('jurusan_id', $jurusanId);

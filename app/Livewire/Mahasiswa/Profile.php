@@ -97,7 +97,7 @@ class Profile extends Component
         $this->validate($this->rulesForPassword());
 
         Auth::user()->update([
-            'password' => Hash::make($this->password),
+            'password' => $this->password,
         ]);
 
         $this->reset(['current_password', 'password', 'password_confirmation']);

@@ -1,0 +1,11 @@
+buatkan issue.md, berisi planning memebuat ini:
+
+-di bagian kajur: data panitia yg tampil hanya panitia verifikasi sedangkan role lain seperti panitia penjadwalan tidak tampil buat agar semua role tampil
+-perbarui juga ui untuk kajur, mahasiswa, Dosen, Panitia penjadwalan, Verifikasi, Administrasi
+-gunakan context7
+
+jangan terlalu low level atau detail
+
+cukup instruksikan secara high level
+
+nanti document planning nya akan digunakan oleh proggramer atau model yang lebih murah untuk di implementasikan

@@ -9,4 +9,10 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+input::placeholder,
+textarea::placeholder {
+    color: #9ca3af; /* text-gray-400 */
+    opacity: 1;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));

@@ -62,10 +62,9 @@
 
             @if($mode === 'auto')
                 @if($penguji1Id)
-                    @php $d = \App\Models\User::find($penguji1Id); @endphp
                     <div class="space-y-2">
-                        <p class="font-semibold text-lg">{{ $d->name }}</p>
-                        <p class="text-sm text-gray-500">NIP: {{ $d->nip }}</p>
+                        <p class="font-semibold text-lg">{{ $penguji1['name'] ?? '-' }}</p>
+                        <p class="text-sm text-gray-500">NIP: {{ $penguji1['nip'] ?? '-' }}</p>
                         <p class="text-sm">Kepakaran: <span class="font-medium text-purple-700">{{ $penguji1Kepakaran }}</span></p>
                         <p class="text-sm">
                             Kuota Tersisa:
@@ -102,10 +101,9 @@
 
             @if($mode === 'auto')
                 @if($penguji2Id)
-                    @php $d = \App\Models\User::find($penguji2Id); @endphp
                     <div class="space-y-2">
-                        <p class="font-semibold text-lg">{{ $d->name }}</p>
-                        <p class="text-sm text-gray-500">NIP: {{ $d->nip }}</p>
+                        <p class="font-semibold text-lg">{{ $penguji2['name'] ?? '-' }}</p>
+                        <p class="text-sm text-gray-500">NIP: {{ $penguji2['nip'] ?? '-' }}</p>
                         <p class="text-sm">Kepakaran: <span class="font-medium text-purple-700">{{ $penguji2Kepakaran }}</span></p>
                         <p class="text-sm">
                             Kuota Tersisa:

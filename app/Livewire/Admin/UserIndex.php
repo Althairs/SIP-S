@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Admin;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 use App\Models\User;
 use App\Models\Jurusan;
 use App\Models\Prodi;
@@ -11,23 +13,43 @@ use Spatie\Permission\Models\Role;
 
 class UserIndex extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url]
     public $jurusanFilter = '';
+
+    #[Url]
     public $prodiFilter = '';
+
+    #[Url]
     public $roleFilter = '';
+
+    #[Url]
     public $statusFilter = '';
 
-    protected $queryString = ['search', 'jurusanFilter', 'prodiFilter', 'roleFilter', 'statusFilter'];
+    public $onlyKajurSekjur = false;
 
-    public function updatingSearch()
+    public function mount()
     {
-        $this->resetPage();
+        if (request()->routeIs('admin.kajur-sekjur.index')) {
+            $this->onlyKajurSekjur = true;
+        }
+    }
+
+    public function updated($property)
+    {
+        if (in_array($property, ['search', 'jurusanFilter', 'prodiFilter', 'roleFilter', 'statusFilter'])) {
+            $this->resetPage();
+        }
     }
 
     public function toggleStatus($userId)
     {
+        abort_unless(auth()->user()->can('edit_users'), 403);
+
         $user = User::findOrFail($userId);
         $user->update(['is_active' => !$user->is_active]);
         session()->flash('success', 'Status user berhasil diubah.');
@@ -35,6 +57,8 @@ class UserIndex extends Component
 
     public function deleteUser($userId)
     {
+        abort_unless(auth()->user()->can('delete_users'), 403);
+
         $user = User::findOrFail($userId);
 
         // Cegah super admin menghapus dirinya sendiri
@@ -50,6 +74,16 @@ class UserIndex extends Component
     public function render()
     {
         $users = User::with(['jurusan', 'prodi', 'roles'])
+            ->when($this->onlyKajurSekjur, function ($query) {
+                if ($this->roleFilter) {
+                    $query->role($this->roleFilter);
+                } else {
+                    $query->role(['kajur', 'sekjur']);
+                }
+            })
+            ->when(!$this->onlyKajurSekjur && $this->roleFilter, function ($query) {
+                $query->role($this->roleFilter);
+            })
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
@@ -64,18 +98,18 @@ class UserIndex extends Component
             ->when($this->prodiFilter, function ($query) {
                 $query->where('prodi_id', $this->prodiFilter);
             })
-            ->when($this->roleFilter, function ($query) {
-                $query->role($this->roleFilter);
-            })
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('is_active', $this->statusFilter);
             })
             ->latest()
-            ->paginate(15);
+            ->paginate($this->onlyKajurSekjur ? 10 : 15);
 
         $jurusans = Jurusan::active()->get();
         $prodis = Prodi::active()->get();
-        $roles = Role::all();
+
+        $roles = $this->onlyKajurSekjur
+            ? Role::whereIn('name', ['kajur', 'sekjur'])->get()
+            : Role::all();
 
         return view('livewire.admin.user-index', [
             'users' => $users,

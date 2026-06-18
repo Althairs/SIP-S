@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
@@ -15,6 +16,7 @@ class PanitiaIndex extends Component
 
     public $search = '';
     public $prodiFilter = '';
+    public $roleFilter = '';
     public $statusFilter = '';
     public $showModal = false;
     public $editMode = false;
@@ -25,14 +27,32 @@ class PanitiaIndex extends Component
     public $password = '';
     public $password_confirmation = '';
     public $nip = '';
+    public $role = '';
     public $prodi_id = '';
     public $nomor_hp = '';
     public $alamat = '';
     public $is_active = true;
 
-    protected $queryString = ['search', 'prodiFilter', 'statusFilter'];
+    public array $summary = [];
+
+    protected $queryString = ['search', 'prodiFilter', 'roleFilter', 'statusFilter'];
 
     public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingProdiFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingRoleFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }
@@ -54,6 +74,7 @@ class PanitiaIndex extends Component
         $this->name = $user->name;
         $this->email = $user->email;
         $this->nip = $user->nip;
+        $this->role = $user->getRoleNames()->first() ?? '';
         $this->prodi_id = $user->prodi_id;
         $this->nomor_hp = $user->nomor_hp;
         $this->alamat = $user->alamat;
@@ -70,7 +91,7 @@ class PanitiaIndex extends Component
 
     private function resetForm()
     {
-        $this->reset(['name', 'email', 'password', 'password_confirmation', 'nip', 'prodi_id', 'nomor_hp', 'alamat', 'is_active', 'userId', 'editMode']);
+        $this->reset(['name', 'email', 'password', 'password_confirmation', 'nip', 'role', 'prodi_id', 'nomor_hp', 'alamat', 'is_active', 'userId', 'editMode']);
     }
 
     protected function rules()
@@ -78,6 +99,7 @@ class PanitiaIndex extends Component
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $this->userId],
+            'role' => ['required', 'string', Rule::in(['panitia_verifikasi', 'panitia_penjadwalan', 'panitia_administrasi'])],
             'nip' => ['required', 'string', 'max:20', 'unique:users,nip,' . $this->userId],
             'prodi_id' => ['nullable', 'exists:prodis,id'],
             'nomor_hp' => ['nullable', 'string', 'max:15'],
@@ -116,12 +138,17 @@ class PanitiaIndex extends Component
         }
 
         if ($this->editMode) {
+            abort_unless(auth()->user()->can('edit_panitia'), 403);
+
             $user = User::findOrFail($this->userId);
             $user->update($data);
+            $user->syncRoles([$this->role]);
             session()->flash('success', 'Panitia berhasil diperbarui.');
         } else {
+            abort_unless(auth()->user()->can('create_panitia'), 403);
+
             $user = User::create($data);
-            $user->assignRole('panitia');
+            $user->assignRole($this->role);
             session()->flash('success', 'Panitia berhasil ditambahkan.');
         }
 
@@ -130,6 +157,8 @@ class PanitiaIndex extends Component
 
     public function toggleStatus($id)
     {
+        abort_unless(auth()->user()->can('edit_panitia'), 403);
+
         $user = User::findOrFail($id);
         $user->update(['is_active' => !$user->is_active]);
         session()->flash('success', 'Status panitia berhasil diubah.');
@@ -137,6 +166,8 @@ class PanitiaIndex extends Component
 
     public function deletePanitia($id)
     {
+        abort_unless(auth()->user()->can('delete_panitia'), 403);
+
         User::findOrFail($id)->delete();
         session()->flash('success', 'Panitia berhasil dihapus.');
     }
@@ -145,9 +176,32 @@ class PanitiaIndex extends Component
     {
         $jurusanId = Auth::user()->jurusan_id;
 
-        $panitias = User::role('panitia')
-            ->where('jurusan_id', $jurusanId)
-            ->with('prodi')
+        $baseQuery = User::role(['panitia_verifikasi', 'panitia_penjadwalan', 'panitia_administrasi'])
+            ->where('jurusan_id', $jurusanId);
+
+        $this->summary = [
+            'total' => (clone $baseQuery)->count(),
+            'verifikasi' => (clone $baseQuery)->whereHas('roles', function ($q) {
+                $q->where('name', 'panitia_verifikasi');
+            })->count(),
+            'penjadwalan' => (clone $baseQuery)->whereHas('roles', function ($q) {
+                $q->where('name', 'panitia_penjadwalan');
+            })->count(),
+            'administrasi' => (clone $baseQuery)->whereHas('roles', function ($q) {
+                $q->where('name', 'panitia_administrasi');
+            })->count(),
+        ];
+
+        $query = (clone $baseQuery)
+            ->with('prodi');
+
+        if ($this->roleFilter) {
+            $query->whereHas('roles', function ($q) {
+                $q->where('name', $this->roleFilter);
+            });
+        }
+
+        $panitias = $query
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
@@ -169,6 +223,7 @@ class PanitiaIndex extends Component
         return view('livewire.kajur.panitia-index', [
             'panitias' => $panitias,
             'prodis' => $prodis,
+            'summary' => $this->summary,
         ])->layout('components.layouts.app-auth');
     }
 }
