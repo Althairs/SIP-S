@@ -9,7 +9,6 @@ use App\Livewire\Admin\JurusanEdit;
 use App\Livewire\Admin\ProdiIndex;
 use App\Livewire\Admin\ProdiCreate;
 use App\Livewire\Admin\ProdiEdit;
-use App\Livewire\Admin\KajurSekjurIndex;
 use App\Livewire\Admin\UserIndex;
 use App\Livewire\Admin\UserCreate;
 use App\Livewire\Admin\RoleIndex;
@@ -87,7 +86,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     /*
@@ -110,7 +109,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{prodi}/edit', ProdiEdit::class)->name('edit');
         });
 
-        Route::get('/kajur-sekjur', KajurSekjurIndex::class)->name('kajur-sekjur.index');
+        Route::get('/kajur-sekjur', UserIndex::class)->name('kajur-sekjur.index');
 
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', UserIndex::class)->name('index');

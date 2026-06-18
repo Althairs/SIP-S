@@ -37,7 +37,12 @@
                         </label>
                         <select id="role"
                                 wire:model.live="role"
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('role') border-red-500 @enderror">
+                                @class([
+                                    'w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500',
+                                    'text-gray-400' => !$role,
+                                    'text-gray-900' => $role,
+                                    'border-red-500' => $errors->has('role'),
+                                ])>
                             <option value="">Pilih Role</option>
                             @foreach($roles as $r)
                             <option value="{{ $r->name }}">{{ ucfirst($r->name) }}</option>
@@ -53,7 +58,8 @@
                                 Nama Lengkap <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="name" wire:model="name"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('name') border-red-500 @enderror">
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 @error('name') border-red-500 @enderror"
+                                   placeholder="Masukkan nama lengkap">
                             @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -61,7 +67,8 @@
                                 Email <span class="text-red-500">*</span>
                             </label>
                             <input type="email" id="email" wire:model="email"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('email') border-red-500 @enderror">
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 @error('email') border-red-500 @enderror"
+                                   placeholder="Masukkan email">
                             @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -73,8 +80,8 @@
                                 Password {{ $editMode ? '' : '*' }}
                             </label>
                             <input type="password" id="password" wire:model="password"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('password') border-red-500 @enderror"
-                                   placeholder="{{ $editMode ? 'Kosongkan jika tidak diubah' : '' }}">
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 @error('password') border-red-500 @enderror"
+                                   placeholder="{{ $editMode ? 'Kosongkan jika tidak diubah' : 'Masukkan password' }}">
                             @error('password') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -82,7 +89,8 @@
                                 Konfirmasi Password {{ $editMode ? '' : '*' }}
                             </label>
                             <input type="password" id="password_confirmation" wire:model="password_confirmation"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400"
+                                   placeholder="Konfirmasi password">
                         </div>
                     </div>
 
@@ -118,7 +126,7 @@
                                 Jurusan
                             </label>
                             <select id="jurusan_id" wire:model="jurusan_id"
-                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    @class(["w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500", 'text-gray-400' => !$jurusan_id, 'text-gray-900' => $jurusan_id])>
                                 <option value="">Pilih Jurusan</option>
                                 @foreach($jurusans as $jurusan)
                                 <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
@@ -130,7 +138,7 @@
                                 Program Studi
                             </label>
                             <select id="prodi_id" wire:model="prodi_id"
-                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    @class(["w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500", 'text-gray-400' => !$prodi_id, 'text-gray-900' => $prodi_id])>
                                 <option value="">Pilih Prodi</option>
                                 @foreach($prodis as $prodi)
                                 <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }} ({{ $prodi->jurusan->nama_jurusan ?? '' }})</option>
@@ -145,7 +153,7 @@
                             Nomor HP
                         </label>
                         <input type="text" id="nomor_hp" wire:model="nomor_hp"
-                               class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400"
                                placeholder="Contoh: 081234567890">
                     </div>
 
@@ -154,7 +162,7 @@
                             Alamat
                         </label>
                         <textarea id="alamat" wire:model="alamat" rows="2"
-                                  class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                  class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400"
                                   placeholder="Alamat lengkap..."></textarea>
                     </div>
 

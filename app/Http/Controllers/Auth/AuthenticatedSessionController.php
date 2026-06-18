@@ -64,6 +64,21 @@ class AuthenticatedSessionController extends Controller
             if ($user->hasRole('sekjur')) {
                 return route('sekjur.dashboard');
             }
+            if ($user->hasRole('panitia_verifikasi')) {
+                return route('panitia.verifikasi.dashboard');
+            }
+            if ($user->hasRole('panitia_penjadwalan')) {
+                return route('panitia.penjadwalan.dashboard');
+            }
+            if ($user->hasRole('panitia_administrasi')) {
+                return route('panitia.administrasi.dashboard');
+            }
+            if ($user->hasRole('dosen')) {
+                return route('dosen.dashboard');
+            }
+            if ($user->hasRole('mahasiswa')) {
+                return route('mahasiswa.dashboard');
+            }
         }
 
         return route('dashboard.index');
