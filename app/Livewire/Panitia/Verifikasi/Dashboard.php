@@ -2,18 +2,26 @@
 
 namespace App\Livewire\Panitia\Verifikasi;
 
-use Livewire\Component;
 use App\Models\Pendaftaran;
-use Carbon\Carbon;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
     public $totalPending;
+
     public $totalDiverifikasi;
+
     public $totalDitolak;
+
     public $totalDisetujui;
+
     public $pendaftarans;
+
     public $recentVerifications;
+
+    public $prioritasBerkas;
+
+    public $progressVerifikasi = 0;
 
     public function mount()
     {
@@ -35,6 +43,16 @@ class Dashboard extends Component
 
         // Semua yang sudah diverifikasi (disetujui + ditolak)
         $this->totalDiverifikasi = $this->totalDisetujui + $this->totalDitolak;
+        $totalMasuk = $this->totalPending + $this->totalDiverifikasi;
+        $this->progressVerifikasi = $totalMasuk > 0 ? round(($this->totalDiverifikasi / $totalMasuk) * 100) : 0;
+
+        // Berkas pending paling lama menjadi prioritas kerja.
+        $this->prioritasBerkas = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'dosens.dosen'])
+            ->where('jurusan_id', $jurusanId)
+            ->where('status', 'pending')
+            ->oldest()
+            ->take(5)
+            ->get();
 
         // Pendaftaran terbaru (semua status)
         $this->recentVerifications = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'dosens.dosen'])

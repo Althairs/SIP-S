@@ -2,21 +2,31 @@
 
 namespace App\Livewire\Dosen;
 
-use Livewire\Component;
-use App\Models\Pendaftaran;
-use App\Models\UjianPenguji;
-use App\Models\Revisi;
 use App\Models\KuotaDosen;
+use App\Models\Penilaian;
+use App\Models\Revisi;
+use App\Models\UjianPenguji;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
     public $totalMenguji;
+
     public $totalRevisi;
+
     public $totalSelesai;
+
     public $kuotaPembimbing;
+
     public $kuotaPenguji;
+
     public $jadwalHariIni;
+
+    public $jadwalMendatang;
+
     public $pendingRevisis;
+
+    public $totalNilaiPerluInput;
 
     public function mount()
     {
@@ -24,11 +34,15 @@ class Dashboard extends Component
 
         // Statistik menguji
         $this->totalMenguji = UjianPenguji::where('dosen_id', $dosenId)
-            ->whereHas('pendaftaran', function($q) { $q->where('status', 'dijadwalkan'); })
+            ->whereHas('pendaftaran', function ($q) {
+                $q->where('status', 'dijadwalkan');
+            })
             ->count();
 
         $this->totalSelesai = UjianPenguji::where('dosen_id', $dosenId)
-            ->whereHas('pendaftaran', function($q) { $q->where('status', 'selesai'); })
+            ->whereHas('pendaftaran', function ($q) {
+                $q->where('status', 'selesai');
+            })
             ->count();
 
         // Revisi pending
@@ -41,12 +55,33 @@ class Dashboard extends Component
 
         // Jadwal hari ini
         $this->jadwalHariIni = UjianPenguji::where('dosen_id', $dosenId)
-            ->whereHas('pendaftaran', function($q) {
+            ->whereHas('pendaftaran', function ($q) {
                 $q->where('status', 'dijadwalkan')
-                  ->whereDate('tanggal_ujian', now()->format('Y-m-d'));
+                    ->whereDate('tanggal_ujian', now()->format('Y-m-d'));
             })
             ->with('pendaftaran.mahasiswa')
             ->get();
+
+        $this->jadwalMendatang = UjianPenguji::where('dosen_id', $dosenId)
+            ->whereHas('pendaftaran', function ($q) {
+                $q->where('status', 'dijadwalkan')
+                    ->whereDate('tanggal_ujian', '>=', now()->format('Y-m-d'));
+            })
+            ->with('pendaftaran.mahasiswa')
+            ->get()
+            ->sortBy(fn ($jadwal) => $jadwal->pendaftaran->tanggal_ujian)
+            ->take(5);
+
+        $pendaftaranSudahDinilai = Penilaian::where('dosen_id', $dosenId)
+            ->whereIn('status', ['selesai', 'diverifikasi'])
+            ->pluck('pendaftaran_id');
+
+        $this->totalNilaiPerluInput = UjianPenguji::where('dosen_id', $dosenId)
+            ->whereHas('pendaftaran', function ($q) {
+                $q->whereIn('status', ['dijadwalkan', 'selesai']);
+            })
+            ->whereNotIn('pendaftaran_id', $pendaftaranSudahDinilai)
+            ->count();
 
         // Revisi pending list
         $this->pendingRevisis = Revisi::byDosen($dosenId)

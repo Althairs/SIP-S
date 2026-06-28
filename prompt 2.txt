@@ -1,11 +1,25 @@
 buatkan issue.md, berisi planning memebuat ini:
 
--di bagian kajur: data panitia yg tampil hanya panitia verifikasi sedangkan role lain seperti panitia penjadwalan tidak tampil buat agar semua role tampil
--perbarui juga ui untuk kajur, mahasiswa, Dosen, Panitia penjadwalan, Verifikasi, Administrasi
--gunakan context7
+- di
 
 jangan terlalu low level atau detail
 
 cukup instruksikan secara high level
 
 nanti document planning nya akan digunakan oleh proggramer atau model yang lebih murah untuk di implementasikan
+
+Nama Lengkap : Sindi Adelia Mamonto
+TTL :Bintauna pantai , 2003-04-22
+No. KTP : 7108026204030001
+Telephon :085295170098
+Email : sindimamonto22@gmail.com
+Alamat : Bintauna pantai
+Tahun Permohonan : 2026
+Universitas :Universitas Negeri Gorontalo, Gorontalo
+Nim :531422022
+Fakultas : teknik
+Jurusan : informatika
+Jumlah Dana : Rp. 5,000,000
+Registrasi : 20 Juni 2026, Pukul: 16:55:19
+Status : Registrasi, Menunggu Pengajuan Diperiksa oleh Admin
+Keterangan :

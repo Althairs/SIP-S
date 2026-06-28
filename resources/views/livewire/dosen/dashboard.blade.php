@@ -34,6 +34,46 @@
         </div>
     </div>
 
+    <!-- Focus Context -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+            <div>
+                <p class="text-sm font-medium text-indigo-700">Fokus Tugas Dosen</p>
+                <h2 class="text-xl font-semibold text-gray-900 mt-1">
+                    @if($jadwalHariIni->count() > 0)
+                        Ada {{ $jadwalHariIni->count() }} jadwal menguji hari ini.
+                    @elseif($totalNilaiPerluInput > 0)
+                        Ada {{ $totalNilaiPerluInput }} penilaian yang perlu diselesaikan.
+                    @elseif($totalRevisi > 0)
+                        Ada {{ $totalRevisi }} revisi yang menunggu tindak lanjut.
+                    @else
+                        Tidak ada tugas mendesak hari ini.
+                    @endif
+                </h2>
+                <p class="text-sm text-gray-500 mt-2">Ringkasan ini menggabungkan jadwal, revisi, kuota, dan input nilai agar tugas berikutnya jelas.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-3 min-w-full lg:min-w-[420px]">
+                <div class="rounded-xl bg-indigo-50 p-4 text-center">
+                    <p class="text-2xl font-bold text-indigo-700">{{ $jadwalHariIni->count() }}</p>
+                    <p class="text-xs text-indigo-700">Hari Ini</p>
+                </div>
+                <div class="rounded-xl bg-green-50 p-4 text-center">
+                    <p class="text-2xl font-bold text-green-700">{{ $totalNilaiPerluInput }}</p>
+                    <p class="text-xs text-green-700">Perlu Nilai</p>
+                </div>
+                <div class="rounded-xl bg-amber-50 p-4 text-center">
+                    <p class="text-2xl font-bold text-amber-700">{{ $totalRevisi }}</p>
+                    <p class="text-xs text-amber-700">Revisi</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5 flex flex-wrap gap-3">
+            <a href="{{ route('dosen.jadwal') }}" class="px-4 py-2 bg-indigo-700 text-white rounded-xl hover:bg-indigo-800 text-sm font-medium">Lihat Jadwal</a>
+            <a href="{{ route('dosen.nilai.index') }}" class="px-4 py-2 bg-green-50 text-green-700 rounded-xl hover:bg-green-100 text-sm font-medium">Input Nilai</a>
+            <a href="{{ route('dosen.revisi.index') }}" class="px-4 py-2 bg-amber-50 text-amber-700 rounded-xl hover:bg-amber-100 text-sm font-medium">Cek Revisi</a>
+        </div>
+    </div>
+
     <div class="grid lg:grid-cols-2 gap-6">
         <!-- Jadwal Hari Ini -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
@@ -80,6 +120,31 @@
                 @endif
             </div>
         </div>
+    </div>
+
+    <!-- Upcoming Schedule -->
+    <div class="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-900">Jadwal Mendatang</h2>
+                <p class="text-sm text-gray-500">Lima agenda terdekat yang perlu disiapkan.</p>
+            </div>
+            <a href="{{ route('dosen.jadwal') }}" class="text-sm text-indigo-600 hover:underline font-medium">Lihat Semua</a>
+        </div>
+        @if($jadwalMendatang->isEmpty())
+            <div class="rounded-xl bg-gray-50 p-5 text-center text-sm text-gray-500">Belum ada jadwal mendatang.</div>
+        @else
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-3">
+                @foreach($jadwalMendatang as $jadwal)
+                    <div class="rounded-xl border border-gray-100 p-4">
+                        <p class="text-xs font-medium text-indigo-700">{{ $jadwal->pendaftaran->tanggal_ujian?->format('d M Y') }}</p>
+                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $jadwal->pendaftaran->mahasiswa->name }}</p>
+                        <p class="mt-1 text-xs text-gray-500">{{ Str::limit($jadwal->pendaftaran->judul_penelitian, 45) }}</p>
+                        <p class="mt-2 text-xs text-gray-400">{{ $jadwal->pendaftaran->tanggal_ujian?->format('H:i') }} | {{ $jadwal->pendaftaran->ruangan ?? '-' }}</p>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <!-- Quick Actions -->

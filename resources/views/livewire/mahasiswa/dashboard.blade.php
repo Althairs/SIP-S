@@ -11,6 +11,36 @@
         </div>
     </div>
 
+    <!-- Next Action -->
+    @php
+        $nextActionTheme = [
+            'blue' => 'bg-blue-50 border-blue-100 text-blue-700 hover:bg-blue-100',
+            'amber' => 'bg-amber-50 border-amber-100 text-amber-700 hover:bg-amber-100',
+            'yellow' => 'bg-yellow-50 border-yellow-100 text-yellow-700 hover:bg-yellow-100',
+            'green' => 'bg-green-50 border-green-100 text-green-700 hover:bg-green-100',
+            'purple' => 'bg-purple-50 border-purple-100 text-purple-700 hover:bg-purple-100',
+            'gray' => 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100',
+        ][$nextAction['color'] ?? 'gray'];
+    @endphp
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <p class="text-sm font-medium text-blue-700">Langkah Berikutnya</p>
+                <h2 class="text-xl font-semibold text-gray-900 mt-1">{{ $nextAction['title'] }}</h2>
+                <p class="text-sm text-gray-500 mt-2">{{ $nextAction['description'] }}</p>
+                @if($pendaftaranAktif)
+                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                        <span class="px-2 py-1 bg-{{ $pendaftaranAktif->statusColor }}-100 text-{{ $pendaftaranAktif->statusColor }}-800 rounded-full text-xs font-medium">{{ $pendaftaranAktif->statusLabel }}</span>
+                        <span class="text-xs text-gray-400">{{ ucwords(str_replace('_', ' ', $pendaftaranAktif->jenis_ujian)) }}</span>
+                    </div>
+                @endif
+            </div>
+            <a href="{{ $nextAction['url'] }}" class="px-5 py-2.5 rounded-xl border text-sm font-medium transition {{ $nextActionTheme }}">
+                {{ $nextAction['label'] }}
+            </a>
+        </div>
+    </div>
+
     {{-- ============= REMINDER URGENT ============= --}}
     @if($reminderTerdekat)
     <div class="bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 rounded-2xl p-6 mb-6">

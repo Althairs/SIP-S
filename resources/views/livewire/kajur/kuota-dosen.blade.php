@@ -24,6 +24,34 @@
         </div>
     </div>
 
+    <!-- Default Kuota Bulanan -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900">Default Kuota Bulanan</h3>
+                <p class="text-sm text-gray-500 mt-1">Kuota otomatis direset setiap awal bulan. Default saat ini: 20/bulan (dapat diubah).</p>
+                @if($jurusan?->kuota_last_reset_at)
+                    <p class="text-xs text-gray-400 mt-1">Reset terakhir: {{ $jurusan->kuota_last_reset_at->translatedFormat('d F Y H:i') }}</p>
+                @endif
+            </div>
+            <form wire:submit="saveDefaultKuota" class="flex flex-col sm:flex-row gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Default Pembimbing</label>
+                    <input type="number" wire:model="defaultKuotaPembimbing" min="1" max="50"
+                           class="w-full sm:w-28 px-3 py-2 border border-gray-300 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Default Penguji</label>
+                    <input type="number" wire:model="defaultKuotaPenguji" min="1" max="50"
+                           class="w-full sm:w-28 px-3 py-2 border border-gray-300 rounded-xl text-sm">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-rose-700 text-white rounded-xl hover:bg-rose-800 text-sm font-medium whitespace-nowrap">Simpan Default</button>
+                <button type="button" wire:click="resetKuotaBulanan" wire:confirm="Reset kuota semua dosen ke default bulanan sekarang?"
+                        class="px-4 py-2 border border-rose-300 text-rose-700 rounded-xl hover:bg-rose-50 text-sm font-medium whitespace-nowrap">Reset Sekarang</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Filter -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
         <div class="flex flex-col md:flex-row gap-3">
@@ -78,8 +106,8 @@
                     @forelse($dosens as $index => $dosen)
                     @php
                         $kuota = $dosen->kuota;
-                        $sisaPembimbing = $kuota ? $kuota->sisa_pembimbing : 5;
-                        $sisaPenguji = $kuota ? $kuota->sisa_penguji : 10;
+                        $sisaPembimbing = $kuota ? $kuota->sisa_pembimbing : ($jurusan?->default_kuota_pembimbing ?? 20);
+                        $sisaPenguji = $kuota ? $kuota->sisa_penguji : ($jurusan?->default_kuota_penguji ?? 20);
 
                         $pembimbingClass = $sisaPembimbing >= 2.5 ? 'green' : ($sisaPembimbing > 0 ? 'amber' : 'red');
                         $pengujiClass = $sisaPenguji >= 5 ? 'green' : ($sisaPenguji > 0 ? 'amber' : 'red');
@@ -96,7 +124,7 @@
                             </div>
                         </td>
                         <!-- Pembimbing -->
-                        <td class="px-2 py-4 text-center text-sm font-medium">{{ $kuota?->kuota_pembimbing ?? 5 }}</td>
+                        <td class="px-2 py-4 text-center text-sm font-medium">{{ $kuota?->kuota_pembimbing ?? ($jurusan?->default_kuota_pembimbing ?? 20) }}</td>
                         <td class="px-2 py-4 text-center text-sm">{{ $kuota?->terpakai_pembimbing ?? 0 }}</td>
                         <td class="px-2 py-4 text-center">
                             <span class="inline-flex items-center justify-center w-10 h-6 bg-{{ $pembimbingClass }}-100 text-{{ $pembimbingClass }}-800 rounded-full text-xs font-bold">
@@ -104,7 +132,7 @@
                             </span>
                         </td>
                         <!-- Penguji -->
-                        <td class="px-2 py-4 text-center text-sm font-medium">{{ $kuota?->kuota_penguji ?? 10 }}</td>
+                        <td class="px-2 py-4 text-center text-sm font-medium">{{ $kuota?->kuota_penguji ?? ($jurusan?->default_kuota_penguji ?? 20) }}</td>
                         <td class="px-2 py-4 text-center text-sm">{{ $kuota?->terpakai_penguji ?? 0 }}</td>
                         <td class="px-2 py-4 text-center">
                             <span class="inline-flex items-center justify-center w-10 h-6 bg-{{ $pengujiClass }}-100 text-{{ $pengujiClass }}-800 rounded-full text-xs font-bold">

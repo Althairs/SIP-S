@@ -51,6 +51,8 @@ use App\Livewire\Panitia\Penjadwalan\SettingRuangan;
 use App\Livewire\Panitia\Penjadwalan\SettingWaktu;
 // use App\Livewire\Panitia\Penjadwalan\GeneratePenguji;
 use App\Livewire\Panitia\Administrasi\Dashboard as PanitiaAdminDashboard;
+use App\Livewire\Panitia\Administrasi\Laporan as PanitiaAdminLaporan;
+use App\Http\Controllers\Panitia\LaporanController as PanitiaLaporanController;
 
 // Dosen
 use App\Livewire\Dosen\Dashboard as DosenDashboard;
@@ -248,6 +250,8 @@ Route::middleware(['auth', 'active'])->group(function () {
     */
     Route::middleware(['role:panitia_administrasi'])->prefix('panitia/administrasi')->name('panitia.administrasi.')->group(function () {
         Route::get('/', PanitiaAdminDashboard::class)->name('dashboard');
+        Route::get('/laporan', PanitiaAdminLaporan::class)->name('laporan');
+        Route::get('/laporan/{jenis}/download', [PanitiaLaporanController::class, 'download'])->name('laporan.download');
         Route::get('/profile', Profile::class)->name('profile');
     });
 

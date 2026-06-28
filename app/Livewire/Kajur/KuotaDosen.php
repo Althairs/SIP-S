@@ -2,28 +2,51 @@
 
 namespace App\Livewire\Kajur;
 
-use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\User;
+use App\Models\Jurusan;
 use App\Models\KuotaDosen as ModelKuotaDosen;
 use App\Models\Prodi;
+use App\Models\User;
+use App\Services\KuotaDosenService;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class KuotaDosen extends Component
 {
     use WithPagination;
 
     public $search = '';
+
     public $prodiFilter = '';
+
     public $showEditModal = false;
+
     public $editDosenId;
+
     public $editNama;
+
     public $editNip;
+
     public $editKuotaPembimbing;
+
     public $editKuotaPenguji;
+
     public $editTerpakaiPembimbing;
+
     public $editTerpakaiPenguji;
 
+    public $defaultKuotaPembimbing;
+
+    public $defaultKuotaPenguji;
+
     protected $queryString = ['search', 'prodiFilter'];
+
+    public function mount(): void
+    {
+        $jurusan = Jurusan::find(auth()->user()->jurusan_id);
+
+        $this->defaultKuotaPembimbing = $jurusan?->default_kuota_pembimbing ?? KuotaDosenService::DEFAULT_KUOTA_PEMBIMBING;
+        $this->defaultKuotaPenguji = $jurusan?->default_kuota_penguji ?? KuotaDosenService::DEFAULT_KUOTA_PENGUJI;
+    }
 
     public function updatingSearch()
     {
@@ -36,8 +59,8 @@ class KuotaDosen extends Component
         $this->editDosenId = $dosen->id;
         $this->editNama = $dosen->name;
         $this->editNip = $dosen->nip;
-        $this->editKuotaPembimbing = $dosen->kuota?->kuota_pembimbing ?? 5;
-        $this->editKuotaPenguji = $dosen->kuota?->kuota_penguji ?? 10;
+        $this->editKuotaPembimbing = $dosen->kuota?->kuota_pembimbing ?? $this->defaultKuotaPembimbing;
+        $this->editKuotaPenguji = $dosen->kuota?->kuota_penguji ?? $this->defaultKuotaPenguji;
         $this->editTerpakaiPembimbing = $dosen->kuota?->terpakai_pembimbing ?? 0;
         $this->editTerpakaiPenguji = $dosen->kuota?->terpakai_penguji ?? 0;
         $this->showEditModal = true;
@@ -52,8 +75,8 @@ class KuotaDosen extends Component
     public function saveKuota()
     {
         $this->validate([
-            'editKuotaPembimbing' => 'required|integer|min:1|max:20',
-            'editKuotaPenguji' => 'required|integer|min:1|max:30',
+            'editKuotaPembimbing' => 'required|integer|min:1|max:50',
+            'editKuotaPenguji' => 'required|integer|min:1|max:50',
         ]);
 
         ModelKuotaDosen::updateOrCreate(
@@ -69,14 +92,32 @@ class KuotaDosen extends Component
         $this->closeEditModal();
     }
 
+    public function saveDefaultKuota()
+    {
+        $this->validate([
+            'defaultKuotaPembimbing' => 'required|integer|min:1|max:50',
+            'defaultKuotaPenguji' => 'required|integer|min:1|max:50',
+        ]);
+
+        Jurusan::where('id', auth()->user()->jurusan_id)->update([
+            'default_kuota_pembimbing' => $this->defaultKuotaPembimbing,
+            'default_kuota_penguji' => $this->defaultKuotaPenguji,
+        ]);
+
+        session()->flash('success', 'Default kuota bulanan berhasil disimpan.');
+    }
+
     public function resetKuota($dosenId)
     {
+        $jurusan = Jurusan::findOrFail(auth()->user()->jurusan_id);
+        $defaults = app(KuotaDosenService::class)->defaultsForJurusan($jurusan);
+
         ModelKuotaDosen::updateOrCreate(
             ['dosen_id' => $dosenId],
             [
                 'jurusan_id' => auth()->user()->jurusan_id,
-                'kuota_pembimbing' => 5,
-                'kuota_penguji' => 10,
+                'kuota_pembimbing' => $defaults['kuota_pembimbing'],
+                'kuota_penguji' => $defaults['kuota_penguji'],
                 'terpakai_pembimbing' => 0,
                 'terpakai_penguji' => 0,
             ]
@@ -85,17 +126,26 @@ class KuotaDosen extends Component
         session()->flash('success', 'Kuota dosen berhasil direset ke default.');
     }
 
+    public function resetKuotaBulanan()
+    {
+        $jurusan = Jurusan::findOrFail(auth()->user()->jurusan_id);
+        $count = app(KuotaDosenService::class)->resetBulananForJurusan($jurusan);
+
+        session()->flash('success', "Kuota {$count} dosen berhasil direset ke default bulanan.");
+    }
+
     public function render()
     {
         $jurusanId = auth()->user()->jurusan_id;
+        $jurusan = Jurusan::find($jurusanId);
 
         $dosens = User::role('dosen')
             ->where('jurusan_id', $jurusanId)
             ->with(['kuota', 'prodi'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('nip', 'like', '%' . $this->search . '%');
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('nip', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->prodiFilter, function ($query) {
@@ -108,6 +158,7 @@ class KuotaDosen extends Component
         return view('livewire.kajur.kuota-dosen', [
             'dosens' => $dosens,
             'prodis' => $prodis,
+            'jurusan' => $jurusan,
         ])->layout('components.layouts.app-auth');
     }
 }

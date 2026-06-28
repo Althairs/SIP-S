@@ -7,27 +7,21 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Str;
-use Spatie\Permission\Traits\HasPermissions;
-
-
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @method bool hasRole(string|array $roles)
  */ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-
-
-
     protected $fillable = [
         'name',
         'email',
@@ -111,18 +105,25 @@ use Spatie\Permission\Traits\HasPermissions;
     /**
      * Scope untuk role tertentu
      */
-    public function scopeRole($query, $role)
+    public function scopeRole($query, string|array $role)
     {
         return $query->whereHas('roles', function ($q) use ($role) {
+            if (is_array($role)) {
+                $q->whereIn('name', $role);
+
+                return;
+            }
+
             $q->where('name', $role);
         });
     }
+
     public function initials(): string
     {
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn($word) => Str::substr($word, 0, 1))
+            ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
 }

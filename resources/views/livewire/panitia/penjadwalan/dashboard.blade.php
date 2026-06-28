@@ -82,6 +82,57 @@
         </div>
     </div>
 
+    <!-- Scheduling Queue -->
+    <div class="grid lg:grid-cols-3 gap-6 mb-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900">Prioritas Penjadwalan</h2>
+                    <p class="text-sm text-gray-500">Pendaftaran yang sudah melewati masa tunggu dan siap ditindaklanjuti.</p>
+                </div>
+                <a href="{{ route('panitia.penjadwalan.jadwal') }}" class="text-sm font-medium text-cyan-700 hover:text-cyan-800">Kelola Jadwal</a>
+            </div>
+
+            @if($siapDijadwalkan->isEmpty())
+                <div class="rounded-xl bg-gray-50 p-6 text-center text-sm text-gray-500">Belum ada pendaftaran yang siap dijadwalkan.</div>
+            @else
+                <div class="space-y-3">
+                    @foreach($siapDijadwalkan as $pendaftaran)
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-xl border border-gray-100 p-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-1 bg-cyan-100 text-cyan-800 rounded-full text-xs font-medium">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
+                                    <span class="text-xs text-gray-400">Masuk {{ $pendaftaran->first_registered_at?->format('d M Y') ?? '-' }}</span>
+                                </div>
+                                <p class="font-semibold text-gray-900">{{ Str::limit($pendaftaran->judul_penelitian, 70) }}</p>
+                                <p class="text-sm text-gray-500">{{ $pendaftaran->mahasiswa->name }} | {{ $pendaftaran->mahasiswa->nim }}</p>
+                            </div>
+                            <a href="{{ route('panitia.penjadwalan.jadwal') }}" class="px-4 py-2 bg-cyan-700 text-white rounded-xl hover:bg-cyan-800 text-sm font-medium text-center">Jadwalkan</a>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Konteks Proses</h2>
+            <div class="space-y-3">
+                <div class="rounded-xl bg-yellow-50 p-4">
+                    <p class="text-2xl font-bold text-yellow-700">{{ $pendingApproval }}</p>
+                    <p class="text-sm text-yellow-700">Siap generate/jadwal</p>
+                </div>
+                <div class="rounded-xl bg-gray-50 p-4">
+                    <p class="text-2xl font-bold text-gray-700">{{ $menungguMasaTunggu }}</p>
+                    <p class="text-sm text-gray-600">Masih menunggu 7 hari</p>
+                </div>
+                <div class="rounded-xl bg-green-50 p-4">
+                    <p class="text-2xl font-bold text-green-700">{{ $jadwalMingguIni->count() }}</p>
+                    <p class="text-sm text-green-700">Agenda minggu ini</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="grid lg:grid-cols-2 gap-6">
         <!-- Jadwal Hari Ini -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100">

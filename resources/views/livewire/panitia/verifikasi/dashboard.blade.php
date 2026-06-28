@@ -88,6 +88,65 @@
         </div>
     </div>
 
+    <!-- Verification Queue -->
+    <div class="grid lg:grid-cols-3 gap-6 mb-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900">Prioritas Verifikasi</h2>
+                    <p class="text-sm text-gray-500">Berkas pending terlama ditampilkan lebih dulu agar antrean terasa jelas.</p>
+                </div>
+                <a href="{{ route('panitia.verifikasi.berkas') }}" class="text-sm font-medium text-orange-700 hover:text-orange-800">Buka Berkas</a>
+            </div>
+
+            @if($prioritasBerkas->isEmpty())
+                <div class="rounded-xl bg-gray-50 p-6 text-center text-sm text-gray-500">Tidak ada berkas yang menunggu verifikasi.</div>
+            @else
+                <div class="space-y-3">
+                    @foreach($prioritasBerkas as $pendaftaran)
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-xl border border-gray-100 p-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
+                                    <span class="text-xs text-gray-400">Masuk {{ $pendaftaran->created_at->format('d M Y H:i') }}</span>
+                                </div>
+                                <p class="font-semibold text-gray-900">{{ Str::limit($pendaftaran->judul_penelitian, 70) }}</p>
+                                <p class="text-sm text-gray-500">{{ $pendaftaran->mahasiswa->name }} | {{ $pendaftaran->mahasiswa->nim }}</p>
+                            </div>
+                            <a href="{{ route('panitia.verifikasi.berkas') }}" class="px-4 py-2 bg-orange-700 text-white rounded-xl hover:bg-orange-800 text-sm font-medium text-center">Verifikasi</a>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Progress Berkas</h2>
+            <div class="rounded-2xl bg-orange-50 p-5">
+                <div class="flex items-end justify-between">
+                    <div>
+                        <p class="text-sm text-orange-700">Terselesaikan</p>
+                        <p class="text-4xl font-bold text-orange-900">{{ $progressVerifikasi }}%</p>
+                    </div>
+                    <span class="text-sm text-orange-700">{{ $totalDiverifikasi }} dari {{ $totalDiverifikasi + $totalPending }}</span>
+                </div>
+                <div class="mt-4 h-3 rounded-full bg-orange-100 overflow-hidden">
+                    <div class="h-full rounded-full bg-orange-600" style="width: {{ $progressVerifikasi }}%"></div>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="rounded-xl bg-amber-50 p-4 text-center">
+                    <p class="text-2xl font-bold text-amber-700">{{ $totalPending }}</p>
+                    <p class="text-xs text-amber-700">Menunggu</p>
+                </div>
+                <div class="rounded-xl bg-green-50 p-4 text-center">
+                    <p class="text-2xl font-bold text-green-700">{{ $totalDisetujui }}</p>
+                    <p class="text-xs text-green-700">Disetujui</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Stats Row -->
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 text-center">

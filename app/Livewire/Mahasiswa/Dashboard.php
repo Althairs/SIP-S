@@ -2,17 +2,23 @@
 
 namespace App\Livewire\Mahasiswa;
 
-use Livewire\Component;
 use App\Models\Pendaftaran;
 use App\Models\Reminder;
-use Carbon\Carbon;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
     public $pendaftarans;
+
     public $reminders;
+
     public $tahapan;
+
     public $reminderTerdekat;
+
+    public $pendaftaranAktif;
+
+    public array $nextAction = [];
 
     public function mount()
     {
@@ -22,6 +28,12 @@ class Dashboard extends Component
             ->where('mahasiswa_id', $userId)
             ->latest()
             ->get();
+
+        $this->pendaftaranAktif = $this->pendaftarans->first(function ($pendaftaran) {
+            return ! in_array($pendaftaran->status, ['selesai', 'ditolak_panitia', 'ditolak_sekjur', 'ditolak_kajur']);
+        });
+
+        $this->nextAction = $this->resolveNextAction($this->pendaftaranAktif);
 
         // TAMBAHAN: Ambil reminder aktif
         $this->reminders = Reminder::with('pendaftaran')
@@ -74,6 +86,57 @@ class Dashboard extends Component
             $reminder->markAsRead();
         }
         $this->mount();
+    }
+
+    private function resolveNextAction(?Pendaftaran $pendaftaran): array
+    {
+        if (! $pendaftaran) {
+            return [
+                'label' => 'Mulai Pendaftaran',
+                'title' => 'Belum ada pendaftaran aktif.',
+                'description' => 'Mulai dari tahapan ujian yang tersedia agar sistem bisa menuntun proses berikutnya.',
+                'url' => route('mahasiswa.pendaftaran.create'),
+                'color' => 'blue',
+            ];
+        }
+
+        return match ($pendaftaran->status) {
+            'draft', 'revisi' => [
+                'label' => 'Lengkapi Berkas',
+                'title' => 'Pendaftaran perlu dilengkapi.',
+                'description' => 'Periksa kembali data, pembimbing, dan berkas sebelum dikirim ulang.',
+                'url' => route('mahasiswa.pendaftaran.edit', $pendaftaran),
+                'color' => 'amber',
+            ],
+            'pending' => [
+                'label' => 'Pantau Verifikasi',
+                'title' => 'Berkas sedang menunggu verifikasi panitia.',
+                'description' => 'Cek reminder dan riwayat pendaftaran untuk mengetahui perubahan status.',
+                'url' => route('mahasiswa.pendaftaran.index'),
+                'color' => 'yellow',
+            ],
+            'disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur' => [
+                'label' => 'Lihat Status',
+                'title' => 'Pendaftaran sedang bergerak ke tahap berikutnya.',
+                'description' => 'Sistem akan meneruskan proses sampai jadwal ujian tersedia.',
+                'url' => route('mahasiswa.pendaftaran.index'),
+                'color' => 'green',
+            ],
+            'dijadwalkan' => [
+                'label' => 'Lihat Jadwal',
+                'title' => 'Jadwal ujian sudah tersedia.',
+                'description' => 'Cek waktu, ruangan, dan penguji agar persiapan ujian lebih tenang.',
+                'url' => route('mahasiswa.jadwal'),
+                'color' => 'purple',
+            ],
+            default => [
+                'label' => 'Buka Pendaftaran',
+                'title' => $pendaftaran->statusLabel,
+                'description' => 'Pantau detail pendaftaran untuk mengetahui tindakan berikutnya.',
+                'url' => route('mahasiswa.pendaftaran.index'),
+                'color' => 'gray',
+            ],
+        };
     }
 
     public function render()

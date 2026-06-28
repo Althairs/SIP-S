@@ -97,8 +97,16 @@
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $panitia->nip ?? '-' }}</td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 capitalize">
-                                {{ str_replace('_', ' ', $panitia->getRoleNames()->first() ?? '-') }}
+                            @php
+                                $roleName = $panitia->getRoleNames()->first();
+                                $roleBadge = [
+                                    'panitia_verifikasi' => 'bg-amber-100 text-amber-800',
+                                    'panitia_penjadwalan' => 'bg-cyan-100 text-cyan-800',
+                                    'panitia_administrasi' => 'bg-emerald-100 text-emerald-800',
+                                ][$roleName] ?? 'bg-gray-100 text-gray-800';
+                            @endphp
+                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ $roleBadge }} capitalize">
+                                {{ str_replace('_', ' ', $roleName ?? '-') }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $panitia->nomor_hp ?? '-' }}</td>
@@ -124,7 +132,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">Tidak ada data panitia</td>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">Tidak ada data panitia</td>
                     </tr>
                     @endforelse
                 </tbody>
