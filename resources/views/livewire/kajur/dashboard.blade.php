@@ -77,7 +77,7 @@
     </div>
 
     <!-- Quick Links -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    {{-- <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Akses Cepat</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href="{{ route('kajur.data-master.dosen') }}" class="flex flex-col items-center p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition">
@@ -108,5 +108,5 @@
                 <span class="text-sm font-medium text-emerald-800">Profile</span>
             </a>
         </div>
-    </div>
+    </div> --}}
 </div>

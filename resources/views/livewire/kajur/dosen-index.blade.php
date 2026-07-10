@@ -40,14 +40,14 @@
                     </svg>
                 </div>
                 <select wire:model.change="prodiFilter"
-                    class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="">Semua Prodi</option>
                     @foreach($prodis as $prodi)
                         <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
                 <select wire:model.change="statusFilter"
-                    class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
                     <option value="0">Nonaktif</option>
@@ -167,7 +167,7 @@
         <div class="fixed inset-0 z-50 overflow-y-auto">
             <div class="flex items-center justify-center min-h-screen px-4 py-8">
                 <div class="fixed inset-0 bg-black/50" wire:click="closeModal"></div>
-                <div class="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+                <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
                     <div class="flex items-center justify-between mb-4 sticky top-0 bg-white z-10 pb-4 border-b">
                         <h3 class="text-xl font-bold text-gray-900">{{ $editMode ? 'Edit Dosen' : 'Tambah Dosen Baru' }}
                         </h3>

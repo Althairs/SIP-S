@@ -29,6 +29,7 @@ class Dashboard extends Component
         $this->stats = [
             'pending' => (clone $baseQuery)->where('status', 'pending')->count(),
             'disetujui_panitia' => (clone $baseQuery)->where('status', 'disetujui_panitia')->count(),
+            'menunggu_penguji' => (clone $baseQuery)->where('status', 'disetujui_panitia')->doesntHave('pengujis')->count(),
             'dijadwalkan' => (clone $baseQuery)->where('status', 'dijadwalkan')->count(),
             'selesai' => (clone $baseQuery)->where('status', 'selesai')->count(),
             'revisi' => (clone $baseQuery)->where('status', 'revisi')->count(),

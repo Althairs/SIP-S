@@ -106,8 +106,19 @@
                                 </div>
                                 <p class="font-semibold text-gray-900">{{ Str::limit($pendaftaran->judul_penelitian, 70) }}</p>
                                 <p class="text-sm text-gray-500">{{ $pendaftaran->mahasiswa->name }} | {{ $pendaftaran->mahasiswa->nim }}</p>
+                                <p class="text-xs text-gray-400 mt-1">
+                                    Pembimbing:
+                                    @if($pendaftaran->pembimbing1 && $pendaftaran->pembimbing1->dosen)
+                                        {{ $pendaftaran->pembimbing1->dosen->name }}
+                                    @endif
+                                    @if($pendaftaran->pembimbing2 && $pendaftaran->pembimbing2->dosen)
+                                        {{ $pendaftaran->pembimbing1 ? ' & ' : '' }}{{ $pendaftaran->pembimbing2->dosen->name }}
+                                    @endif
+                                </p>
                             </div>
-                            <a href="{{ route('panitia.penjadwalan.jadwal') }}" class="px-4 py-2 bg-cyan-700 text-white rounded-xl hover:bg-cyan-800 text-sm font-medium text-center">Jadwalkan</a>
+                            <div class="flex flex-col gap-2">
+                                <a href="{{ route('panitia.penjadwalan.jadwal') }}" class="px-4 py-2 bg-cyan-700 text-white rounded-xl hover:bg-cyan-800 text-sm font-medium text-center">Jadwalkan</a>
+                            </div>
                         </div>
                     @endforeach
                 </div>

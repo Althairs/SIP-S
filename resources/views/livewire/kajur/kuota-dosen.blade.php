@@ -46,8 +46,8 @@
                            class="w-full sm:w-28 px-3 py-2 border border-gray-300 rounded-xl text-sm">
                 </div>
                 <button type="submit" class="px-4 py-2 bg-rose-700 text-white rounded-xl hover:bg-rose-800 text-sm font-medium whitespace-nowrap">Simpan Default</button>
-                <button type="button" wire:click="resetKuotaBulanan" wire:confirm="Reset kuota semua dosen ke default bulanan sekarang?"
-                        class="px-4 py-2 border border-rose-300 text-rose-700 rounded-xl hover:bg-rose-50 text-sm font-medium whitespace-nowrap">Reset Sekarang</button>
+                {{-- <button type="button" wire:click="resetKuotaBulanan" wire:confirm="Test: Reset kuota semua dosen ke default bulanan (20) sekarang? Ini akan mensimulasikan scheduled task yang berjalan setiap tanggal 1."
+                        class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 text-sm font-medium whitespace-nowrap">Test Reset Bulanan</button> --}}
             </form>
         </div>
     </div>

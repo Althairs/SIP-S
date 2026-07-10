@@ -3,6 +3,7 @@
 namespace App\Livewire\Panitia\Penjadwalan;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Ruangan;
 
@@ -10,6 +11,7 @@ class SettingRuangan extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
     public $showModal = false;
     public $editMode = false;

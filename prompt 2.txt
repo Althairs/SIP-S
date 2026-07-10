@@ -1,6 +1,19 @@
 buatkan issue.md, berisi planning memebuat ini:
 
-- di
+- buat di bagian mahasiswa agar bisa upload file revisi proposal/hasil/sidang dan akan menampilkan status diperiksa/di setujui/butuh revisi
+- buat di bagian dosen (penguji dan pembimbing) agar bisa melihat file revisi mahasiswa nya
+- buatkan library untuk menggunakan wa gateaway agar bisa memakai lebih dari 1
+- gunakan wa gateaway Fonnte dan netflie whatsapp cloud api
+- super admin bisa bebas mengganti metode pesannya dari library
+- pesan yang di kirim 
+  1 saat mahasiswa mendapat jadwal ujian
+  2 saat dosen mendapat jadwal menguji
+  3 saat panitia verifikasi dapat pendaftar ujian
+  4 saat sekjur dapat permintaan pembuat penguji dari panitia verfikasi
+  5 saat kajur mendapat persetujian penguji oleh sekjur
+  6 saat panitia penjadwalan dapat persetujuan oleh kajur
+  7 saat mahasiswa menerima notif reminder revisi 
+- gunakan context7
 
 jangan terlalu low level atau detail
 
@@ -8,18 +21,3 @@ cukup instruksikan secara high level
 
 nanti document planning nya akan digunakan oleh proggramer atau model yang lebih murah untuk di implementasikan
 
-Nama Lengkap : Sindi Adelia Mamonto
-TTL :Bintauna pantai , 2003-04-22
-No. KTP : 7108026204030001
-Telephon :085295170098
-Email : sindimamonto22@gmail.com
-Alamat : Bintauna pantai
-Tahun Permohonan : 2026
-Universitas :Universitas Negeri Gorontalo, Gorontalo
-Nim :531422022
-Fakultas : teknik
-Jurusan : informatika
-Jumlah Dana : Rp. 5,000,000
-Registrasi : 20 Juni 2026, Pukul: 16:55:19
-Status : Registrasi, Menunggu Pengajuan Diperiksa oleh Admin
-Keterangan :

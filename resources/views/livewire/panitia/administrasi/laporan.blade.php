@@ -22,7 +22,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Prodi</label>
-                <select wire:model.live="prodiFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl">
+                <select wire:model.live="prodiFilter" class="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                     <option value="">Semua Prodi</option>
                     @foreach($prodis as $prodi)
                         <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
@@ -31,7 +31,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Ujian</label>
-                <select wire:model.live="jenisUjianFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl">
+                <select wire:model.live="jenisUjianFilter" class="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                     <option value="">Semua Jenis</option>
                     <option value="seminar_proposal">Seminar Proposal</option>
                     <option value="seminar_hasil">Seminar Hasil</option>
@@ -40,7 +40,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Bulan</label>
-                <select wire:model.live="bulanFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl">
+                <select wire:model.live="bulanFilter" class="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                     <option value="">Semua Bulan</option>
                     @for($m = 1; $m <= 12; $m++)
                         <option value="{{ $m }}">{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
@@ -49,7 +49,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tahun</label>
-                <select wire:model.live="tahunFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl">
+                <select wire:model.live="tahunFilter" class="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                     <option value="">Semua Tahun</option>
                     @for($y = now()->year; $y >= now()->year - 5; $y--)
                         <option value="{{ $y }}">{{ $y }}</option>

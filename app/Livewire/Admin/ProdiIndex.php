@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Prodi;
 use App\Models\Jurusan;
@@ -11,13 +12,26 @@ class ProdiIndex extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $jurusanFilter = '';
+
+    #[Url(history: true)]
     public $filterStatus = '';
 
-    protected $queryString = ['search', 'jurusanFilter', 'filterStatus'];
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
 
-    public function updatingSearch()
+    public function updatedJurusanFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStatus()
     {
         $this->resetPage();
     }

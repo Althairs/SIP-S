@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -11,9 +12,8 @@ class RoleIndex extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
-
-    protected $queryString = ['search'];
 
     public function updatingSearch()
     {

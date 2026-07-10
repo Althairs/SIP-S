@@ -6,11 +6,7 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h10"/></svg>
         </button>
         <a href="{{ route('panitia.verifikasi.dashboard') }}" class="flex ms-2">
-          <div class="w-8 h-8 bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
+          <img src="{{ asset('images/logo_ung.png') }}" class="h-8" />
           <span class="self-center text-lg font-semibold text-gray-800 ms-3">SIP-<span class="text-orange-700">S</span> <span class="text-xs text-gray-500">| Verifikasi</span></span>
         </a>
       </div>

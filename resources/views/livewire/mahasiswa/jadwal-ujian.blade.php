@@ -2,30 +2,31 @@
     @section('title', 'Jadwal Ujian')
     @section('page-title', 'Jadwal Ujian Saya')
 
-    <!-- Tab Navigation -->
-    <div class="flex border-b border-gray-200 mb-6" x-data="{ tab: 'upcoming' }">
-        <button @click="tab = 'upcoming'"
-                :class="tab === 'upcoming' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'"
-                class="px-6 py-3 text-sm font-medium border-b-2 transition flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Akan Datang
-            @if($upcomingUjian->count() > 0)
-            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">{{ $upcomingUjian->count() }}</span>
-            @endif
-        </button>
-        <button @click="tab = 'history'"
-                :class="tab === 'history' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'"
-                class="px-6 py-3 text-sm font-medium border-b-2 transition flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            Riwayat
-            @if($riwayatUjian->count() > 0)
-            <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">{{ $riwayatUjian->count() }}</span>
-            @endif
-        </button>
-    </div>
+    <!-- Tab Navigation & Content -->
+    <div x-data="{ tab: 'upcoming' }">
+        <div class="flex border-b border-gray-200 mb-6">
+            <button @click="tab = 'upcoming'"
+                    :class="tab === 'upcoming' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                    class="px-6 py-3 text-sm font-medium border-b-2 transition flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Akan Datang
+                @if($upcomingUjian->count() > 0)
+                <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">{{ $upcomingUjian->count() }}</span>
+                @endif
+            </button>
+            <button @click="tab = 'history'"
+                    :class="tab === 'history' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                    class="px-6 py-3 text-sm font-medium border-b-2 transition flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Riwayat
+                @if($riwayatUjian->count() > 0)
+                <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">{{ $riwayatUjian->count() }}</span>
+                @endif
+            </button>
+        </div>
 
-    <!-- Upcoming Ujian -->
-    <div x-data="{ tab: 'upcoming' }" x-show="tab === 'upcoming'">
+        <!-- Upcoming Ujian -->
+        <div x-show="tab === 'upcoming'" x-cloak>
         @if($upcomingUjian->isEmpty())
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
             <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -96,10 +97,10 @@
             @endforeach
         </div>
         @endif
-    </div>
+        </div>
 
-    <!-- Riwayat Ujian -->
-    <div x-data="{ tab: 'upcoming' }" x-show="tab === 'history'">
+        <!-- Riwayat Ujian -->
+        <div x-show="tab === 'history'" x-cloak>
         @if($riwayatUjian->isEmpty())
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
             <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -139,7 +140,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Selesai</span>
+                                <span class="px-2 py-1 bg-{{ $ujian->statusColor }}-100 text-{{ $ujian->statusColor }}-800 rounded-full text-xs font-medium">{{ $ujian->statusLabel }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <button wire:click="showDetailUjian({{ $ujian->id }})" class="text-sm text-blue-700 hover:text-blue-800 font-medium">Lihat Detail</button>
@@ -151,6 +152,7 @@
             </div>
         </div>
         @endif
+        </div>
     </div>
 
     {{-- ============= MODAL DETAIL UJIAN (BESAR) ============= --}}
@@ -301,8 +303,9 @@
                                         {{ str_replace('_', ' ', $penguji->peran) }}
                                     </span>
                                     @if($penguji->is_overload)
-                                    <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium flex items-center gap-1">
-                                        ⚠️ Overload
+                                    <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                                        Overload
                                     </span>
                                     @endif
                                 </div>
@@ -318,12 +321,12 @@
                                     </div>
                                 </div>
                                 @if($penguji->kuota_tersisa !== null)
-                                <div class="mt-2 flex items-center gap-2 text-xs">
+                                {{-- <div class="mt-2 flex items-center gap-2 text-xs">
                                     <span class="text-gray-500">Kuota tersisa:</span>
                                     <span class="font-medium {{ $penguji->kuota_tersisa < 0 ? 'text-red-600' : 'text-green-600' }}">
                                         {{ $penguji->kuota_tersisa }}
                                     </span>
-                                </div>
+                                </div> --}}
                                 @endif
                                 @if($penguji->catatan)
                                 <p class="mt-2 text-xs text-gray-500 bg-white/50 rounded-lg p-2">{{ $penguji->catatan }}</p>

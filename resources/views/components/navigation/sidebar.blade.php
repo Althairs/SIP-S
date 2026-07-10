@@ -131,6 +131,58 @@
             </a>
          </li>
 
+        <li class="pt-4">
+            <span class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Notifikasi</span>
+        </li>
+
+        <li>
+            <a href="{{ route('admin.notification-settings') }}" class="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-green-50 hover:text-green-700 group {{ request()->routeIs('admin.notification-settings.*') ? 'bg-green-50 text-green-700' : '' }}">
+               <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.notification-settings.*') ? 'text-cyan-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+               <span class="flex-1 ms-3 whitespace-nowrap">Notifikasi Whatsapp</span>
+            </a>
+         </li>
+
+        <!-- Super Admin Menu -->
+        {{-- @role('super_admin')
+        <div class="px-4 py-2">
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Notifikasi</p>
+
+            <a href="{{ route('admin.notification-settings') }}" class="flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 mt-1 {{ request()->routeIs('admin.notification-settings') ? 'bg-cyan-50 text-cyan-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.notification-settings') ? 'text-cyan-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                Notifikasi WhatsApp
+            </a>
+        </div>
+        @endrole
+
+        <!-- Mahasiswa Menu -->
+        @role('mahasiswa')
+        <div class="px-4 py-2">
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Akademik</p>
+            <a href="{{ route('mahasiswa.jadwal') }}" class="flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 mt-1 {{ request()->routeIs('mahasiswa.jadwal') ? 'bg-cyan-50 text-cyan-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('mahasiswa.jadwal') ? 'text-cyan-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                Jadwal Ujian
+            </a>
+            <a href="{{ route('mahasiswa.revisi') }}" class="flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 mt-1 {{ request()->routeIs('mahasiswa.revisi') ? 'bg-cyan-50 text-cyan-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('mahasiswa.revisi') ? 'text-cyan-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                Revisi
+            </a>
+            <a href="{{ route('mahasiswa.nilai') }}" class="flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 mt-1 {{ request()->routeIs('mahasiswa.nilai') ? 'bg-cyan-50 text-cyan-700 font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('mahasiswa.nilai') ? 'text-cyan-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                Nilai
+            </a>
+        </div>
+        @endrole --}}
+
          <!-- Divider -->
          <li class="pt-4">
             <span class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pengaturan</span>

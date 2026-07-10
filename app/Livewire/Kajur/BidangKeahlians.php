@@ -3,6 +3,7 @@
 namespace App\Livewire\Kajur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\BidangKeahlian;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ class BidangKeahlians extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
     public $showModal = false;
     public $editMode = false;
@@ -20,8 +22,6 @@ class BidangKeahlians extends Component
     public $nama_bidang = '';
     public $deskripsi = '';
     public $is_active = true;
-
-    protected $queryString = ['search'];
 
     public function updatingSearch()
     {

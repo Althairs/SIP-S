@@ -3,6 +3,7 @@
 namespace App\Livewire\Kajur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\User;
 use App\Models\Prodi;
@@ -15,8 +16,13 @@ class DosenIndex extends Component
 {
     use WithPagination, AuthorizesRequests;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $prodiFilter = '';
+
+    #[Url(history: true)]
     public $statusFilter = '';
     public $showModal = false;
     public $showImportModal = false;
@@ -54,7 +60,17 @@ class DosenIndex extends Component
         $this->listKepakaran = Kepakaran::active()->orderBy('hierarki_level')->get();
     }
 
-    public function updatingSearch()
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedProdiFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }

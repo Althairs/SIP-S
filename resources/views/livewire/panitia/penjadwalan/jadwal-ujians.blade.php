@@ -26,6 +26,33 @@
         </div>
     @endif
 
+    {{-- Persistent Notification --}}
+    @if($showNotification)
+        <div class="mb-4 p-4 {{ $notificationType === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800' }} border rounded-xl flex items-center justify-between">
+            <div class="flex items-center">
+                @if($notificationType === 'success')
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                    </svg>
+                @else
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                @endif
+                {{ $notificationMessage }}
+            </div>
+            <button wire:click="closeNotification" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    @endif
+
     <!-- Tabs -->
     <div class="flex border-b border-gray-200 mb-6 gap-1 overflow-x-auto">
         <button wire:click="setTab('siap')"
@@ -73,7 +100,7 @@
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
             </div>
-            <select wire:model.change="jenisFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl">
+            <select wire:model.change="jenisFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                 <option value="">Semua Jenis Ujian</option>
                 <option value="seminar_proposal">Seminar Proposal</option>
                 <option value="seminar_hasil">Seminar Hasil</option>
@@ -179,7 +206,37 @@
                                                     <span class="text-xs font-medium">{{ $penguji->dosen->name ?? '-' }}</span>
                                                     <span
                                                         class="text-xs text-gray-400">({{ str_replace('_', ' ', $penguji->peran) }})</span>
-                                                    @if($penguji->is_overload)<span class="text-xs text-red-500">⚠️</span>@endif
+                                                    @if($penguji->is_overload)<svg class="w-4 h-4 text-red-500 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>@endif
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <span class="text-xs text-gray-400">-</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                    <div class="md:col-span-2">
+                                        <p class="text-xs text-gray-500">Pembimbing</p>
+                                        @if($p->pembimbing1 && $p->pembimbing1->dosen)
+                                            <p class="text-xs font-medium">{{ $p->pembimbing1->dosen->name }}</p>
+                                        @endif
+                                        @if($p->pembimbing2 && $p->pembimbing2->dosen)
+                                            <p class="text-xs text-gray-400">{{ $p->pembimbing2->dosen->name }}</p>
+                                        @endif
+                                        @if(!$p->pembimbing1 && !$p->pembimbing2)
+                                            <span class="text-xs text-gray-400">-</span>
+                                        @endif
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <p class="text-xs text-gray-500">Penguji</p>
+                                        @php $pengujiList = \App\Models\UjianPenguji::where('pendaftaran_id', $p->id)->with('dosen.kepakaran')->get(); @endphp
+                                        @if($pengujiList->count() > 0)
+                                            @foreach($pengujiList as $penguji)
+                                                <div class="flex items-center gap-1">
+                                                    <span class="text-xs font-medium">{{ $penguji->dosen->name ?? '-' }}</span>
+                                                    <span class="text-xs text-gray-400">({{ str_replace('_', ' ', $penguji->peran) }})</span>
+                                                    @if($penguji->is_overload)<svg class="w-4 h-4 text-red-500 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77-.833.192 2.5 1.732 2.5z"></path></svg>@endif
                                                 </div>
                                             @endforeach
                                         @else
@@ -200,6 +257,16 @@
                         </div>
 
                         <div class="md:text-right md:flex-shrink-0">
+                            <button wire:click="openDetailModal({{ $p->id }})"
+                                class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 text-sm font-medium whitespace-nowrap transition mb-2 md:mb-0 md:mr-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                Detail
+                            </button>
                             <button wire:click="openScheduleModal({{ $p->id }})"
                                 class="px-5 py-2.5 bg-cyan-700 text-white rounded-xl hover:bg-cyan-800 text-sm font-medium whitespace-nowrap shadow-sm shadow-cyan-200 transition">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,8 +336,19 @@
                                 </div>
                             </div>
                             <p class="mt-3 text-sm text-gray-500">{{ $p->mahasiswa->name }} ({{ $p->mahasiswa->nim }})</p>
+                            <p class="mt-2 text-xs text-gray-400">
+                                Pembimbing:
+                                @if($p->pembimbing1 && $p->pembimbing1->dosen)
+                                    {{ $p->pembimbing1->dosen->name }}
+                                @endif
+                                @if($p->pembimbing2 && $p->pembimbing2->dosen)
+                                    {{ $p->pembimbing1 ? ' & ' : '' }}{{ $p->pembimbing2->dosen->name }}
+                                @endif
+                            </p>
                         </div>
                         <div class="flex flex-col gap-2 md:flex-shrink-0">
+                            <button wire:click="openDetailModal({{ $p->id }})"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-200 text-sm font-medium whitespace-nowrap">Detail</button>
                             <button wire:click="rescheduleUjian({{ $p->id }})"
                                 class="px-4 py-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl hover:bg-amber-100 text-sm font-medium whitespace-nowrap">Ubah</button>
                             <button wire:click="cancelJadwal({{ $p->id }})" wire:confirm="Batalkan jadwal?"
@@ -299,9 +377,22 @@
                     </div>
                     <h3 class="font-semibold text-gray-700">{{ Str::limit($p->judul_penelitian, 60) }}</h3>
                     <p class="text-sm text-gray-500">{{ $p->mahasiswa->name }} ({{ $p->mahasiswa->nim }})</p>
+                    <p class="text-xs text-gray-400 mt-1">
+                        Pembimbing:
+                        @if($p->pembimbing1 && $p->pembimbing1->dosen)
+                            {{ $p->pembimbing1->dosen->name }}
+                        @endif
+                        @if($p->pembimbing2 && $p->pembimbing2->dosen)
+                            {{ $p->pembimbing1 ? ' & ' : '' }}{{ $p->pembimbing2->dosen->name }}
+                        @endif
+                    </p>
                     @if($p->nilai_total)
                         <p class="text-sm mt-1">Nilai: <span class="font-bold text-purple-700">{{ $p->nilai_total }}
                     ({{ $p->grade }})</span></p>@endif
+                    <div class="mt-2">
+                        <button wire:click="openDetailModal({{ $p->id }})"
+                            class="text-xs text-cyan-600 hover:text-cyan-800 font-medium">Lihat Detail</button>
+                    </div>
                 </div>
             @empty
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center text-gray-500">Belum ada
@@ -349,8 +440,7 @@
                                 @foreach($pengujiList as $penguji)
                                     <p class="text-xs"><span class="font-medium">{{ $penguji->dosen->name ?? '-' }}</span>
                                         ({{ str_replace('_', ' ', $penguji->peran) }}) @if($penguji->dosen->kepakaran)-
-                                        {{ $penguji->dosen->kepakaran->nama_kepakaran }}@endif @if($penguji->is_overload)<span
-                                        class="text-red-500">⚠️</span>@endif</p>
+                                        {{ $penguji->dosen->kepakaran->nama_kepakaran }}@endif @if($penguji->is_overload)<svg class="w-4 h-4 text-red-500 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>@endif</p>
                                 @endforeach
                             </div>
                         @endif
@@ -367,9 +457,10 @@
 
                     <div class="flex gap-3 mb-4">
                         <button type="button" wire:click="autoGenerateJadwal"
-                            class="px-4 py-2 {{ $scheduleMode === 'auto' ? 'bg-cyan-700 text-white' : 'bg-gray-100 text-gray-700' }} rounded-xl text-sm font-medium transition">🎲
-                            Auto Random</button>
-                        <span class="text-xs text-gray-400 self-center">atau atur manual</span>
+                            class="px-4 py-2 {{ $scheduleMode === 'auto' ? 'bg-cyan-700 text-white' : 'bg-gray-100 text-gray-700' }} rounded-xl text-sm font-medium transition flex items-center">
+                            {{-- <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> --}}
+                            Random</button>
+                        {{-- <span class="text-xs text-gray-400 self-center">Atur Manual</span> --}}
                     </div>
 
                     <form wire:submit="scheduleUjian">
@@ -438,7 +529,10 @@
                             @if($tanggal_ujian && $sesi)
                                 @php $si = $sesi - 1; @endphp
                                 <div class="p-4 bg-cyan-50 rounded-xl border border-cyan-200">
-                                    <p class="text-sm font-semibold text-cyan-800">📋 Preview Jadwal</p>
+                                    <p class="text-sm font-semibold text-cyan-800 flex items-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                        Preview Jadwal
+                                    </p>
                                     <div class="grid grid-cols-3 gap-3 mt-2 text-sm">
                                         <div>
                                             <p class="text-xs text-cyan-600">Tanggal</p>
@@ -542,6 +636,98 @@
                                 {{ count($selectedIds) }} Ujian</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ============= MODAL: DETAIL ============= --}}
+    @if($showDetailModal && $selectedPendaftaran)
+        <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen px-4">
+                <div class="fixed inset-0 bg-black/50" wire:click="closeDetailModal"></div>
+                <div class="relative bg-white rounded-2xl shadow-xl max-w-5xl w-full p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900">Detail Pendaftaran</h3>
+                        <button wire:click="closeDetailModal" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <p class="text-sm text-gray-500 mb-2">Judul Penelitian</p>
+                            <p class="text-lg font-semibold text-gray-900">{{ $selectedPendaftaran->judul_penelitian }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <p class="text-sm text-gray-500 mb-2">Mahasiswa</p>
+                                <p class="font-semibold text-gray-900">{{ $selectedPendaftaran->mahasiswa->name }}</p>
+                                <p class="text-sm text-gray-400">{{ $selectedPendaftaran->mahasiswa->nim }}</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <p class="text-sm text-gray-500 mb-2">Jenis Ujian</p>
+                                <p class="font-semibold text-gray-900">{{ ucwords(str_replace('_', ' ', $selectedPendaftaran->jenis_ujian)) }}</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <p class="text-sm text-gray-500 mb-2">Status</p>
+                                <p class="font-semibold text-gray-900">{{ $selectedPendaftaran->status_label }}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <p class="text-sm text-gray-500 mb-3">Dosen Pembimbing</p>
+                                @if($selectedPendaftaran->pembimbing1 && $selectedPendaftaran->pembimbing1->dosen)
+                                    <p class="text-base font-semibold text-gray-900">{{ $selectedPendaftaran->pembimbing1->dosen->name }} <span class="text-sm text-gray-400">(Pembimbing 1)</span></p>
+                                @endif
+                                @if($selectedPendaftaran->pembimbing2 && $selectedPendaftaran->pembimbing2->dosen)
+                                    <p class="text-base font-semibold text-gray-900 mt-2">{{ $selectedPendaftaran->pembimbing2->dosen->name }} <span class="text-sm text-gray-400">(Pembimbing 2)</span></p>
+                                @endif
+                                @if(!$selectedPendaftaran->pembimbing1 && !$selectedPendaftaran->pembimbing2)
+                                    <p class="text-base text-gray-400">-</p>
+                                @endif
+                            </div>
+
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <p class="text-sm text-gray-500 mb-3">Dosen Penguji</p>
+                                @php $pengujiList = \App\Models\UjianPenguji::where('pendaftaran_id', $selectedPendaftaran->id)->with('dosen')->get(); @endphp
+                                @if($pengujiList->count() > 0)
+                                    @foreach($pengujiList as $penguji)
+                                        <p class="text-base font-semibold text-gray-900">{{ $penguji->dosen->name ?? '-' }} <span class="text-sm text-gray-400">({{ str_replace('_', ' ', $penguji->peran) }})</span></p>
+                                    @endforeach
+                                @else
+                                    <p class="text-base text-gray-400">-</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        @if($selectedPendaftaran->bidangKeahlians->count() > 0)
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <p class="text-sm text-gray-500 mb-3">Bidang Keahlian</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($selectedPendaftaran->bidangKeahlians as $bk)
+                                        <span class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm font-medium">{{ $bk->nama_bidang }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($selectedPendaftaran->tanggal_ujian)
+                            <div class="bg-blue-50 rounded-xl p-6">
+                                <p class="text-sm text-blue-600 mb-2">Jadwal Ujian</p>
+                                <p class="text-lg font-semibold text-blue-900">{{ \Carbon\Carbon::parse($selectedPendaftaran->tanggal_ujian)->format('d M Y H:i') }}</p>
+                                <p class="text-base text-blue-800">{{ $selectedPendaftaran->ruangan ?? '-' }} | Sesi {{ $selectedPendaftaran->sesi ?? '-' }}</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="mt-8 flex justify-end">
+                        <button wire:click="closeDetailModal" class="px-8 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 font-medium text-base">Tutup</button>
+                    </div>
                 </div>
             </div>
         </div>

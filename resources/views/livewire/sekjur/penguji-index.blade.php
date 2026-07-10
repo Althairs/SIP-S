@@ -31,7 +31,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
             </div>
-            <select wire:model.change="statusFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl">
+            <select wire:model.live="statusFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                 <option value="">Semua</option>
                 <option value="no_penguji">Belum Ada Penguji</option>
                 <option value="has_penguji">Sudah Ada Penguji</option>
@@ -91,7 +91,7 @@
                                 <span class="text-xs text-gray-500">{{ str_replace('_', ' ', $penguji->peran) }}:</span>
                                 <span class="font-medium ml-1">{{ $penguji->dosen->name ?? '-' }}</span>
                                 @if($penguji->is_overload)
-                                <span class="ml-1 px-1.5 py-0.5 bg-red-100 text-red-700 rounded text-xs" title="Kuota overload">⚠️</span>
+                                <span class="ml-1 px-1.5 py-0.5 bg-red-100 text-red-700 rounded text-xs inline-flex items-center" title="Kuota overload"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg></span>
                                 @endif
                                 @if($penguji->kepakaran)
                                 <span class="block text-xs text-purple-600 ml-4">{{ $penguji->kepakaran->nama_kepakaran }}</span>

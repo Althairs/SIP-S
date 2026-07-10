@@ -8,14 +8,17 @@ use App\Models\Prodi;
 use App\Models\User;
 use App\Services\KuotaDosenService;
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 
 class KuotaDosen extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
 
+    #[Url(history: true)]
     public $prodiFilter = '';
 
     public $showEditModal = false;

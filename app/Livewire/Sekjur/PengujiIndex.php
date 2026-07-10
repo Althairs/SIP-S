@@ -3,20 +3,27 @@
 namespace App\Livewire\Sekjur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Pendaftaran;
-use App\Models\User;
 
 class PengujiIndex extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $statusFilter = '';
 
-    protected $queryString = ['search', 'statusFilter'];
 
-    public function updatingSearch()
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }
@@ -50,12 +57,12 @@ class PengujiIndex extends Component
 
         // Count stats
         $totalMenunggu = Pendaftaran::where('jurusan_id', $jurusanId)
-            ->whereIn('status', ['disetujui_kaprodi', 'disetujui_kajur', 'dijadwalkan'])
+            ->whereIn('status', ['disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur'])
             ->doesntHave('pengujis')
             ->count();
 
         $totalSudahDiatur = Pendaftaran::where('jurusan_id', $jurusanId)
-            ->whereIn('status', ['disetujui_kaprodi', 'disetujui_kajur', 'dijadwalkan'])
+            ->whereIn('status', ['disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan'])
             ->has('pengujis')
             ->count();
 

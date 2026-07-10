@@ -62,7 +62,7 @@ class Dashboard extends Component
             ->where('first_registered_at', '<=', now()->subDays(7))
             ->count();
 
-        $this->siapDijadwalkan = Pendaftaran::with('mahasiswa')
+        $this->siapDijadwalkan = Pendaftaran::with(['mahasiswa', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where('jurusan_id', $jurusanId)
             ->where('status', 'disetujui_kajur')
             ->where('first_registered_at', '<=', now()->subDays(7))
@@ -76,7 +76,7 @@ class Dashboard extends Component
             ->count();
 
         // Jadwal hari ini
-        $this->jadwalHariIni = Pendaftaran::with(['mahasiswa'])
+        $this->jadwalHariIni = Pendaftaran::with(['mahasiswa', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where('jurusan_id', $jurusanId)
             ->where('status', 'dijadwalkan')
             ->whereDate('tanggal_ujian', Carbon::today())
@@ -84,7 +84,7 @@ class Dashboard extends Component
             ->get();
 
         // Jadwal minggu ini
-        $this->jadwalMingguIni = Pendaftaran::with(['mahasiswa'])
+        $this->jadwalMingguIni = Pendaftaran::with(['mahasiswa', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where('jurusan_id', $jurusanId)
             ->where('status', 'dijadwalkan')
             ->whereBetween('tanggal_ujian', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])

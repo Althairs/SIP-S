@@ -40,14 +40,14 @@
                     </svg>
                 </div>
                 <select wire:model.change="prodiFilter"
-                    class="px-4 py-2.5 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    class="px-4 py-2.5 pr-10 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-purple-500 focus:border-purple-500">
                     <option value="">Semua Prodi</option>
                     @foreach($prodis as $prodi)
                         <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
                 <select wire:model.change="statusFilter"
-                    class="px-8 py-2.5 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    class="px-4 py-2.5 pr-10 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-purple-500 focus:border-purple-500">
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
                     <option value="0">Nonaktif</option>

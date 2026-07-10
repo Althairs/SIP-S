@@ -3,6 +3,7 @@
 namespace App\Livewire\Kajur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\User;
 use App\Models\Prodi;
@@ -13,9 +14,16 @@ class MahasiswaIndex extends Component
 {
     use WithPagination, AuthorizesRequests;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $prodiFilter = '';
+
+    #[Url(history: true)]
     public $angkatanFilter = '';
+
+    #[Url(history: true)]
     public $statusFilter = '';
     public $showModal = false;
     public $editMode = false;
@@ -34,7 +42,22 @@ class MahasiswaIndex extends Component
 
     protected $queryString = ['search', 'prodiFilter', 'angkatanFilter', 'statusFilter'];
 
-    public function updatingSearch()
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedProdiFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedAngkatanFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }

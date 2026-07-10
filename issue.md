@@ -1,157 +1,109 @@
-# Issue: Modul Laporan PDF & Kuota Dosen Bulanan
+# Dokumen Perencanaan: Import Mahasiswa, Otomatisasi Status Akun, & Dashboard Tracker
 
-## Ringkasan
-
-Menambahkan fitur unduh laporan PDF untuk **Panitia Administrasi** dan perbaikan alur **kuota dosen** di panel **Kajur**. Semua laporan digenerate dengan **DomPDF**, memakai kop surat standar universitas.
+Dokumen ini berisi spesifikasi kebutuhan dan rencana implementasi tingkat tinggi untuk beberapa fitur baru pada sistem pendaftaran ujian mahasiswa. Rencana ini ditujukan untuk digunakan oleh programmer atau model AI guna diimplementasikan ke dalam codebase Laravel + Livewire + Tailwind CSS.
 
 ---
 
-## Konteks Sistem (Yang Sudah Ada)
+## 1. Fitur Import Mahasiswa (Kajur > Mahasiswa)
 
-- Panel Panitia Administrasi sudah ada (`/panitia/administrasi`) — sidebar masih placeholder "Dalam Pengembangan"
-- Modul kuota dosen Kajur sudah ada (`KuotaDosen`, halaman `kajur/kuota-dosen`)
-- Prototype PDF sudah ada di `resources/views/testlaporan.blade.php` dan acuan visual di `contoh-laporan.pdf`
-- Data utama tersedia di model: `Pendaftaran`, `Penilaian`, `KuotaDosen`, `User`
+### Deskripsi Kebutuhan
+Mengganti tombol **"Export"** yang ada pada menu Kajur > Mahasiswa dengan tombol **"Import"** untuk mengunggah berkas Excel berisi daftar mahasiswa baru/aktif.
 
----
+### Alur Implementasi & Solusi
+1. **Perubahan UI (Kajur > Mahasiswa Index)**
+   - Ubah tombol Export di file `resources/views/livewire/kajur/mahasiswa-index.blade.php` menjadi tombol **Import**.
+   - Tombol Import akan memicu modal baru (layout upload file) atau area dropzone file Excel.
+   
+2. **Validasi Skema Header Excel**
+   - Sebelum memproses baris data, sistem wajib memvalidasi apakah kolom file Excel yang diunggah sesuai dengan format referensi `mahasiswa_import.xlsx`.
+   - Gunakan class `HeadingRowImport` dari package `maatwebsite/excel` untuk memeriksa kecocokan array header.
+   - Kolom-kolom wajib yang harus ada di baris pertama Excel:
+     * `No.`, `Strata`, `Angkatan`, `NIK`, `NIM`, `Nama`, `Tanggal Lahir`, `Sex`, `Fakultas`, `Program Studi`, `Kelas`, `Tipe`, `Seleksi`, `Status Awal`, `Semester Awal Terdaftar`, `Status Aktif`.
+   - Jika kolom tidak sesuai, batalkan proses import dan tampilkan pesan error: *"Format kolom berkas Excel tidak sesuai dengan template referensi."*
 
-## 1. UI Laporan — Panitia Administrasi
+3. **Logika Proses & Sinkronisasi Status Aktif**
+   - Lakukan iterasi pada data baris Excel.
+   - Gunakan `NIM` sebagai identifier unik untuk mencari record mahasiswa (tabel `users` dengan role `mahasiswa`).
+   - **Jika NIM sudah ada di database**:
+     * Update data profil mahasiswa sesuai data terbaru dari Excel.
+     * Periksa nilai kolom `Status Aktif` dari Excel. Jika bernilai **"Aktif"**, maka aktifkan kembali akun mahasiswa tersebut (`is_active = true`).
+   - **Jika NIM belum ada di database**:
+     * Buat user baru dengan role `mahasiswa`.
+     * Set password default (atau hash NIM/kombinasi aman) dan simpan data profil lainnya.
+     * Set status `is_active` berdasarkan nilai kolom `Status Aktif` di Excel.
 
-**Tujuan:** Halaman khusus untuk mengunduh semua jenis laporan.
-
-**Yang perlu dibuat:**
-- Tambah menu **Laporan** di sidebar panitia administrasi (ganti placeholder "Dalam Pengembangan")
-- Halaman Livewire berisi daftar 4 jenis laporan (lihat bagian 4)
-- Setiap laporan punya tombol **Download PDF**
-- Filter umum (opsional tapi disarankan): periode/tahun akademik, prodi, jenis ujian
-- Scope data: hanya jurusan milik user yang login (`jurusan_id`)
-
-**Acceptance criteria:**
-- Hanya role `panitia_administrasi` yang bisa akses
-- Setiap tombol download menghasilkan file PDF valid
-- UI konsisten dengan dashboard panitia administrasi yang sudah ada
-
----
-
-## 2. Kuota Dosen Bulanan — Kajur
-
-**Tujuan:** Kuota dosen terisi otomatis setiap bulan, dengan default **20/bulan**, dan bisa diubah manual oleh Kajur.
-
-**Perilaku yang diharapkan:**
-- Setiap awal bulan (atau mekanisme reset bulanan), kuota dosen di jurusan terkait diisi ulang ke nilai default
-- Default global: **20** (untuk kuota yang relevan — tentukan apakah 20 untuk pembimbing, penguji, atau keduanya; sesuaikan dengan kebutuhan bisnis)
-- Kajur bisa mengubah default bulanan per jurusan (mis. via setting di halaman kuota dosen)
-- Kajur tetap bisa override kuota per dosen secara manual (fitur edit yang sudah ada)
-- Counter `terpakai_*` direset atau dihitung ulang sesuai kebijakan bisnis yang dipilih
-
-**Yang perlu ditinjau/ditambah:**
-- Apakah perlu kolom/tabel baru untuk **setting default kuota bulanan** per jurusan
-- Apakah perlu **scheduled job** (Laravel scheduler) untuk reset otomatis tiap bulan
-- Sesuaikan nilai default lama (saat ini 5/10) dengan kebijakan baru (20)
-
-**Acceptance criteria:**
-- Kuota ter-reset otomatis tiap bulan tanpa intervensi manual
-- Kajur bisa mengatur angka default selain 20
-- Override per dosen tetap berfungsi
+### File yang Perlu Dimodifikasi/Dibuat
+- `resources/views/livewire/kajur/mahasiswa-index.blade.php` (UI Tombol & Modal Import)
+- `app/Livewire/Kajur/MahasiswaIndex.php` (Penanganan file upload & trigger import class)
+- [NEW] `app/Imports/MahasiswaImport.php` (Class import Laravel-Excel yang mengimplementasikan `ToCollection` / `ToModel`, `WithHeadingRow`, dan `WithValidation`)
 
 ---
 
-## 3. Infrastruktur PDF (DomPDF)
+## 2. Otomatisasi Penonaktifan Akun Inaktif (Inactivity Logic)
 
-**Tujuan:** Satu cara standar untuk generate semua laporan PDF.
+### Deskripsi Kebutuhan
+Sistem harus secara otomatis menonaktifkan akun mahasiswa yang tidak mengajukan atau memiliki pendaftaran ujian/sidang aktif dalam kurun waktu 5 bulan terakhir.
 
-**Yang perlu dibuat:**
-- Install & konfigurasi package DomPDF untuk Laravel (atau adaptasi dari prototype `testlaporan.blade.php`)
-- Buat **layout/template PDF reusable** dengan kop surat
-- Buat **service atau controller** terpusat untuk generate & stream/download PDF
-- Pisahkan: **template Blade untuk PDF** (bukan view Livewire biasa)
-- Logo universitas via base64 (sudah dicontohkan di prototype)
+### Alur Implementasi & Solusi
+1. **Logika Penentuan Akun Inaktif**
+   - Mahasiswa dianggap **inaktif** jika:
+     * Tidak memiliki data pendaftaran (tabel `pendaftarans`) sama sekali dalam 5 bulan terakhir sejak akun dibuat, ATAU
+     * Pendaftaran terakhir mahasiswa tersebut (`created_at` pada tabel `pendaftarans`) sudah lebih dari 5 bulan yang lalu.
+   
+2. **Pembuatan Artisan Console Command**
+   - Buat command baru Laravel, misalnya `php artisan mahasiswa:nonaktifkan-inaktif`.
+   - Query pencarian akun mahasiswa aktif (`is_active = true`):
+     * Cek relasi ke `pendaftarans`.
+     * Jika pendaftaran terakhir > 5 bulan (menggunakan `now()->subMonths(5)`), atau tidak memiliki pendaftaran dan tanggal pembuatan akun (`users.created_at`) > 5 bulan, ubah `is_active = false`.
+   
+3. **Pendaftaran di Scheduler**
+   - Daftarkan command tersebut pada `routes/console.php` menggunakan `Schedule::command()` untuk dieksekusi secara otomatis dan berkala (misal: harian atau mingguan).
 
-**Struktur direktori (saran):**
-```
-resources/views/pdf/
-  ├── layouts/kop.blade.php      ← partial kop surat
-  ├── laporan-pendaftaran.blade.php
-  ├── laporan-kuota-dosen.blade.php
-  ├── laporan-nilai.blade.php
-  └── laporan-ujian-selesai.blade.php
-```
-
-**Acceptance criteria:**
-- Semua laporan memakai layout kop yang sama
-- Font, margin, dan ukuran kertas konsisten (A4 portrait)
-- File PDF bisa diunduh langsung dari browser
+### File yang Perlu Dimodifikasi/Dibuat
+- [NEW] `app/Console/Commands/NonaktifkanMahasiswaInaktif.php` (Command logika inaktivitas)
+- `routes/console.php` (Pendaftaran jadwal eksekusi command)
 
 ---
 
-## 4. Jenis Laporan
+## 3. Tracker Status Pendaftaran Interaktif di Dashboard Mahasiswa
 
-### 4.1 Laporan Pendaftaran Mahasiswa
-- Data dari `Pendaftaran` (+ relasi mahasiswa, prodi, jenis ujian, status)
-- Isi: daftar mahasiswa yang mendaftar ujian, periode, status pendaftaran
+### Deskripsi Kebutuhan
+Menampilkan representasi visual interaktif (stepper / timeline progress) mengenai alur proses pendaftaran aktif mahasiswa pada halaman dashboard utama mereka.
 
-### 4.2 Laporan Kuota Dosen (Membimbing & Menguji)
-- Data dari `KuotaDosen` (+ relasi dosen, prodi)
-- Isi: nama dosen, kuota pembimbing, terpakai, sisa, kuota penguji, terpakai, sisa
+### Alur/Tahapan Pendaftaran
+Proses pendaftaran ujian mahasiswa memiliki tahapan status berikut:
+1. **Tahap 1: Verifikasi Berkas (Panitia)**
+   - **Status**: `pending` (Sedang diperiksa), `disetujui_panitia` (Disetujui), `ditolak_panitia` (Ditolak).
+2. **Tahap 2: Penetapan Penguji (Sekjur/Kajur)**
+   - **Status**: `disetujui_sekjur` (Ditetapkan penguji oleh Sekjur), `disetujui_kajur` (Disetujui Kajur), `ditolak_sekjur`/`ditolak_kajur` (Ditolak).
+3. **Tahap 3: Penjadwalan Ujian (Panitia Penjadwalan)**
+   - **Status**: `dijadwalkan` (Jadwal & Ruangan diterbitkan).
+4. **Tahap 4: Pelaksanaan & Selesai**
+   - **Status**: `selesai`.
 
-### 4.3 Laporan Nilai Mahasiswa
-- Data dari `Pendaftaran` / `Penilaian` yang sudah selesai dinilai
-- Isi: mahasiswa, jenis ujian, nilai total, grade, penguji/pembimbing
+### Desain & Implementasi UI Dashboard
+- Di file `resources/views/livewire/mahasiswa/dashboard.blade.php`, buat komponen **Stepper Horizontal atau Vertical Timeline** menggunakan kelas Tailwind CSS.
+- Komponen ini hanya tampil jika terdapat `$pendaftaranAktif` pada property dashboard.
+- Berikan warna/ikon interaktif yang berbeda berdasarkan status pendaftaran:
+  * **Selesai (Completed)**: Lingkaran hijau dengan ikon centang (`bg-green-100 text-green-600`).
+  * **Sedang Berjalan (Active/In Progress)**: Lingkaran biru dengan efek animasi/pulse (`bg-blue-100 text-blue-600 animate-pulse`).
+  * **Belum Dimulai (Pending/Upcoming)**: Lingkaran abu-abu (`bg-gray-100 text-gray-400`).
+  * **Ditolak/Batal (Rejected)**: Lingkaran merah dengan ikon silang (`bg-red-100 text-red-600`).
+- Tampilkan detail kecil di bawah setiap tahapan (contoh: nama penguji jika sudah ditetapkan, atau waktu/ruangan jika sudah dijadwalkan).
 
-### 4.4 Laporan Mahasiswa yang Sudah Ujian
-- Mahasiswa dengan status selesai per jenis ujian: **proposal**, **hasil**, **skripsi**
-- Bisa ditampilkan per jenis atau digabung dengan kolom jenis ujian
-- Isi: identitas mahasiswa, judul, tanggal ujian, nilai (jika ada)
-
-**Catatan umum semua laporan:**
-- Sertakan judul laporan, tanggal cetak, dan filter yang dipakai
-- Format tabel sederhana (bukan desain kompleks)
-- Data difilter per `jurusan_id` user yang login
-
----
-
-## 5. Kop Surat
-
-**Acuan:** `contoh-laporan.pdf` dan implementasi di `testlaporan.blade.php`
-
-**Spesifikasi kop:**
-- Tabel 3 kolom: logo (kiri) | teks institusi (tengah) | spacer (kanan)
-- Logo UNG di kolom kiri
-- Teks kop: Kementerian, Universitas, Fakultas, alamat, telepon, email, laman
-- Garis pemisah ganda di bawah kop
-- Judul laporan di bawah kop (bukan surat rekomendasi — sesuaikan per jenis laporan)
-
-Buat sebagai **Blade partial** agar dipakai ulang di semua template PDF.
+### File yang Perlu Dimodifikasi
+- `app/Livewire/Mahasiswa/Dashboard.php` (Menyediakan data status pendaftaran aktif saat ini)
+- `resources/views/livewire/mahasiswa/dashboard.blade.php` (Visualisasi layout stepper/progress tracker)
 
 ---
 
-## Urutan Implementasi (Disarankan)
+## 4. Referensi & Integrasi Context7
 
-1. Setup DomPDF + layout kop surat (partial reusable)
-2. Buat 1 laporan sebagai proof of concept (mis. laporan pendaftaran)
-3. Buat UI halaman laporan di Panitia Administrasi + route
-4. Implementasi 3 laporan sisanya
-5. Fitur kuota dosen bulanan (migration/setting + scheduler + UI Kajur)
-6. Testing end-to-end per role
-
----
-
-## Hal di Luar Scope (Untuk Issue Terpisah)
-
-- Tanda tangan digital / QR code BSrE (ada di contoh surat, belum wajib untuk laporan rekap)
-- Export Excel/CSV
-- Laporan untuk role selain Panitia Administrasi
-- Nomor surat resmi per laporan
-
----
-
-## Referensi File
-
-| File | Keterangan |
-|------|------------|
-| `contoh-laporan.pdf` | Acuan visual kop surat |
-| `resources/views/testlaporan.blade.php` | Prototype DomPDF + struktur HTML/CSS kop |
-| `app/Livewire/Panitia/Administrasi/Dashboard.php` | Dashboard panitia administrasi |
-| `app/Livewire/Kajur/KuotaDosen.php` | Manajemen kuota dosen |
-| `app/Models/KuotaDosen.php` | Model kuota |
-| `app/Models/Pendaftaran.php` | Model pendaftaran ujian |
+Untuk pengembang yang akan melakukan implementasi fitur ini:
+- Gunakan library **Laravel Excel** (`/websites/laravel-excel_3_1`) sebagai basis import data.
+- Gunakan `HeadingRowImport` untuk mengecek header berkas secara dinamis sebelum di-import:
+  ```php
+  use Maatwebsite\Excel\HeadingRowImport;
+  $headings = (new HeadingRowImport)->toArray($file);
+  ```
+- Seluruh manipulasi data mahasiswa wajib memperhatikan konsistensi role `'mahasiswa'` yang di-manage menggunakan `spatie/laravel-permission`.

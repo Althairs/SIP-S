@@ -50,15 +50,27 @@
                     <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <div>
-                    <span class="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-medium">
-                        {{ $reminderTerdekat->prioritas === 'tinggi' ? '⚠️ Prioritas Tinggi' : 'ℹ️ Reminder' }}
+                    <span class="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-medium inline-flex items-center gap-1">
+                        @if($reminderTerdekat->prioritas === 'tinggi')
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                        Prioritas Tinggi
+                        @else
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Reminder
+                        @endif
                     </span>
                     <h3 class="text-lg font-bold text-gray-900 mt-2">{{ $reminderTerdekat->judul }}</h3>
                     <p class="text-sm text-gray-600 mt-1">{{ $reminderTerdekat->pesan }}</p>
                     <div class="flex items-center gap-3 mt-3">
-                        <span class="text-xs text-gray-500">📅 {{ $reminderTerdekat->tanggal_tampil->format('d M Y') }}</span>
+                        <span class="text-xs text-gray-500 inline-flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            {{ $reminderTerdekat->tanggal_tampil->format('d M Y') }}
+                        </span>
                         @if($reminderTerdekat->tanggal_kadaluarsa)
-                        <span class="text-xs text-red-500">⏰ Deadline: {{ $reminderTerdekat->tanggal_kadaluarsa->format('d M Y') }}</span>
+                        <span class="text-xs text-red-500 inline-flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Deadline: {{ $reminderTerdekat->tanggal_kadaluarsa->format('d M Y') }}
+                        </span>
                         @endif
                     </div>
                 </div>
@@ -95,7 +107,10 @@
         {{-- ============= DAFTAR REMINDER ============= --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="text-lg font-semibold text-gray-900">📬 Reminder & Notifikasi</h2>
+                <h2 class="text-lg font-semibold text-gray-900 inline-flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                    Reminder & Notifikasi
+                </h2>
                 @if($reminders->where('is_read', false)->count() > 0)
                 <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">{{ $reminders->where('is_read', false)->count() }} baru</span>
                 @endif
@@ -113,8 +128,13 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $reminder->prioritas === 'tinggi' ? 'bg-red-100 text-red-800' : ($reminder->prioritas === 'sedang' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600') }}">
-                                        {{ $reminder->prioritas === 'tinggi' ? '⚠️' : '📌' }} {{ ucfirst($reminder->prioritas) }}
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium inline-flex items-center gap-1 {{ $reminder->prioritas === 'tinggi' ? 'bg-red-100 text-red-800' : ($reminder->prioritas === 'sedang' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600') }}">
+                                        @if($reminder->prioritas === 'tinggi')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                                        @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                                        @endif
+                                        {{ ucfirst($reminder->prioritas) }}
                                     </span>
                                     @if(!$reminder->is_read)
                                     <span class="w-2 h-2 bg-blue-500 rounded-full"></span>

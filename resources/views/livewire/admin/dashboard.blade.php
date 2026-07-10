@@ -62,7 +62,7 @@
     </div>
 
     <!-- Quick Stats Row -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    {{-- <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
             <p class="text-2xl font-bold text-green-700">{{ $totalKajur }}</p>
             <p class="text-sm text-green-600">Kajur</p>
@@ -79,7 +79,7 @@
             <p class="text-2xl font-bold text-purple-700">{{ $totalMahasiswa }}</p>
             <p class="text-sm text-purple-600">Mahasiswa</p>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Recent Data -->
     <div class="grid lg:grid-cols-2 gap-6">

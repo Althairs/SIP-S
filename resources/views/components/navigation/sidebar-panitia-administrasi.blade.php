@@ -6,11 +6,7 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h10"/></svg>
         </button>
         <a href="{{ route('panitia.administrasi.dashboard') }}" class="flex ms-2">
-          <div class="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-          </div>
+          <img src="{{ asset('images/logo_ung.png') }}" class="h-8" />
           <span class="self-center text-lg font-semibold text-gray-800 ms-3">SIP-<span class="text-gray-700">S</span> <span class="text-xs text-gray-500">| Administrasi</span></span>
         </a>
       </div>
@@ -29,6 +25,12 @@
          </li>
          <li class="pt-4">
             <span class="px-2 text-xs font-semibold text-gray-400 uppercase">Administrasi</span>
+         </li>
+         <li>
+            <a href="{{ route('panitia.administrasi.nilai-berkas') }}" class="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-700 {{ request()->routeIs('panitia.administrasi.nilai-berkas') ? 'bg-gray-100 text-gray-900 font-medium' : '' }}">
+               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+               <span class="ms-3">Nilai Berkas</span>
+            </a>
          </li>
          <li>
             <a href="{{ route('panitia.administrasi.laporan') }}" class="flex items-center px-2 py-1.5 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-700 {{ request()->routeIs('panitia.administrasi.laporan*') ? 'bg-gray-100 text-gray-900 font-medium' : '' }}">

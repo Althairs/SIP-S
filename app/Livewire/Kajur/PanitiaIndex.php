@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\Attributes\Url;
 // use Illuminate\Container\Attributes\Auth;
 use Livewire\WithPagination;
 
@@ -20,12 +21,16 @@ class PanitiaIndex extends Component
         'panitia_administrasi',
     ];
 
+    #[Url(history: true)]
     public $search = '';
 
+    #[Url(history: true)]
     public $prodiFilter = '';
 
+    #[Url(history: true)]
     public $roleFilter = '';
 
+    #[Url(history: true)]
     public $statusFilter = '';
 
     public $showModal = false;
@@ -58,22 +63,22 @@ class PanitiaIndex extends Component
 
     protected $queryString = ['search', 'prodiFilter', 'roleFilter', 'statusFilter'];
 
-    public function updatingSearch()
+    public function updatedSearch()
     {
         $this->resetPage();
     }
 
-    public function updatingProdiFilter()
+    public function updatedProdiFilter()
     {
         $this->resetPage();
     }
 
-    public function updatingRoleFilter()
+    public function updatedRoleFilter()
     {
         $this->resetPage();
     }
 
-    public function updatingStatusFilter()
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }

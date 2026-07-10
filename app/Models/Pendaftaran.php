@@ -89,12 +89,16 @@ class Pendaftaran extends Model
         return $this->hasOne(PendaftaranDosen::class)->where('peran', 'pembimbing_2');
     }
 
-    // TAMBAHAN: Relasi ke UjianPenguji (penguji dari sekjur)
+
     public function pengujis()
     {
         return $this->hasMany(UjianPenguji::class);
     }
 
+    public function revisis()
+    {
+        return $this->hasMany(Revisi::class, 'pendaftaran_id');
+    }
     // Scope
     public function scopeByStatus($query, $status)
     {

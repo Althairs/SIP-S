@@ -16,14 +16,18 @@ class JadwalUjian extends Component
 
     public function mount()
     {
+        $this->loadJadwal();
+    }
+
+    protected function loadJadwal(): void
+    {
         $userId = auth()->id();
 
-        // Ujian yang akan datang
         $this->upcomingUjian = Pendaftaran::with([
-            'dosens.dosen.kepakaran',
+            'pembimbing1.dosen',
             'bidangKeahlians',
             'jurusan',
-            'prodi'
+            'prodi',
         ])
             ->where('mahasiswa_id', $userId)
             ->where('status', 'dijadwalkan')
@@ -31,17 +35,16 @@ class JadwalUjian extends Component
             ->orderBy('tanggal_ujian')
             ->get();
 
-        // Riwayat ujian (selesai atau sudah lewat)
         $this->riwayatUjian = Pendaftaran::with([
-            'dosens.dosen.kepakaran',
-            'bidangKeahlians'
+            'pembimbing1.dosen',
+            'bidangKeahlians',
         ])
             ->where('mahasiswa_id', $userId)
             ->where(function ($query) {
-                $query->where('status', 'selesai')
+                $query->whereIn('status', ['selesai', 'revisi'])
                     ->orWhere(function ($q) {
                         $q->where('status', 'dijadwalkan')
-                          ->where('tanggal_ujian', '<', now());
+                            ->where('tanggal_ujian', '<', now());
                     });
             })
             ->orderBy('tanggal_ujian', 'desc')

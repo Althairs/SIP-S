@@ -22,6 +22,8 @@ class GeneratePenguji extends Component
     public $penguji1Kepakaran;
     public $penguji1Kuota;
     public $penguji1Overload = false;
+    public $penguji1Score = 0;
+    public array $penguji1ScoreBreakdown = [];
 
     // Penguji 2
     public $penguji2Id;
@@ -29,6 +31,8 @@ class GeneratePenguji extends Component
     public $penguji2Kepakaran;
     public $penguji2Kuota;
     public $penguji2Overload = false;
+    public $penguji2Score = 0;
+    public array $penguji2ScoreBreakdown = [];
 
     // Manual selection
     public $manualPenguji1;
@@ -74,6 +78,10 @@ class GeneratePenguji extends Component
             ->when(count($excludeIds), fn($query) => $query->whereNotIn('id', $excludeIds))
             ->with(['kepakaran', 'kuota', 'bidangKeahlians'])
             ->get()
+            ->filter(function ($dosen) {
+                // Filter dosen dengan bidang keahlian lebih dari 3
+                return $dosen->bidangKeahlians->count() <= 3;
+            })
             ->map(function ($dosen) use ($bidangIds) {
                 $dosen->score = $this->calculateScore($dosen, $bidangIds);
                 return $dosen;
@@ -85,10 +93,15 @@ class GeneratePenguji extends Component
     private function calculateScore($dosen, $bidangIds)
     {
         $score = 0;
+        $breakdown = [];
 
         // 1. Kepakaran (hierarki tertinggi = score tertinggi)
         if ($dosen->kepakaran) {
-            $score += (10 - $dosen->kepakaran->hierarki_level) * 9;
+            $kepakaranScore = (11 - $dosen->kepakaran->hierarki_level) * 5;
+            $score += $kepakaranScore;
+            $breakdown['kepakaran'] = $kepakaranScore;
+        } else {
+            $breakdown['kepakaran'] = 0;
         }
 
         // 1.5 Bidang keahlian match bonus (lebih tinggi jika ada intersection)
@@ -96,18 +109,42 @@ class GeneratePenguji extends Component
         if ($dosen->bidangKeahlians && count($bidangIds)) {
             $matching = $dosen->bidangKeahlians->pluck('id')->intersect($bidangIds)->count();
             if ($matching) {
-                $score += 50 + ($matching * 5);
+                // $bidangScore = 50 + ($matching * 5);
+                $totalBidang = max(count($bidangIds), 1);
+                $bidangScore = ($matching / $totalBidang) * 30;
+                $score += $bidangScore;
+                $breakdown['bidang_keahlian'] = $bidangScore;
+                $breakdown['bidang_match_count'] = $matching;
+            } else {
+                $breakdown['bidang_keahlian'] = 0;
+                $breakdown['bidang_match_count'] = 0;
             }
+        } else {
+            $breakdown['bidang_keahlian'] = 0;
+            $breakdown['bidang_match_count'] = 0;
         }
 
         // 2. Kuota (lebih banyak sisa = score lebih tinggi)
         $sisaKuota = $dosen->kuota?->sisa_penguji ?? 0;
-        $score += min($sisaKuota, 10) * 2;
+        $kuotaScore = min($sisaKuota, 10) * 2;
+        $score += $kuotaScore;
+        $breakdown['kuota'] = $kuotaScore;
+        $breakdown['sisa_kuota'] = $sisaKuota;
 
         // 3. Overload penalty
         if ($dosen->kuota && $dosen->kuota->is_overload_penguji) {
             $score -= 5;
+            $breakdown['overload_penalty'] = -5;
+        } else {
+            $breakdown['overload_penalty'] = 0;
         }
+
+        // Cap score at 100
+        $score = min($score, 100);
+        $breakdown['total'] = $score;
+
+        // Store breakdown in dosen object
+        $dosen->scoreBreakdown = $breakdown;
 
         return $score;
     }
@@ -125,6 +162,12 @@ class GeneratePenguji extends Component
         $this->penguji2Kuota = null;
         $this->penguji1Overload = false;
         $this->penguji2Overload = false;
+        $this->penguji1Score = 0;
+        $this->penguji2Score = 0;
+        $this->penguji1ScoreBreakdown = [];
+        $this->penguji2ScoreBreakdown = [];
+
+        $this->loadAvailableDosens();
 
         $bidangIds = $this->pendaftaran->bidangKeahlians->pluck('id')->toArray();
 
@@ -140,6 +183,8 @@ class GeneratePenguji extends Component
             $this->penguji1Kepakaran = $p1->kepakaran?->nama_kepakaran ?? '-';
             $this->penguji1Kuota = $p1->kuota?->sisa_penguji ?? 0;
             $this->penguji1Overload = $p1->kuota?->is_overload_penguji ?? false;
+            $this->penguji1Score = $p1->score ?? 0;
+            $this->penguji1ScoreBreakdown = $p1->scoreBreakdown ?? [];
             $this->penguji1 = $p1->toArray();
         }
 
@@ -154,14 +199,14 @@ class GeneratePenguji extends Component
         }
 
         // Jika tidak ditemukan yang sama bidang dengan kuota, ambil dosen lain dengan kuota tersisa
-        if (! $p2) {
+        if (!$p2) {
             $p2 = $sorted->first(function ($d) use ($p1) {
                 return $d->id !== $p1?->id && ($d->kuota?->sisa_penguji ?? 0) > 0;
             });
         }
 
         // Fallback: pick highest-scoring different dosen
-        if (! $p2) {
+        if (!$p2) {
             $p2 = $sorted->first(function ($d) use ($p1) {
                 return $d->id !== $p1?->id;
             });
@@ -172,6 +217,8 @@ class GeneratePenguji extends Component
             $this->penguji2Kepakaran = $p2->kepakaran?->nama_kepakaran ?? '-';
             $this->penguji2Kuota = $p2->kuota?->sisa_penguji ?? 0;
             $this->penguji2Overload = $p2->kuota?->is_overload_penguji ?? false;
+            $this->penguji2Score = $p2->score ?? 0;
+            $this->penguji2ScoreBreakdown = $p2->scoreBreakdown ?? [];
             $this->penguji2 = $p2->toArray();
         }
 
@@ -186,14 +233,18 @@ class GeneratePenguji extends Component
     {
         $this->mode = 'manual';
 
+        $this->loadAvailableDosens();
+
         if ($this->manualPenguji1) {
-            $dosen = User::with(['kepakaran', 'kuota'])->find($this->manualPenguji1);
+            $dosen = $this->availableDosens->firstWhere('id', $this->manualPenguji1);
 
             if ($dosen) {
                 $this->penguji1Id = $dosen->id;
                 $this->penguji1Kepakaran = $dosen->kepakaran?->nama_kepakaran ?? '-';
                 $this->penguji1Kuota = $dosen->kuota?->sisa_penguji ?? 0;
                 $this->penguji1Overload = $dosen->kuota?->is_overload_penguji ?? false;
+                $this->penguji1Score = $dosen->score ?? 0;
+                $this->penguji1ScoreBreakdown = $dosen->scoreBreakdown ?? [];
                 $this->penguji1 = $dosen->toArray();
             }
         } else {
@@ -202,16 +253,20 @@ class GeneratePenguji extends Component
             $this->penguji1Kepakaran = null;
             $this->penguji1Kuota = null;
             $this->penguji1Overload = false;
+            $this->penguji1Score = 0;
+            $this->penguji1ScoreBreakdown = [];
         }
 
         if ($this->manualPenguji2) {
-            $dosen = User::with(['kepakaran', 'kuota'])->find($this->manualPenguji2);
+            $dosen = $this->availableDosens->firstWhere('id', $this->manualPenguji2);
 
             if ($dosen) {
                 $this->penguji2Id = $dosen->id;
                 $this->penguji2Kepakaran = $dosen->kepakaran?->nama_kepakaran ?? '-';
                 $this->penguji2Kuota = $dosen->kuota?->sisa_penguji ?? 0;
                 $this->penguji2Overload = $dosen->kuota?->is_overload_penguji ?? false;
+                $this->penguji2Score = $dosen->score ?? 0;
+                $this->penguji2ScoreBreakdown = $dosen->scoreBreakdown ?? [];
                 $this->penguji2 = $dosen->toArray();
             }
         } else {
@@ -220,6 +275,8 @@ class GeneratePenguji extends Component
             $this->penguji2Kepakaran = null;
             $this->penguji2Kuota = null;
             $this->penguji2Overload = false;
+            $this->penguji2Score = 0;
+            $this->penguji2ScoreBreakdown = [];
         }
     }
 
@@ -289,6 +346,8 @@ class GeneratePenguji extends Component
 
     public function render()
     {
+        $this->loadAvailableDosens();
+
         return view('livewire.sekjur.generate-penguji')->layout('components.layouts.app-auth');
     }
 }

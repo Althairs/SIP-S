@@ -35,11 +35,19 @@ class AturAtributDosen extends Component
     public $selectedDosenIds = [];
     public $selectAll = false;
 
-    public function updated($property)
+    public function updatedSearch()
     {
-        if (in_array($property, ['search', 'kepakaranFilter', 'bidangFilter'])) {
-            $this->resetPage();
-        }
+        $this->resetPage();
+    }
+
+    public function updatedKepakaranFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedBidangFilter()
+    {
+        $this->resetPage();
     }
 
     public function updatedSelectAll($value)
