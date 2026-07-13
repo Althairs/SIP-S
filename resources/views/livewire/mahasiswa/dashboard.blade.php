@@ -41,6 +41,151 @@
         </div>
     </div>
 
+    {{-- ============= STEPPER PROSES PENDAFTARAN ============= --}}
+    @if($pendaftaranAktif)
+        @php
+            $status = $pendaftaranAktif->status;
+            
+            // Step 1: Verifikasi Panitia
+            $step1Class = 'border-gray-200 text-gray-400 bg-white';
+            $step1Line = 'bg-gray-200';
+            $step1Label = 'Verifikasi Berkas';
+            $step1Icon = '1';
+            
+            if (in_array($status, ['pending'])) {
+                $step1Class = 'border-blue-600 text-blue-600 bg-blue-50 font-semibold animate-pulse';
+                $step1Label = 'Verifikasi Berkas (Proses)';
+                $step1Icon = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+            } elseif (in_array($status, ['draft', 'revisi'])) {
+                $step1Class = 'border-amber-500 text-amber-500 bg-amber-50 font-semibold';
+                $step1Label = 'Verifikasi Berkas (Draft/Revisi)';
+                $step1Icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>';
+            } elseif (in_array($status, ['ditolak_panitia'])) {
+                $step1Class = 'border-red-600 text-red-600 bg-red-50 font-semibold';
+                $step1Label = 'Verifikasi Berkas (Ditolak)';
+                $step1Icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            } else { // disetujui_panitia and beyond
+                $step1Class = 'border-green-600 text-white bg-green-600 font-semibold';
+                $step1Line = 'bg-green-600';
+                $step1Icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            }
+
+            // Step 2: Penetapan Penguji oleh Sekjur
+            $step2Class = 'border-gray-200 text-gray-400 bg-white';
+            $step2Line = 'bg-gray-200';
+            $step2Label = 'Penetapan Penguji';
+            $step2Icon = '2';
+
+            if (in_array($status, ['disetujui_panitia'])) {
+                $step2Class = 'border-blue-600 text-blue-600 bg-blue-50 font-semibold animate-pulse';
+                $step2Label = 'Penetapan Penguji (Proses)';
+                $step2Icon = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                $step1Line = 'bg-blue-600';
+            } elseif (in_array($status, ['ditolak_sekjur', 'ditolak_kajur'])) {
+                $step2Class = 'border-red-600 text-red-600 bg-red-50 font-semibold';
+                $step2Label = 'Penetapan Penguji (Ditolak)';
+                $step2Icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                $step1Line = 'bg-green-600';
+            } elseif (in_array($status, ['disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan', 'selesai'])) {
+                $step2Class = 'border-green-600 text-white bg-green-600 font-semibold';
+                $step2Line = 'bg-green-600';
+                $step1Line = 'bg-green-600';
+                $step2Icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            }
+
+            // Step 3: Penjadwalan Ujian
+            $step3Class = 'border-gray-200 text-gray-400 bg-white';
+            $step3Line = 'bg-gray-200';
+            $step3Label = 'Penjadwalan Ujian';
+            $step3Icon = '3';
+
+            if (in_array($status, ['disetujui_sekjur', 'disetujui_kajur'])) {
+                $step3Class = 'border-blue-600 text-blue-600 bg-blue-50 font-semibold animate-pulse';
+                $step3Label = 'Penjadwalan (Proses)';
+                $step3Icon = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                $step2Line = 'bg-blue-600';
+            } elseif (in_array($status, ['dijadwalkan', 'selesai'])) {
+                $step3Class = 'border-green-600 text-white bg-green-600 font-semibold';
+                $step3Line = 'bg-green-600';
+                $step2Line = 'bg-green-600';
+                $step3Icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            }
+
+            // Step 4: Selesai
+            $step4Class = 'border-gray-200 text-gray-400 bg-white';
+            $step4Label = 'Selesai';
+            $step4Icon = '4';
+
+            if (in_array($status, ['dijadwalkan'])) {
+                $step4Class = 'border-blue-600 text-blue-600 bg-blue-50 font-semibold animate-pulse';
+                $step4Label = 'Ujian Terjadwal';
+                $step4Icon = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                $step3Line = 'bg-blue-600';
+            } elseif (in_array($status, ['selesai'])) {
+                $step4Class = 'border-green-600 text-white bg-green-600 font-semibold';
+                $step3Line = 'bg-green-600';
+                $step4Icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            }
+        @endphp
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-6">Progress Alur Pendaftaran Ujian</h3>
+            <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-4">
+                
+                <!-- Step 1 -->
+                <div class="flex items-center gap-4 flex-1 w-full relative">
+                    <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center flex-shrink-0 z-10 {{ $step1Class }}">
+                        {!! $step1Icon !!}
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Tahap 1</span>
+                        <span class="text-sm font-bold text-gray-800">{{ $step1Label }}</span>
+                    </div>
+                    <!-- Connector line for md screens -->
+                    <div class="hidden md:block absolute left-10 right-0 top-5 h-0.5 z-0 {{ $step1Line }}" style="margin-left: 1rem; margin-right: 1rem;"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex items-center gap-4 flex-1 w-full relative">
+                    <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center flex-shrink-0 z-10 {{ $step2Class }}">
+                        {!! $step2Icon !!}
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Tahap 2</span>
+                        <span class="text-sm font-bold text-gray-800">{{ $step2Label }}</span>
+                    </div>
+                    <!-- Connector line for md screens -->
+                    <div class="hidden md:block absolute left-10 right-0 top-5 h-0.5 z-0 {{ $step2Line }}" style="margin-left: 1rem; margin-right: 1rem;"></div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex items-center gap-4 flex-1 w-full relative">
+                    <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center flex-shrink-0 z-10 {{ $step3Class }}">
+                        {!! $step3Icon !!}
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Tahap 3</span>
+                        <span class="text-sm font-bold text-gray-800">{{ $step3Label }}</span>
+                    </div>
+                    <!-- Connector line for md screens -->
+                    <div class="hidden md:block absolute left-10 right-0 top-5 h-0.5 z-0 {{ $step3Line }}" style="margin-left: 1rem; margin-right: 1rem;"></div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flex items-center gap-4 w-full md:w-auto relative">
+                    <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center flex-shrink-0 z-10 {{ $step4Class }}">
+                        {!! $step4Icon !!}
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Tahap 4</span>
+                        <span class="text-sm font-bold text-gray-800">{{ $step4Label }}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    @endif
+
     {{-- ============= REMINDER URGENT ============= --}}
     @if($reminderTerdekat)
     <div class="bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 rounded-2xl p-6 mb-6">

@@ -1,10 +1,6 @@
 buatkan issue.md, berisi planning memebuat ini:
 
-- di bagian kajur > mahasiswa ganti buton export menjadi import untuk import pendaftaran mahsiswa nanti akan menampilkan layout baru untuk upload file excel dan alidasi filenya pakah cocok
-- gunakan referensi mahasiswa_import.xlsx untuk import filenya
-- logic baru dimana saat mahasiswa tdk mendaftar dalam 5 bulan akun akan otomatis nonaktif
-- saat import pendaftaran lihat status aktif mahasiswanya jika aktif maka akun di aktifkan kembali 
-- di halaman mahasiswa pada bagian dashboard tampilkan status interaktif bagaimana proses pendaftaran. contoh 1. pendaftaran di periksa panitia verfikasi -> disetujui -> 2. ditetapkan penguji oleh sekjur -> mendapat penguji sampai dibuatnya penjadwalan 
+- ganti layout semua modal menjadi 
 - gunakan context7
 
 jangan terlalu low level atau detail

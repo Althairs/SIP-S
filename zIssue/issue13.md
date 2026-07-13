@@ -12,14 +12,22 @@ Mengganti tombol **"Export"** yang ada pada menu Kajur > Mahasiswa dengan tombol
 ### Alur Implementasi & Solusi
 1. **Perubahan UI (Kajur > Mahasiswa Index)**
    - Ubah tombol Export di file `resources/views/livewire/kajur/mahasiswa-index.blade.php` menjadi tombol **Import**.
-   - Tombol Import akan memicu modal baru (layout upload file) atau area dropzone file Excel.
+   - Tombol Import akan memicu view baru (layout upload file).
    
 2. **Validasi Skema Header Excel**
-   - Sebelum memproses baris data, sistem wajib memvalidasi apakah kolom file Excel yang diunggah sesuai dengan format referensi `mahasiswa_import.xlsx`.
-   - Gunakan class `HeadingRowImport` dari package `maatwebsite/excel` untuk memeriksa kecocokan array header.
-   - Kolom-kolom wajib yang harus ada di baris pertama Excel:
-     * `No.`, `Strata`, `Angkatan`, `NIK`, `NIM`, `Nama`, `Tanggal Lahir`, `Sex`, `Fakultas`, `Program Studi`, `Kelas`, `Tipe`, `Seleksi`, `Status Awal`, `Semester Awal Terdaftar`, `Status Aktif`.
-   - Jika kolom tidak sesuai, batalkan proses import dan tampilkan pesan error: *"Format kolom berkas Excel tidak sesuai dengan template referensi."*
+
+   - Sebelum memproses baris data, sistem wajib memvalidasi kecocokan header file Excel yang diunggah terhadap daftar kolom wajib.
+
+   - Daftar Kolom Wajib: No, Nama, NIM, Fakultas, Prodi, Status Awal, Semester Awal Terdaftar, Status Aktif.
+
+   - Aturan Validasi: 
+     - Sistem menggunakan HeadingRowImport untuk mengambil array header dari baris pertama.
+
+     - Validasi harus bersifat case-insensitive (mengabaikan besar/kecil huruf) dan mengabaikan urutan kolom.
+
+     - Sistem wajib memverifikasi bahwa seluruh Daftar Kolom Wajib di atas ditemukan di dalam file.
+
+   - Penanganan Error: Jika salah satu atau lebih kolom wajib tidak ditemukan, proses import harus dibatalkan (dihentikan) dan sistem wajib menampilkan pesan error spesifik: "Format kolom berkas Excel tidak sesuai. Pastikan file mengandung kolom: No, Nama, NIM, Fakultas, Prodi, Status Awal, Semester Awal Terdaftar, dan Status Aktif."
 
 3. **Logika Proses & Sinkronisasi Status Aktif**
    - Lakukan iterasi pada data baris Excel.

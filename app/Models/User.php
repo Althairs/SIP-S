@@ -126,4 +126,10 @@ use Spatie\Permission\Traits\HasRoles;
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    public function pendaftarans()
+    {
+        return $this->hasMany(Pendaftaran::class, 'mahasiswa_id');
+    }
 }
+

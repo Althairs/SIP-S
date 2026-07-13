@@ -19,3 +19,15 @@ Schedule::command('kuota:reset-bulanan')
     ->onFailure(function () {
         Log::error('Gagal mereset kuota dosen bulanan pada ' . now()->format('Y-m-d H:i:s'));
     });
+
+// Schedule daily check for inactive students to deactivate them
+Schedule::command('mahasiswa:nonaktifkan-inaktif')
+    ->daily()
+    ->description('Menonaktifkan akun mahasiswa yang tidak mendaftar ujian dalam 5 bulan terakhir')
+    ->onSuccess(function () {
+        Log::info('Pemeriksaan otomatis mahasiswa inaktif selesai dijalankan.');
+    })
+    ->onFailure(function () {
+        Log::error('Pemeriksaan otomatis mahasiswa inaktif gagal.');
+    });
+
