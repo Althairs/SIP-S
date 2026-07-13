@@ -53,13 +53,48 @@ class UserCreate extends Component
         $this->is_active = $user->is_active;
     }
 
-    public function updatedRole()
+    public function updatedRole($value)
     {
         // Reset fields berdasarkan role
-        if (in_array($this->role, ['kajur', 'sekjur', 'panitia', 'dosen'])) {
+        if (in_array($value, ['kajur', 'sekjur', 'panitia', 'dosen'])) {
             $this->nim = '';
         } else {
             $this->nip = '';
+        }
+
+        // Auto-generate password dari NIM/NIP jika role sesuai dan tidak edit mode
+        if (!$this->editMode) {
+            $this->autoGeneratePassword();
+        }
+    }
+
+    public function updatedNip($value)
+    {
+        // Auto-generate password dari NIP untuk role dosen (hanya jika tidak edit mode)
+        if (!$this->editMode && in_array($this->role, ['kajur', 'sekjur', 'panitia', 'dosen']) && !empty($value)) {
+            $this->password = $value;
+            $this->password_confirmation = $value;
+        }
+    }
+
+    public function updatedNim($value)
+    {
+        // Auto-generate password dari NIM untuk role mahasiswa (hanya jika tidak edit mode)
+        if (!$this->editMode && $this->role === 'mahasiswa' && !empty($value)) {
+            $this->password = $value;
+            $this->password_confirmation = $value;
+        }
+    }
+
+    protected function autoGeneratePassword()
+    {
+        // Auto-generate password untuk role mahasiswa atau dosen
+        if ($this->role === 'mahasiswa' && !empty($this->nim)) {
+            $this->password = $this->nim;
+            $this->password_confirmation = $this->nim;
+        } elseif (in_array($this->role, ['kajur', 'sekjur', 'panitia', 'dosen']) && !empty($this->nip)) {
+            $this->password = $this->nip;
+            $this->password_confirmation = $this->nip;
         }
     }
 

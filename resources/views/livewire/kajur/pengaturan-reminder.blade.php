@@ -42,7 +42,7 @@
                         <div class="flex items-center gap-3">
                             <input type="number" wire:model="deadlineDays" min="7" max="365"
                                    class="w-32 px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 @error('deadlineDays') border-red-500 @enderror">
-                            <span class="text-sm text-gray-500">hari</span>
+                            <span class="text-sm text-gray-900">hari</span>
                         </div>
                         @error('deadlineDays') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
@@ -51,9 +51,9 @@
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Template Pesan</label>
                         <textarea wire:model="pesanTemplate" rows="3"
-                                  class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 text-sm text-gray-400/60"
+                                  class="w-full px-4 py-2.5 border border-gray-900 rounded-xl focus:ring-2 focus:ring-cyan-500 text-sm text-gray-900/100"
                                   placeholder="Template pesan..."></textarea>
-                        <p class="text-xs text-gray-400 mt-1">
+                        <p class="text-xs text-gray-900 mt-1">
                             Variabel: <code>{jenis_ujian}</code> <code>{judul}</code> <code>{deadline}</code>
                         </p>
                     </div>
@@ -67,7 +67,9 @@
                             @foreach($reminders as $index => $reminder)
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                                 <div class="flex items-center gap-3">
-                                    <span class="w-8 h-8 {{ $reminder['type'] === 'daily' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700' }} rounded-full flex items-center justify-center text-sm font-bold">📅</span>
+                                    <span class="w-8 h-8 {{ $reminder['type'] === 'daily' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700' }} rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </span>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ $reminder['label'] }}</p>
                                         <p class="text-xs text-gray-500">
@@ -142,7 +144,10 @@
         <div>
             <!-- Preview -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-                <h3 class="text-sm font-semibold text-gray-700 mb-4">📋 Preview Timeline</h3>
+                <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    Preview Timeline
+                </h3>
                 <div class="space-y-3">
                     <div class="flex items-start space-x-3">
                         <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
@@ -178,7 +183,10 @@
 
             <!-- Statistik -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-sm font-semibold text-gray-700 mb-4">📊 Statistik</h3>
+                <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    Statistik
+                </h3>
                 @php
                     $jurusanId = auth()->user()->jurusan_id;
                     $totalReminders = \App\Models\Reminder::whereHas('pendaftaran', function($q) use ($jurusanId) {

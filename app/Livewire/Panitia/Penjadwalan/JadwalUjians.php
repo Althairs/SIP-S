@@ -9,7 +9,10 @@ use App\Models\Pendaftaran;
 use App\Models\UjianPenguji;
 use App\Models\Ruangan;
 use App\Models\PengaturanJadwal;
+use App\Services\JadwalConflictService;
+use App\Jobs\SendWhatsAppNotification;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class JadwalUjians extends Component
 {
@@ -26,9 +29,15 @@ class JadwalUjians extends Component
 
     public $showScheduleModal = false;
     public $showBatchModal = false;
+    public $showDetailModal = false;
     public $selectedPendaftaran;
     public $selectedIds = [];
     public $selectAll = false;
+
+    // Persistent notification
+    public $notificationMessage = '';
+    public $notificationType = ''; // 'success' or 'error'
+    public $showNotification = false;
 
     public $tanggal_ujian;
     public $tanggal_minimal;
@@ -148,7 +157,7 @@ class JadwalUjians extends Component
     public function openBatchModal()
     {
         if (empty($this->selectedIds)) {
-            session()->flash('error', 'Pilih minimal satu pendaftaran.');
+            $this->showNotification('Pilih minimal satu pendaftaran.', 'error');
             return;
         }
 
@@ -157,7 +166,7 @@ class JadwalUjians extends Component
             ->count();
 
         if ($notReady > 0) {
-            session()->flash('error', 'Beberapa pendaftaran belum siap.');
+            $this->showNotification('Beberapa pendaftaran belum siap.', 'error');
             return;
         }
 
@@ -179,6 +188,32 @@ class JadwalUjians extends Component
     public function closeBatchModal()
     {
         $this->showBatchModal = false;
+    }
+
+    public function openDetailModal($id)
+    {
+        $this->selectedPendaftaran = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])->findOrFail($id);
+        $this->showDetailModal = true;
+    }
+
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->selectedPendaftaran = null;
+    }
+
+    private function showNotification($message, $type = 'success')
+    {
+        $this->notificationMessage = $message;
+        $this->notificationType = $type;
+        $this->showNotification = true;
+    }
+
+    public function closeNotification()
+    {
+        $this->showNotification = false;
+        $this->notificationMessage = '';
+        $this->notificationType = '';
     }
 
     // Method auto generate
@@ -215,6 +250,9 @@ class JadwalUjians extends Component
         $jamMulai = $this->jamMulaiOptions[$sesiIndex] ?? '08:00';
         $tanggalUjian = Carbon::parse($this->tanggal_ujian . ' ' . $jamMulai);
 
+        $conflictService = new JadwalConflictService();
+        $conflictService->validateSchedule($this->selectedPendaftaran, $this->tanggal_ujian, $this->sesi, $this->ruangan);
+
         $this->selectedPendaftaran->update([
             'tanggal_ujian' => $tanggalUjian,
             'ruangan' => $this->ruangan,
@@ -222,6 +260,20 @@ class JadwalUjians extends Component
             'status' => 'dijadwalkan',
             'scheduled_at' => now(),
         ]);
+
+        // Send WA to Mahasiswa
+        if ($this->selectedPendaftaran->mahasiswa && $this->selectedPendaftaran->mahasiswa->nomor_hp) {
+            $msg = "Halo {$this->selectedPendaftaran->mahasiswa->name},\n\nJadwal ujian Anda telah ditetapkan:\nTanggal: {$tanggalUjian->format('d M Y H:i')}\nRuangan: {$this->ruangan}\n\nSilakan cek SIP-S untuk detailnya.";
+            SendWhatsAppNotification::dispatch($this->selectedPendaftaran->mahasiswa->nomor_hp, $msg);
+        }
+
+        // Send WA to Dosens
+        foreach ($this->selectedPendaftaran->pengujis as $dosenUjian) {
+            if ($dosenUjian->dosen && $dosenUjian->dosen->nomor_hp) {
+                $msgDosen = "Halo Bapak/Ibu {$dosenUjian->dosen->name},\n\nAnda dijadwalkan untuk menguji pada:\nTanggal: {$tanggalUjian->format('d M Y H:i')}\nMahasiswa: {$this->selectedPendaftaran->mahasiswa->name}\nRuangan: {$this->ruangan}\n\nSilakan cek SIP-S untuk detailnya.";
+                SendWhatsAppNotification::dispatch($dosenUjian->dosen->nomor_hp, $msgDosen);
+            }
+        }
 
         $sesiLabel = $this->labelSesiOptions[$sesiIndex] ?? 'Sesi ' . $this->sesi;
         session()->flash('success', 'Ujian dijadwalkan pada ' . $tanggalUjian->format('d M Y') . ', ' . $sesiLabel . ' (' . $jamMulai . ' - ' . ($this->jamSelesaiOptions[$sesiIndex] ?? 'selesai') . ').');
@@ -247,20 +299,59 @@ class JadwalUjians extends Component
         $jamMulai = $this->jamMulaiOptions[$sesiIndex] ?? '08:00';
         $tanggalUjian = Carbon::parse($this->tanggal_ujian . ' ' . $jamMulai);
 
-        $count = Pendaftaran::whereIn('id', $this->selectedIds)
+        $conflictService = new JadwalConflictService();
+        $pendaftarans = Pendaftaran::whereIn('id', $this->selectedIds)
             ->where('status', 'disetujui_kajur')
-            ->update([
-                'tanggal_ujian' => $tanggalUjian,
-                'ruangan' => $this->ruangan,
-                'sesi' => $this->sesi,
-                'status' => 'dijadwalkan',
-                'scheduled_at' => now(),
-            ]);
+            ->get();
+
+        $successCount = 0;
+        $errorMessages = [];
+
+        foreach ($pendaftarans as $pendaftaran) {
+            try {
+                $conflictService->validateSchedule($pendaftaran, $this->tanggal_ujian, $this->sesi, $this->ruangan);
+
+                $pendaftaran->update([
+                    'tanggal_ujian' => $tanggalUjian,
+                    'ruangan' => $this->ruangan,
+                    'sesi' => $this->sesi,
+                    'status' => 'dijadwalkan',
+                    'scheduled_at' => now(),
+                ]);
+
+                // Send WA to Mahasiswa
+                if ($pendaftaran->mahasiswa && $pendaftaran->mahasiswa->nomor_hp) {
+                    $msg = "Halo {$pendaftaran->mahasiswa->name},\n\nJadwal ujian Anda telah ditetapkan:\nTanggal: {$tanggalUjian->format('d M Y H:i')}\nRuangan: {$this->ruangan}\n\nSilakan cek SIP-S untuk detailnya.";
+                    SendWhatsAppNotification::dispatch($pendaftaran->mahasiswa->nomor_hp, $msg);
+                }
+
+                // Send WA to Dosens
+                foreach ($pendaftaran->pengujis as $dosenUjian) {
+                    if ($dosenUjian->dosen && $dosenUjian->dosen->nomor_hp) {
+                        $msgDosen = "Halo Bapak/Ibu {$dosenUjian->dosen->name},\n\nAnda dijadwalkan untuk menguji pada:\nTanggal: {$tanggalUjian->format('d M Y H:i')}\nMahasiswa: {$pendaftaran->mahasiswa->name}\nRuangan: {$this->ruangan}\n\nSilakan cek SIP-S untuk detailnya.";
+                        SendWhatsAppNotification::dispatch($dosenUjian->dosen->nomor_hp, $msgDosen);
+                    }
+                }
+
+                $successCount++;
+            } catch (ValidationException $e) {
+                $msg = $e->validator->errors()->first('tanggal_ujian') ?: 'Gagal dijadwalkan (konflik).';
+                $errorMessages[] = "{$pendaftaran->mahasiswa->name}: {$msg}";
+            }
+        }
 
         $this->selectedIds = [];
         $this->selectAll = false;
 
-        session()->flash('success', "$count ujian dijadwalkan pada " . $tanggalUjian->format('d M Y') . '.');
+        if ($successCount > 0) {
+            $this->showNotification("$successCount ujian berhasil dijadwalkan pada " . $tanggalUjian->format('d M Y') . '.', 'success');
+        }
+
+        if (!empty($errorMessages)) {
+            $errorText = "Gagal menjadwalkan " . count($errorMessages) . " ujian: " . implode(" | ", $errorMessages);
+            $this->showNotification($errorText, 'error');
+        }
+
         $this->closeBatchModal();
     }
 
@@ -307,7 +398,7 @@ class JadwalUjians extends Component
     private function getSiapList()
     {
         $jurusanId = auth()->user()->jurusan_id;
-        return Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen'])
+        return Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where('jurusan_id', $jurusanId)
             ->where('status', 'disetujui_kajur')
             ->when($this->search, function ($query) {
@@ -330,7 +421,7 @@ class JadwalUjians extends Component
     {
         $jurusanId = auth()->user()->jurusan_id;
 
-        $query = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen'])
+        $query = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where('jurusan_id', $jurusanId);
 
         switch ($this->tab) {

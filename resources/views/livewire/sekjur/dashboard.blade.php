@@ -20,13 +20,17 @@
                     <div class="text-xs text-gray-500">Disetujui Panitia</div>
                     <div class="text-2xl font-bold text-gray-900">{{ $stats['disetujui_panitia'] ?? 0 }}</div>
                 </div>
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <div class="text-xs text-gray-500">Dijadwalkan</div>
-                    <div class="text-2xl font-bold text-gray-900">{{ $stats['dijadwalkan'] ?? 0 }}</div>
+                <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <div class="text-xs text-orange-600">Menunggu Penguji</div>
+                    <div class="text-2xl font-bold text-orange-700">{{ $stats['menunggu_penguji'] ?? 0 }}</div>
                 </div>
             </div>
 
-            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="text-xs text-gray-500">Dijadwalkan</div>
+                    <div class="text-xl font-semibold text-gray-900">{{ $stats['dijadwalkan'] ?? 0 }}</div>
+                </div>
                 <div class="p-4 bg-gray-50 rounded-lg">
                     <div class="text-xs text-gray-500">Selesai</div>
                     <div class="text-xl font-semibold text-gray-900">{{ $stats['selesai'] ?? 0 }}</div>

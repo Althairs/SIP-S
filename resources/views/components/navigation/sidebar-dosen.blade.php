@@ -9,13 +9,7 @@
                     </svg>
                 </button>
                 <a href="{{ route('dosen.dashboard') }}" class="flex ms-2">
-                    <div
-                        class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                    </div>
+                    <img src="{{ asset('images/logo_ung.png') }}" class="h-8" />
                     <span class="self-center text-lg font-semibold text-gray-800 ms-3">SIP-<span
                             class="text-indigo-700">S</span> <span class="text-xs text-gray-500">| Dosen</span></span>
                 </a>

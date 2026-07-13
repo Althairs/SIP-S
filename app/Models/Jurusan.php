@@ -15,10 +15,14 @@ class Jurusan extends Model
         'nama_jurusan',
         'deskripsi',
         'is_active',
+        'default_kuota_pembimbing',
+        'default_kuota_penguji',
+        'kuota_last_reset_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'kuota_last_reset_at' => 'datetime',
     ];
 
     /**

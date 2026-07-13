@@ -47,7 +47,7 @@
         <div class="space-y-3">
             @foreach($kepakarans as $k)
             <div class="flex items-center space-x-4 p-3 rounded-xl {{ $k->is_active ? 'bg-gray-50' : 'bg-red-50 opacity-60' }}">
-                <div class="w-12 h-12 bg-cyan-{{ min($k->hierarki_level * 100, 900) }} rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                <div class="w-12 h-12 bg-cyan-{{ min($k->hierarki_level * 100, 900) }} rounded-full flex items-center justify-center text-black font-bold text-lg flex-shrink-0">
                     {{ $k->hierarki_level }}
                 </div>
                 <div class="flex-1">

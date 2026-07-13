@@ -3,6 +3,7 @@
 namespace App\Livewire\Kajur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Pendaftaran;
 
@@ -10,10 +11,11 @@ class VerifikasiSeminarProposal extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
-    public $statusFilter = '';
 
-    protected $queryString = ['search', 'statusFilter'];
+    #[Url(history: true)]
+    public $statusFilter = '';
 
     public function updatingSearch()
     {

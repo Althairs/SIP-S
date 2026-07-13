@@ -2,57 +2,83 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Models\Prodi;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\User;
-use App\Models\Prodi;
+use Livewire\Attributes\Url;
 // use Illuminate\Container\Attributes\Auth;
-use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
 
 class PanitiaIndex extends Component
 {
     use WithPagination;
 
+    private const PANITIA_ROLES = [
+        'panitia_verifikasi',
+        'panitia_penjadwalan',
+        'panitia_administrasi',
+    ];
+
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $prodiFilter = '';
+
+    #[Url(history: true)]
     public $roleFilter = '';
+
+    #[Url(history: true)]
     public $statusFilter = '';
+
     public $showModal = false;
+
     public $editMode = false;
+
     public $userId;
 
     public $name = '';
+
     public $email = '';
+
     public $password = '';
+
     public $password_confirmation = '';
+
     public $nip = '';
+
     public $role = '';
+
     public $prodi_id = '';
+
     public $nomor_hp = '';
+
     public $alamat = '';
+
     public $is_active = true;
 
     public array $summary = [];
 
     protected $queryString = ['search', 'prodiFilter', 'roleFilter', 'statusFilter'];
 
-    public function updatingSearch()
+    public function updatedSearch()
     {
         $this->resetPage();
     }
 
-    public function updatingProdiFilter()
+    public function updatedProdiFilter()
     {
         $this->resetPage();
     }
 
-    public function updatingRoleFilter()
+    public function updatedRoleFilter()
     {
         $this->resetPage();
     }
 
-    public function updatingStatusFilter()
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }
@@ -98,16 +124,16 @@ class PanitiaIndex extends Component
     {
         $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $this->userId],
-            'role' => ['required', 'string', Rule::in(['panitia_verifikasi', 'panitia_penjadwalan', 'panitia_administrasi'])],
-            'nip' => ['required', 'string', 'max:20', 'unique:users,nip,' . $this->userId],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$this->userId],
+            'role' => ['required', 'string', Rule::in(self::PANITIA_ROLES)],
+            'nip' => ['required', 'string', 'max:20', 'unique:users,nip,'.$this->userId],
             'prodi_id' => ['nullable', 'exists:prodis,id'],
             'nomor_hp' => ['nullable', 'string', 'max:15'],
             'alamat' => ['nullable', 'string'],
             'is_active' => ['boolean'],
         ];
 
-        if (!$this->editMode) {
+        if (! $this->editMode) {
             $rules['password'] = ['required', 'string', 'min:8', 'confirmed'];
         } else {
             $rules['password'] = ['nullable', 'string', 'min:8', 'confirmed'];
@@ -160,7 +186,7 @@ class PanitiaIndex extends Component
         abort_unless(auth()->user()->can('edit_panitia'), 403);
 
         $user = User::findOrFail($id);
-        $user->update(['is_active' => !$user->is_active]);
+        $user->update(['is_active' => ! $user->is_active]);
         session()->flash('success', 'Status panitia berhasil diubah.');
     }
 
@@ -176,7 +202,7 @@ class PanitiaIndex extends Component
     {
         $jurusanId = Auth::user()->jurusan_id;
 
-        $baseQuery = User::role(['panitia_verifikasi', 'panitia_penjadwalan', 'panitia_administrasi'])
+        $baseQuery = User::role(self::PANITIA_ROLES)
             ->where('jurusan_id', $jurusanId);
 
         $this->summary = [
@@ -193,7 +219,7 @@ class PanitiaIndex extends Component
         ];
 
         $query = (clone $baseQuery)
-            ->with('prodi');
+            ->with(['prodi', 'roles']);
 
         if ($this->roleFilter) {
             $query->whereHas('roles', function ($q) {
@@ -204,9 +230,9 @@ class PanitiaIndex extends Component
         $panitias = $query
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%')
-                      ->orWhere('nip', 'like', '%' . $this->search . '%');
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%')
+                        ->orWhere('nip', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->prodiFilter, function ($query) {

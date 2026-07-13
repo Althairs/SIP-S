@@ -3,6 +3,7 @@
 namespace App\Livewire\Kajur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Kepakaran as ModelKepakaran;
 
@@ -10,6 +11,7 @@ class Kepakaran extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
     public $showModal = false;
     public $editMode = false;
@@ -19,8 +21,6 @@ class Kepakaran extends Component
     public $hierarki_level = 1;
     public $deskripsi = '';
     public $is_active = true;
-
-    protected $queryString = ['search'];
 
     public function updatingSearch()
     {

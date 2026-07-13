@@ -9,13 +9,7 @@
                     </svg>
                 </button>
                 <a href="{{ route('panitia.penjadwalan.dashboard') }}" class="flex ms-2">
-                    <div
-                        class="w-8 h-8 bg-gradient-to-br from-cyan-600 to-cyan-700 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
+                    <img src="{{ asset('images/logo_ung.png') }}" class="h-8" />
                     <span class="self-center text-lg font-semibold text-gray-800 ms-3">SIP-<span
                             class="text-cyan-700">S</span> <span class="text-xs text-gray-500">|
                             Penjadwalan</span></span>

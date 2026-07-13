@@ -1,0 +1,11 @@
+buatkan issue.md, berisi planning memebuat ini:
+
+- ganti layout semua modal menjadi 
+- gunakan context7
+
+jangan terlalu low level atau detail
+
+cukup instruksikan secara high level
+
+nanti document planning nya akan digunakan oleh proggramer atau model yang lebih murah untuk di implementasikan
+

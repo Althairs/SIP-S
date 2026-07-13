@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Jurusan;
 
@@ -10,10 +11,11 @@ class JurusanIndex extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
-    public $filterStatus = '';
 
-    protected $queryString = ['search', 'filterStatus'];
+    #[Url(history: true)]
+    public $filterStatus = '';
 
     public function updatingSearch()
     {

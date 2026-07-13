@@ -42,19 +42,19 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <select wire:model="roleFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <select wire:model="roleFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-amber-500 focus:border-amber-500">
                     <option value="">Semua Role</option>
                     <option value="panitia_verifikasi">Panitia Verifikasi</option>
                     <option value="panitia_penjadwalan">Panitia Penjadwalan</option>
                     <option value="panitia_administrasi">Panitia Administrasi</option>
                 </select>
-                <select wire:model="prodiFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <select wire:model="prodiFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-amber-500 focus:border-amber-500">
                     <option value="">Semua Prodi</option>
                     @foreach($prodis as $prodi)
                         <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
-                <select wire:model.change="statusFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <select wire:model.change="statusFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-amber-500 focus:border-amber-500">
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
                     <option value="0">Nonaktif</option>
@@ -95,10 +95,18 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-700">{{ $panitia->nip ?? '-' }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ $panitia->nip ?? '-' }}</td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 capitalize">
-                                {{ str_replace('_', ' ', $panitia->getRoleNames()->first() ?? '-') }}
+                            @php
+                                $roleName = $panitia->getRoleNames()->first();
+                                $roleBadge = [
+                                    'panitia_verifikasi' => 'bg-amber-100 text-amber-800',
+                                    'panitia_penjadwalan' => 'bg-cyan-100 text-cyan-800',
+                                    'panitia_administrasi' => 'bg-emerald-100 text-emerald-800',
+                                ][$roleName] ?? 'bg-gray-900 text-gray-900';
+                            @endphp
+                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ $roleBadge }} capitalize">
+                                {{ str_replace('_', ' ', $roleName ?? '-') }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $panitia->nomor_hp ?? '-' }}</td>
@@ -124,7 +132,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">Tidak ada data panitia</td>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">Tidak ada data panitia</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -177,7 +185,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Role Panitia <span class="text-red-500">*</span></label>
-                            <select wire:model="role" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400 @error('role') border-red-500 @enderror {{ !$role ? 'text-gray-400' : 'text-gray-900' }}">
+                            <select wire:model="role" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-900 @error('role') border-red-500 @enderror {{ !$role ? 'text-gray-900' : 'text-gray-900' }}">
                                 <option value="">Pilih Role Panitia</option>
                                 <option value="panitia_verifikasi">Panitia Verifikasi</option>
                                 <option value="panitia_penjadwalan">Panitia Penjadwalan</option>

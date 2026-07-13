@@ -40,6 +40,12 @@ class Settings extends Component
         session()->flash('success', 'Password berhasil diperbarui.');
     }
 
+    public function resetForm()
+    {
+        $this->reset(['current_password', 'password', 'password_confirmation']);
+        $this->resetErrorBag();
+    }
+
     public function render()
     {
         return view('livewire.admin.settings')->layout('components.layouts.app-auth');

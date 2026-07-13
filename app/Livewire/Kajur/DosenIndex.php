@@ -3,20 +3,26 @@
 namespace App\Livewire\Kajur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\User;
 use App\Models\Prodi;
 use App\Models\BidangKeahlian;
 use App\Models\Kepakaran;
-use App\Models\KuotaDosen;
+use App\Services\KuotaDosenService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DosenIndex extends Component
 {
     use WithPagination, AuthorizesRequests;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $prodiFilter = '';
+
+    #[Url(history: true)]
     public $statusFilter = '';
     public $showModal = false;
     public $showImportModal = false;
@@ -54,7 +60,17 @@ class DosenIndex extends Component
         $this->listKepakaran = Kepakaran::active()->orderBy('hierarki_level')->get();
     }
 
-    public function updatingSearch()
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedProdiFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }
@@ -193,14 +209,7 @@ class DosenIndex extends Component
             }
 
             // Buat kuota default
-            KuotaDosen::create([
-                'dosen_id' => $user->id,
-                'jurusan_id' => $jurusanId,
-                'kuota_pembimbing' => 5,
-                'kuota_penguji' => 10,
-                'terpakai_pembimbing' => 0,
-                'terpakai_penguji' => 0,
-            ]);
+            app(KuotaDosenService::class)->ensureKuotaForDosen($user);
 
             session()->flash('success', 'Dosen berhasil ditambahkan.');
         }

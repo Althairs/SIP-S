@@ -90,7 +90,7 @@ class PendaftaranForm extends Form
 
         // Prevent duplicate registration for the same jenis_ujian
         if (!$this->pendaftaran) {
-            $activeStatuses = ['draft', 'pending', 'disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan', 'revisi'];
+            $activeStatuses = ['pending', 'disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan', 'revisi'];
             $exists = Pendaftaran::where('mahasiswa_id', Auth::id())
                 ->where('jenis_ujian', $this->jenis_ujian)
                 ->whereIn('status', $activeStatuses)
@@ -99,6 +99,24 @@ class PendaftaranForm extends Form
             if ($exists) {
                 throw ValidationException::withMessages([
                     'jenis_ujian' => ['Anda sudah memiliki pendaftaran aktif untuk jenis ujian ini.'],
+                ]);
+            }
+
+            // Prevent registration for completed exam type
+            $completed = Pendaftaran::where('mahasiswa_id', Auth::id())
+                ->where('jenis_ujian', $this->jenis_ujian)
+                ->where('status', 'selesai')
+                ->exists();
+
+            if ($completed) {
+                $labels = [
+                    'seminar_proposal' => 'Seminar Proposal',
+                    'seminar_hasil' => 'Seminar Hasil',
+                    'sidang_skripsi' => 'Sidang Skripsi',
+                ];
+                $jenisLabel = $labels[$this->jenis_ujian] ?? $this->jenis_ujian;
+                throw ValidationException::withMessages([
+                    'jenis_ujian' => ["Anda sudah pernah mendaftar dan menyelesaikan ujian jenis {$jenisLabel}. Silakan memilih jenis ujian yang berbeda."],
                 ]);
             }
         }

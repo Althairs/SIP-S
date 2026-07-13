@@ -39,11 +39,29 @@ class UserIndex extends Component
         }
     }
 
-    public function updated($property)
+    public function updatedSearch()
     {
-        if (in_array($property, ['search', 'jurusanFilter', 'prodiFilter', 'roleFilter', 'statusFilter'])) {
-            $this->resetPage();
-        }
+        $this->resetPage();
+    }
+
+    public function updatedJurusanFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedProdiFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedRoleFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
+    {
+        $this->resetPage();
     }
 
     public function toggleStatus($userId)

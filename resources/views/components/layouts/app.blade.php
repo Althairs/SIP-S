@@ -9,6 +9,7 @@
     <meta name="description" content="Sistem Informasi Pengelolaan Skripsi Fakultas Pertanian">
 
     <!-- Fonts -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
 

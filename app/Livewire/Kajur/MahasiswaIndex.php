@@ -3,22 +3,35 @@
 namespace App\Livewire\Kajur;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\User;
 use App\Models\Prodi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
+use Livewire\WithFileUploads;
+
 class MahasiswaIndex extends Component
 {
-    use WithPagination, AuthorizesRequests;
+    use WithPagination, AuthorizesRequests, WithFileUploads;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $prodiFilter = '';
+
+    #[Url(history: true)]
     public $angkatanFilter = '';
+
+    #[Url(history: true)]
     public $statusFilter = '';
     public $showModal = false;
+    public $showImportView = false;
+    public $file;
     public $editMode = false;
+
     public $userId;
 
     public $name = '';
@@ -34,7 +47,22 @@ class MahasiswaIndex extends Component
 
     protected $queryString = ['search', 'prodiFilter', 'angkatanFilter', 'statusFilter'];
 
-    public function updatingSearch()
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedProdiFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedAngkatanFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }
@@ -158,10 +186,63 @@ class MahasiswaIndex extends Component
         session()->flash('success', 'Mahasiswa berhasil dihapus.');
     }
 
-    public function exportExcel()
+    public function toggleImportView()
     {
-        session()->flash('info', 'Fitur export akan segera tersedia.');
+        $this->showImportView = !$this->showImportView;
+        $this->file = null;
+        $this->resetErrorBag();
     }
+
+    public function importExcel()
+    {
+        $this->validate([
+            'file' => 'required|file|mimes:xlsx,xls|max:10240',
+        ], [
+            'file.required' => 'Silakan pilih berkas Excel terlebih dahulu.',
+            'file.mimes' => 'Berkas harus berupa file Excel (.xlsx atau .xls).',
+            'file.max' => 'Ukuran berkas tidak boleh melebihi 10MB.',
+        ]);
+
+        try {
+            $filePath = $this->file->getRealPath();
+
+            // Get headings from first row using HeadingRowImport
+            $headings = (new \Maatwebsite\Excel\HeadingRowImport)->toArray($filePath);
+            $excelHeaders = isset($headings[0][0]) ? array_map('trim', array_map('strtolower', $headings[0][0])) : [];
+
+            // Required columns list
+            $requiredColumns = ['no', 'nama', 'nim', 'fakultas', 'prodi', 'status awal', 'semester awal terdaftar', 'status aktif'];
+
+            $missingColumns = [];
+            foreach ($requiredColumns as $col) {
+                if ($col === 'prodi') {
+                    // Check for prodi, program studi or program_studi
+                    if (!in_array('prodi', $excelHeaders) && !in_array('program studi', $excelHeaders) && !in_array('program_studi', $excelHeaders)) {
+                        $missingColumns[] = 'Prodi / Program Studi';
+                    }
+                } else {
+                    $slugCol = str_replace(' ', '_', $col);
+                    if (!in_array($col, $excelHeaders) && !in_array($slugCol, $excelHeaders)) {
+                        $missingColumns[] = ucwords($col);
+                    }
+                }
+            }
+
+            if (!empty($missingColumns)) {
+                $this->addError('file', 'Format kolom berkas Excel tidak sesuai. Pastikan file mengandung kolom: No, Nama, NIM, Fakultas, Prodi, Status Awal, Semester Awal Terdaftar, dan Status Aktif. Kolom yang tidak ditemukan: ' . implode(', ', $missingColumns));
+                return;
+            }
+
+            $jurusanId = Auth::user()->jurusan_id;
+            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\MahasiswaImport($jurusanId), $filePath);
+
+            session()->flash('success', 'Data mahasiswa berhasil di-import.');
+            $this->toggleImportView();
+        } catch (\Exception $e) {
+            $this->addError('file', 'Terjadi kesalahan saat mengimpor file: ' . $e->getMessage());
+        }
+    }
+
 
     public function render()
     {

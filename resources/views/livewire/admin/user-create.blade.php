@@ -39,8 +39,6 @@
                                 wire:model.live="role"
                                 @class([
                                     'w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500',
-                                    'text-gray-400' => !$role,
-                                    'text-gray-900' => $role,
                                     'border-red-500' => $errors->has('role'),
                                 ])>
                             <option value="">Pilih Role</option>
@@ -73,34 +71,13 @@
                         </div>
                     </div>
 
-                    <!-- Password -->
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                                Password {{ $editMode ? '' : '*' }}
-                            </label>
-                            <input type="password" id="password" wire:model="password"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 @error('password') border-red-500 @enderror"
-                                   placeholder="{{ $editMode ? 'Kosongkan jika tidak diubah' : 'Masukkan password' }}">
-                            @error('password') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">
-                                Konfirmasi Password {{ $editMode ? '' : '*' }}
-                            </label>
-                            <input type="password" id="password_confirmation" wire:model="password_confirmation"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400"
-                                   placeholder="Konfirmasi password">
-                        </div>
-                    </div>
-
-                    <!-- NIP/NIM based on role -->
+                     <!-- NIP/NIM based on role -->
                     @if(in_array($role, ['kajur', 'sekjur', 'panitia', 'dosen']))
                     <div>
                         <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">
                             NIP <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="nip" wire:model="nip"
+                        <input type="text" id="nip" wire:model.live="nip"
                                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('nip') border-red-500 @enderror"
                                placeholder="Masukkan NIP">
                         @error('nip') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
@@ -112,12 +89,80 @@
                         <label for="nim" class="block text-sm font-medium text-gray-700 mb-1">
                             NIM <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="nim" wire:model="nim"
+                        <input type="text" id="nim" wire:model.live="nim"
                                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('nim') border-red-500 @enderror"
                                placeholder="Masukkan NIM">
                         @error('nim') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     @endif
+
+                    <!-- Password dengan fitur mata -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                                Password {{ $editMode ? '' : '*' }}
+                                @if(!$editMode && ($role === 'mahasiswa' || $role === 'dosen'))
+                                <span class="text-xs text-gray-500 font-normal">
+                                    (Default: {{ $role === 'mahasiswa' ? 'NIM' : 'NIP' }})
+                                </span>
+                                @endif
+                            </label>
+                            <div class="relative" x-data="{ show: false }">
+                                <input
+                                    :type="show ? 'text' : 'password'"
+                                    id="password"
+                                    wire:model="password"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 @error('password') border-red-500 @enderror pr-12"
+                                    placeholder="{{ $editMode ? 'Kosongkan jika tidak diubah' : 'Masukkan password' }}"
+                                >
+                                <button
+                                    type="button"
+                                    @click="show = !show"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                >
+                                    <svg x-show="show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.124-2.203m2.825-2.825A10.05 10.05 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.977 9.977 0 01-1.124 2.203m-2.825 2.825A10.05 10.05 0 0112 19z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            @error('password') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">
+                                Konfirmasi Password {{ $editMode ? '' : '*' }}
+                            </label>
+                            <div class="relative" x-data="{ show: false }">
+                                <input
+                                    :type="show ? 'text' : 'password'"
+                                    id="password_confirmation"
+                                    wire:model="password_confirmation"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 pr-12"
+                                    placeholder="Konfirmasi password"
+                                >
+                                <button
+                                    type="button"
+                                    @click="show = !show"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                >
+                                    <svg x-show="show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.124-2.203m2.825-2.825A10.05 10.05 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.977 9.977 0 01-1.124 2.203m-2.825 2.825A10.05 10.05 0 0112 19z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
 
                     <!-- Jurusan & Prodi -->
                     <div class="grid md:grid-cols-2 gap-4">
@@ -126,7 +171,7 @@
                                 Jurusan
                             </label>
                             <select id="jurusan_id" wire:model="jurusan_id"
-                                    @class(["w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500", 'text-gray-400' => !$jurusan_id, 'text-gray-900' => $jurusan_id])>
+                                    @class(["w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"])>
                                 <option value="">Pilih Jurusan</option>
                                 @foreach($jurusans as $jurusan)
                                 <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
@@ -138,7 +183,7 @@
                                 Program Studi
                             </label>
                             <select id="prodi_id" wire:model="prodi_id"
-                                    @class(["w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500", 'text-gray-400' => !$prodi_id, 'text-gray-900' => $prodi_id])>
+                                    @class(["w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"])>
                                 <option value="">Pilih Prodi</option>
                                 @foreach($prodis as $prodi)
                                 <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }} ({{ $prodi->jurusan->nama_jurusan ?? '' }})</option>

@@ -1,11 +1,23 @@
 buatkan issue.md, berisi planning memebuat ini:
 
--di bagian kajur: data panitia yg tampil hanya panitia verifikasi sedangkan role lain seperti panitia penjadwalan tidak tampil buat agar semua role tampil
--perbarui juga ui untuk kajur, mahasiswa, Dosen, Panitia penjadwalan, Verifikasi, Administrasi
--gunakan context7
+- buat di bagian mahasiswa agar bisa upload file revisi proposal/hasil/sidang dan akan menampilkan status diperiksa/di setujui/butuh revisi
+- buat di bagian dosen (penguji dan pembimbing) agar bisa melihat file revisi mahasiswa nya
+- buatkan library untuk menggunakan wa gateaway agar bisa memakai lebih dari 1
+- gunakan wa gateaway Fonnte dan netflie whatsapp cloud api
+- super admin bisa bebas mengganti metode pesannya dari library
+- pesan yang di kirim 
+  1 saat mahasiswa mendapat jadwal ujian
+  2 saat dosen mendapat jadwal menguji
+  3 saat panitia verifikasi dapat pendaftar ujian
+  4 saat sekjur dapat permintaan pembuat penguji dari panitia verfikasi
+  5 saat kajur mendapat persetujian penguji oleh sekjur
+  6 saat panitia penjadwalan dapat persetujuan oleh kajur
+  7 saat mahasiswa menerima notif reminder revisi 
+- gunakan context7
 
 jangan terlalu low level atau detail
 
 cukup instruksikan secara high level
 
 nanti document planning nya akan digunakan oleh proggramer atau model yang lebih murah untuk di implementasikan
+

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\PdfController;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\JurusanIndex;
 use App\Livewire\Admin\JurusanCreate;
@@ -16,6 +17,7 @@ use App\Livewire\Admin\RoleCreate;
 use App\Livewire\Admin\RoleEdit;
 use App\Livewire\Admin\Profile;
 use App\Livewire\Admin\Settings;
+use App\Livewire\Admin\NotificationSettings;
 // Kajur Components
 use App\Livewire\Kajur\Dashboard as KajurDashboard;
 use App\Livewire\Kajur\DosenIndex;
@@ -41,6 +43,7 @@ use App\Livewire\Mahasiswa\PendaftaranCreate;
 use App\Livewire\Mahasiswa\JadwalUjian;
 use App\Livewire\Mahasiswa\Nilai;
 use App\Livewire\Mahasiswa\Profile as MahasiswaProfile;
+use App\Livewire\Mahasiswa\DaftarRevisi as MahasiswaDaftarRevisi;
 
 // Panitia
 use App\Livewire\Panitia\Verifikasi\Dashboard as PanitiaVerifikasiDashboard;
@@ -51,6 +54,9 @@ use App\Livewire\Panitia\Penjadwalan\SettingRuangan;
 use App\Livewire\Panitia\Penjadwalan\SettingWaktu;
 // use App\Livewire\Panitia\Penjadwalan\GeneratePenguji;
 use App\Livewire\Panitia\Administrasi\Dashboard as PanitiaAdminDashboard;
+use App\Livewire\Panitia\Administrasi\Laporan as PanitiaAdminLaporan;
+use App\Livewire\Panitia\Administrasi\KelolaNilaiBerkas as PanitiaAdminKelolaNilaiBerkas;
+use App\Http\Controllers\Panitia\LaporanController as PanitiaLaporanController;
 
 // Dosen
 use App\Livewire\Dosen\Dashboard as DosenDashboard;
@@ -62,6 +68,9 @@ use App\Livewire\Dosen\JadwalMenguji;
 use App\Livewire\Dosen\Profile as DosenProfile;
 use App\Livewire\Dosen\InputNilaiSistem;
 use App\Livewire\Dosen\UploadNilaiBerkas;
+
+//test wa
+use App\Livewire\WhatsAppTest;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +85,15 @@ Route::get('/beranda', [PublicController::class, 'index'])->name('beranda');
 Route::get('/jadwal', [PublicController::class, 'jadwal'])->name('jadwal');
 Route::get('/wire', [PublicController::class, 'wire'])->name('wire');
 
+// PDF Guide Routes
+Route::get('/panduan/mahasiswa', [PdfController::class, 'mahasiswa'])->name('pdf.mahasiswa');
+Route::get('/panduan/dosen', [PdfController::class, 'dosen'])->name('pdf.dosen');
+Route::get('/panduan/panitia-verifikasi', [PdfController::class, 'panitiaVerifikasi'])->name('pdf.panitia-verifikasi');
+Route::get('/panduan/panitia-penjadwalan', [PdfController::class, 'panitiaPenjadwalan'])->name('pdf.panitia-penjadwalan');
+Route::get('/panduan/kajur', [PdfController::class, 'kajur'])->name('pdf.kajur');
+Route::get('/panduan/sekjur', [PdfController::class, 'sekjur'])->name('pdf.sekjur');
+
+Route::get('/whatsapp-test', WhatsAppTest::class)->name('whatsapp.test');
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
@@ -124,6 +142,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
         Route::get('/profile', Profile::class)->name('profile');
         Route::get('/settings', Settings::class)->name('settings');
+        Route::get('/notification-settings', NotificationSettings::class)->name('notification-settings');
     });
 
     /*
@@ -210,6 +229,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         // Jadwal Ujian
         Route::get('/jadwal', JadwalUjian::class)->name('jadwal');
 
+        // Revisi
+        Route::get('/revisi', MahasiswaDaftarRevisi::class)->name('revisi');
+
         // Nilai
         Route::get('/nilai', Nilai::class)->name('nilai');
 
@@ -248,6 +270,9 @@ Route::middleware(['auth', 'active'])->group(function () {
     */
     Route::middleware(['role:panitia_administrasi'])->prefix('panitia/administrasi')->name('panitia.administrasi.')->group(function () {
         Route::get('/', PanitiaAdminDashboard::class)->name('dashboard');
+        Route::get('/nilai-berkas', PanitiaAdminKelolaNilaiBerkas::class)->name('nilai-berkas');
+        Route::get('/laporan', PanitiaAdminLaporan::class)->name('laporan');
+        Route::get('/laporan/{jenis}/download', [PanitiaLaporanController::class, 'download'])->name('laporan.download');
         Route::get('/profile', Profile::class)->name('profile');
     });
 

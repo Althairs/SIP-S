@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class LoginRequest extends FormRequest
 {
@@ -27,8 +28,18 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'login' => ['required', 'string'],
             'password' => ['required', 'string'],
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     */
+    public function attributes(): array
+    {
+        return [
+            'login' => 'Email / NIM / NIP',
         ];
     }
 
@@ -41,23 +52,37 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $credentials = $this->only('email', 'password');
+        $login = $this->input('login');
+        $password = $this->input('password');
+        $remember = $this->boolean('remember');
 
-        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
+        // Cari user berdasarkan email, NIM, atau NIP
+        $user = User::where('email', $login)
+            ->orWhere('nim', $login)
+            ->orWhere('nip', $login)
+            ->first();
+
+        if (!$user) {
             RateLimiter::hit($this->throttleKey());
-
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'login' => trans('auth.failed'),
+            ]);
+        }
+
+        // Attempt login dengan email
+        if (!Auth::attempt(['email' => $user->email, 'password' => $password], $remember)) {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'login' => trans('auth.failed'),
             ]);
         }
 
         $user = Auth::user();
-        if ($user && ! $user->is_active) {
+        if ($user && !$user->is_active) {
             Auth::logout();
             RateLimiter::hit($this->throttleKey());
-
             throw ValidationException::withMessages([
-                'email' => 'Akun Anda tidak aktif. Silakan hubungi administrator.',
+                'login' => 'Akun Anda tidak aktif. Silakan hubungi administrator.',
             ]);
         }
 
@@ -71,7 +96,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -80,7 +105,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'login' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -92,6 +117,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('login')) . '|' . $this->ip());
     }
 }

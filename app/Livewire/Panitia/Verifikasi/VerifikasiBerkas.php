@@ -3,6 +3,7 @@
 namespace App\Livewire\Panitia\Verifikasi;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Pendaftaran;
 
@@ -10,12 +11,13 @@ class VerifikasiBerkas extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public $search = '';
+
+    #[Url(history: true)]
     public $statusFilter = 'pending';
     public $showDetailModal = false;
     public $selectedPendaftaran;
-
-    protected $queryString = ['search', 'statusFilter'];
 
     public function mount()
     {

@@ -2,22 +2,30 @@
 
 namespace App\Livewire\Panitia\Penjadwalan;
 
-use Livewire\Component;
 use App\Models\Pendaftaran;
 use App\Models\UjianPenguji;
-use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
     public $totalDisetujui;
+
     public $totalDijadwalkan;
+
     public $totalSelesai;
+
     public $totalPenguji;
+
     public $pendingApproval;
+
     public $jadwalHariIni;
+
     public $jadwalMingguIni;
+
+    public $siapDijadwalkan;
+
+    public $menungguMasaTunggu;
 
     public function mount()
     {
@@ -54,8 +62,21 @@ class Dashboard extends Component
             ->where('first_registered_at', '<=', now()->subDays(7))
             ->count();
 
+        $this->siapDijadwalkan = Pendaftaran::with(['mahasiswa', 'pembimbing1.dosen', 'pembimbing2.dosen'])
+            ->where('jurusan_id', $jurusanId)
+            ->where('status', 'disetujui_kajur')
+            ->where('first_registered_at', '<=', now()->subDays(7))
+            ->latest('approved_at')
+            ->take(5)
+            ->get();
+
+        $this->menungguMasaTunggu = Pendaftaran::where('jurusan_id', $jurusanId)
+            ->where('status', 'disetujui_kajur')
+            ->where('first_registered_at', '>', now()->subDays(7))
+            ->count();
+
         // Jadwal hari ini
-        $this->jadwalHariIni = Pendaftaran::with(['mahasiswa'])
+        $this->jadwalHariIni = Pendaftaran::with(['mahasiswa', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where('jurusan_id', $jurusanId)
             ->where('status', 'dijadwalkan')
             ->whereDate('tanggal_ujian', Carbon::today())
@@ -63,7 +84,7 @@ class Dashboard extends Component
             ->get();
 
         // Jadwal minggu ini
-        $this->jadwalMingguIni = Pendaftaran::with(['mahasiswa'])
+        $this->jadwalMingguIni = Pendaftaran::with(['mahasiswa', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where('jurusan_id', $jurusanId)
             ->where('status', 'dijadwalkan')
             ->whereBetween('tanggal_ujian', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])

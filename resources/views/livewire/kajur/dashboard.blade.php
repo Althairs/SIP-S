@@ -59,11 +59,25 @@
                     </svg>
                 </div>
             </div>
+            <div class="mt-4 grid grid-cols-1 gap-2">
+                <div class="flex items-center justify-between px-4 py-3 bg-amber-50 rounded-xl border border-amber-100">
+                    <span class="text-sm text-gray-600">Verifikasi</span>
+                    <span class="text-sm font-semibold text-amber-800">{{ $totalPanitiaVerifikasi }}</span>
+                </div>
+                <div class="flex items-center justify-between px-4 py-3 bg-cyan-50 rounded-xl border border-cyan-100">
+                    <span class="text-sm text-gray-600">Penjadwalan</span>
+                    <span class="text-sm font-semibold text-cyan-800">{{ $totalPanitiaPenjadwalan }}</span>
+                </div>
+                <div class="flex items-center justify-between px-4 py-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                    <span class="text-sm text-gray-600">Administrasi</span>
+                    <span class="text-sm font-semibold text-emerald-800">{{ $totalPanitiaAdministrasi }}</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Quick Links -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    {{-- <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Akses Cepat</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href="{{ route('kajur.data-master.dosen') }}" class="flex flex-col items-center p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition">
@@ -94,5 +108,5 @@
                 <span class="text-sm font-medium text-emerald-800">Profile</span>
             </a>
         </div>
-    </div>
+    </div> --}}
 </div>
