@@ -14,7 +14,7 @@ class BidangKeahlians extends Component
 
     #[Url(history: true)]
     public $search = '';
-    public $showModal = false;
+    public $showForm = false;
     public $editMode = false;
     public $bidangId;
 
@@ -28,14 +28,14 @@ class BidangKeahlians extends Component
         $this->resetPage();
     }
 
-    public function openCreateModal()
+    public function openCreate()
     {
         $this->resetForm();
         $this->editMode = false;
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function openEditModal($id)
+    public function openEdit($id)
     {
         $this->resetForm();
         $this->editMode = true;
@@ -47,16 +47,16 @@ class BidangKeahlians extends Component
         $this->deskripsi = $bidang->deskripsi;
         $this->is_active = $bidang->is_active;
 
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function closeModal()
+    public function closeForm()
     {
-        $this->showModal = false;
+        $this->showForm = false;
         $this->resetForm();
     }
 
-    private function resetForm()
+    public function resetForm()
     {
         $this->reset(['kode', 'nama_bidang', 'deskripsi', 'is_active', 'bidangId', 'editMode']);
     }
@@ -91,7 +91,7 @@ class BidangKeahlians extends Component
             session()->flash('success', 'Bidang keahlian berhasil ditambahkan.');
         }
 
-        $this->closeModal();
+        $this->closeForm();
     }
 
     public function toggleStatus($id)

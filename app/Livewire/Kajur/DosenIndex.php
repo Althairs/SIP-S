@@ -24,7 +24,7 @@ class DosenIndex extends Component
 
     #[Url(history: true)]
     public $statusFilter = '';
-    public $showModal = false;
+    public $showForm = false;
     public $showImportModal = false;
     public $editMode = false;
     public $userId;
@@ -75,16 +75,16 @@ class DosenIndex extends Component
         $this->resetPage();
     }
 
-    public function openCreateModal()
+    public function openCreate()
     {
         $this->authorize('create_dosen');
         $this->resetForm();
         $this->editMode = false;
-        $this->showModal = true;
+        $this->showForm = true;
 
     }
 
-    public function openEditModal($id)
+    public function openEdit($id)
     {
         $this->authorize('edit_dosen');
         $this->resetForm();
@@ -102,12 +102,12 @@ class DosenIndex extends Component
         $this->kepakaran_id = $user->kepakaran_id;
         $this->selectedBidangKeahlian = $user->bidangKeahlians->pluck('id')->toArray();
 
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function closeModal()
+    public function closeForm()
     {
-        $this->showModal = false;
+        $this->showForm = false;
         $this->resetForm();
     }
 
@@ -214,7 +214,7 @@ class DosenIndex extends Component
             session()->flash('success', 'Dosen berhasil ditambahkan.');
         }
 
-        $this->closeModal();
+        $this->closeForm();
     }
 
     public function toggleStatus($id)

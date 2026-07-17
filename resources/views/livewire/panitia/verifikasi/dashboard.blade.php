@@ -3,15 +3,15 @@
     @section('page-title', 'Dashboard Verifikasi Berkas')
 
     <!-- Welcome Card -->
-    <div class="bg-gradient-to-r from-orange-600 to-orange-800 rounded-2xl p-6 mb-6 text-white">
+    <div class="bg-gradient-to-r from-green-600 to-green-800 rounded-2xl p-6 mb-6 text-white">
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-2xl font-bold">Panel Verifikasi Berkas</h2>
-                <p class="text-orange-100 mt-1">{{ Auth::user()->jurusan?->nama_jurusan }}</p>
-                <p class="text-orange-200 text-sm mt-2">{{ \Carbon\Carbon::now()->format('l, d F Y') }}</p>
+                <p class="text-green-100 mt-1">{{ Auth::user()->jurusan?->nama_jurusan }}</p>
+                <p class="text-green-200 text-sm mt-2">{{ \Carbon\Carbon::now()->format('l, d F Y') }}</p>
             </div>
             <div class="hidden md:block">
-                <svg class="w-20 h-20 text-orange-300 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-20 h-20 text-green-300 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -36,7 +36,7 @@
             </div>
             @if($totalPending > 0)
                 <a href="{{ route('panitia.verifikasi.berkas') }}"
-                    class="inline-block mt-3 text-sm text-orange-700 font-medium hover:text-orange-800">
+                    class="inline-block mt-3 text-sm text-green-700 font-medium hover:text-green-800">
                     Verifikasi Sekarang →
                 </a>
             @endif
@@ -72,14 +72,14 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-blue-100 hover:shadow-md transition">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Total Diverifikasi</p>
-                    <p class="text-3xl font-bold text-blue-700 mt-2">{{ $totalDiverifikasi }}</p>
+                    <p class="text-3xl font-bold text-green-700 mt-2">{{ $totalDiverifikasi }}</p>
                 </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
@@ -96,7 +96,7 @@
                     <h2 class="text-lg font-semibold text-gray-900">Prioritas Verifikasi</h2>
                     <p class="text-sm text-gray-500">Berkas pending terlama ditampilkan lebih dulu agar antrean terasa jelas.</p>
                 </div>
-                <a href="{{ route('panitia.verifikasi.berkas') }}" class="text-sm font-medium text-orange-700 hover:text-orange-800">Buka Berkas</a>
+                <a href="{{ route('panitia.verifikasi.berkas') }}" class="text-sm font-medium text-green-700 hover:text-green-800">Buka Berkas</a>
             </div>
 
             @if($prioritasBerkas->isEmpty())
@@ -107,13 +107,13 @@
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-xl border border-gray-100 p-4">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
                                     <span class="text-xs text-gray-400">Masuk {{ $pendaftaran->created_at->format('d M Y H:i') }}</span>
                                 </div>
                                 <p class="font-semibold text-gray-900">{{ Str::limit($pendaftaran->judul_penelitian, 70) }}</p>
                                 <p class="text-sm text-gray-500">{{ $pendaftaran->mahasiswa->name }} | {{ $pendaftaran->mahasiswa->nim }}</p>
                             </div>
-                            <a href="{{ route('panitia.verifikasi.berkas') }}" class="px-4 py-2 bg-orange-700 text-white rounded-xl hover:bg-orange-800 text-sm font-medium text-center">Verifikasi</a>
+                            <a href="{{ route('panitia.verifikasi.berkas') }}" class="px-4 py-2 bg-green-700 text-white rounded-xl hover:bg-green-800 text-sm font-medium text-center">Verifikasi</a>
                         </div>
                     @endforeach
                 </div>
@@ -122,16 +122,16 @@
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Progress Berkas</h2>
-            <div class="rounded-2xl bg-orange-50 p-5">
+            <div class="rounded-2xl bg-green-50 p-5">
                 <div class="flex items-end justify-between">
                     <div>
-                        <p class="text-sm text-orange-700">Terselesaikan</p>
-                        <p class="text-4xl font-bold text-orange-900">{{ $progressVerifikasi }}%</p>
+                        <p class="text-sm text-green-700">Terselesaikan</p>
+                        <p class="text-4xl font-bold text-green-900">{{ $progressVerifikasi }}%</p>
                     </div>
-                    <span class="text-sm text-orange-700">{{ $totalDiverifikasi }} dari {{ $totalDiverifikasi + $totalPending }}</span>
+                    <span class="text-sm text-green-700">{{ $totalDiverifikasi }} dari {{ $totalDiverifikasi + $totalPending }}</span>
                 </div>
-                <div class="mt-4 h-3 rounded-full bg-orange-100 overflow-hidden">
-                    <div class="h-full rounded-full bg-orange-600" style="width: {{ $progressVerifikasi }}%"></div>
+                <div class="mt-4 h-3 rounded-full bg-green-100 overflow-hidden">
+                    <div class="h-full rounded-full bg-green-600" style="width: {{ $progressVerifikasi }}%"></div>
                 </div>
             </div>
             <div class="mt-4 grid grid-cols-2 gap-3">
@@ -168,7 +168,7 @@
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 class="text-lg font-semibold text-gray-900">Verifikasi Terbaru</h2>
             <a href="{{ route('panitia.verifikasi.berkas') }}"
-                class="text-sm text-orange-600 hover:underline font-medium">Lihat Semua →</a>
+                class="text-sm text-green-600 hover:underline font-medium">Lihat Semua →</a>
         </div>
         <div class="p-6">
             @if($recentVerifications->isEmpty())
@@ -192,7 +192,7 @@
                                             class="px-2 py-1 bg-{{ $p->statusColor }}-100 text-{{ $p->statusColor }}-800 rounded-full text-xs font-medium">
                                             {{ $p->statusLabel }}
                                         </span>
-                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                                             {{ ucwords(str_replace('_', ' ', $p->jenis_ujian)) }}
                                         </span>
                                         <span class="text-xs text-gray-400">{{ $p->created_at->format('d M Y H:i') }}</span>
@@ -219,7 +219,7 @@
                                             <div class="flex gap-1 mt-0.5">
                                                 @if($p->file_proposal)
                                                     <a href="{{ asset('storage/' . $p->file_proposal) }}" target="_blank"
-                                                        class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200">Proposal</a>
+                                                        class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200">Proposal</a>
                                                 @else
                                                     <span class="text-xs text-gray-400">-</span>
                                                 @endif
@@ -229,7 +229,7 @@
                                                 @endif
                                                 @if($p->file_transkrip)
                                                     <a href="{{ asset('storage/' . $p->file_transkrip) }}" target="_blank"
-                                                        class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs hover:bg-purple-200">Transkrip</a>
+                                                        class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200">Transkrip</a>
                                                 @endif
                                             </div>
                                         </div>
@@ -239,7 +239,7 @@
                                                 <div class="flex flex-wrap gap-1 mt-0.5">
                                                     @foreach($p->bidangKeahlians->take(2) as $bk)
                                                         <span
-                                                            class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs">{{ $bk->nama_bidang }}</span>
+                                                            class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">{{ $bk->nama_bidang }}</span>
                                                     @endforeach
                                                     @if($p->bidangKeahlians->count() > 2)
                                                         <span
@@ -255,7 +255,7 @@
                                     <!-- Abstrak (collapsed) -->
                                     @if($p->abstrak)
                                         <div class="mt-3" x-data="{ open: false }">
-                                            <button @click="open = !open" class="text-xs text-blue-600 hover:underline">
+                                            <button @click="open = !open" class="text-xs text-green-600 hover:underline">
                                                 <span x-text="open ? 'Sembunyikan' : 'Lihat'"></span> Abstrak
                                             </button>
                                             <p x-show="open" x-cloak class="text-xs text-gray-600 mt-2 p-3 bg-gray-50 rounded-lg">
@@ -268,7 +268,7 @@
                             @if($p->status === 'pending')
                                 <div class="mt-4 flex items-center gap-3 pt-4 border-t">
                                     <a href="{{ route('panitia.verifikasi.berkas') }}"
-                                        class="px-4 py-2 bg-orange-700 text-white rounded-xl hover:bg-orange-800 text-sm font-medium">
+                                        class="px-4 py-2 bg-green-700 text-white rounded-xl hover:bg-green-800 text-sm font-medium">
                                         Verifikasi Sekarang
                                     </a>
                                 </div>
@@ -285,12 +285,12 @@
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href="{{ route('panitia.verifikasi.berkas') }}"
-                class="flex flex-col items-center p-4 bg-orange-50 rounded-xl hover:bg-orange-100 transition">
-                <svg class="w-8 h-8 text-orange-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="flex flex-col items-center p-4 bg-green-50 rounded-xl hover:bg-green-100 transition">
+                <svg class="w-8 h-8 text-green-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span class="text-sm font-medium text-orange-800">Verifikasi Berkas</span>
+                <span class="text-sm font-medium text-green-800">Verifikasi Berkas</span>
             </a>
 
             <a href="{{ route('panitia.verifikasi.berkas') }}?statusFilter=disetujui_panitia"

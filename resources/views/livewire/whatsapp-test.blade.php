@@ -38,7 +38,7 @@
                     <div class="col-span-full mb-3">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Template Pesan</label>
                         <div class="flex rounded-md shadow-sm">
-                            <select class="flex-1 min-w-0 block w-full px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            <select class="flex-1 min-w-0 block w-full px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                     wire:model="selectedTemplate"
                                     wire:change="selectTemplate($event.target.value)">
                                 @foreach($templates as $template)
@@ -46,7 +46,7 @@
                                 @endforeach
                             </select>
                             <button type="button"
-                                    class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-700 text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-700 text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                                     wire:click="applyTemplateToMessage">
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
@@ -54,7 +54,7 @@
                                 Terapkan
                             </button>
                             <button type="button"
-                                    class="inline-flex items-center px-4 py-2 rounded-r-md border border-l-0 border-gray-300 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    class="inline-flex items-center px-4 py-2 rounded-r-md border border-l-0 border-gray-300 bg-green-600 text-white text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                                     wire:click="saveTemplate">
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
@@ -75,7 +75,7 @@
                                     +62
                                 </span>
                                 <input type="text"
-                                       class="flex-1 min-w-0 block w-full px-3 py-2 rounded-r-md border border-gray-300 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('phone') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
+                                       class="flex-1 min-w-0 block w-full px-3 py-2 rounded-r-md border border-gray-300 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('phone') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
                                        id="phone"
                                        wire:model="phone"
                                        placeholder="8123456789"
@@ -89,7 +89,7 @@
 
                         <div class="flex items-end">
                             <button type="button"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                                     wire:click="sendTestNotification">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
@@ -104,7 +104,7 @@
                         <label for="message" class="block text-sm font-medium text-gray-700 mb-1">
                             Pesan <span class="text-red-500">*</span>
                         </label>
-                        <textarea class="block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none @error('message') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
+                        <textarea class="block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none @error('message') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
                                   id="message"
                                   wire:model="message"
                                   rows="10"
@@ -220,7 +220,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $loop->iteration }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $template['name'] }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <button class="inline-flex items-center px-3 py-1.5 border border-blue-300 rounded-md text-sm font-medium text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                                    <button class="inline-flex items-center px-3 py-1.5 border border-green-300 rounded-md text-sm font-medium text-green-700 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
                                             @click="open = !open">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>

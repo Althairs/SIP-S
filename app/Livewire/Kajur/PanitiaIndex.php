@@ -33,7 +33,7 @@ class PanitiaIndex extends Component
     #[Url(history: true)]
     public $statusFilter = '';
 
-    public $showModal = false;
+    public $showForm = false;
 
     public $editMode = false;
 
@@ -83,14 +83,14 @@ class PanitiaIndex extends Component
         $this->resetPage();
     }
 
-    public function openCreateModal()
+    public function openCreate()
     {
         $this->resetForm();
         $this->editMode = false;
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function openEditModal($id)
+    public function openEdit($id)
     {
         $this->resetForm();
         $this->editMode = true;
@@ -106,16 +106,16 @@ class PanitiaIndex extends Component
         $this->alamat = $user->alamat;
         $this->is_active = $user->is_active;
 
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function closeModal()
+    public function closeForm()
     {
-        $this->showModal = false;
+        $this->showForm = false;
         $this->resetForm();
     }
 
-    private function resetForm()
+    public function resetForm()
     {
         $this->reset(['name', 'email', 'password', 'password_confirmation', 'nip', 'role', 'prodi_id', 'nomor_hp', 'alamat', 'is_active', 'userId', 'editMode']);
     }
@@ -178,7 +178,7 @@ class PanitiaIndex extends Component
             session()->flash('success', 'Panitia berhasil ditambahkan.');
         }
 
-        $this->closeModal();
+        $this->closeForm();
     }
 
     public function toggleStatus($id)

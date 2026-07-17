@@ -73,12 +73,12 @@
                         <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $jurusan->kode_jurusan }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $jurusan->nama_jurusan }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                                 {{ $jurusan->prodis_count }} Prodi
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                                 {{ $jurusan->users_count }} Users
                             </span>
                         </td>

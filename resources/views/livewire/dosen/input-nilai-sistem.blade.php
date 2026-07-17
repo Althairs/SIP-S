@@ -16,7 +16,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Jenis Ujian</p>
-                    <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
                 </div>
                 <div class="col-span-2">
                     <p class="text-sm text-gray-500">Judul</p>
@@ -37,12 +37,12 @@
         </div>
 
         <!-- Info Bobot -->
-        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6">
-            <h3 class="text-sm font-semibold text-blue-800 mb-2 flex items-center">
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6">
+            <h3 class="text-sm font-semibold text-green-800 mb-2 flex items-center">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 Ketentuan Penilaian
             </h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-blue-700">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-green-700">
                 <div>• Presentasi: <strong>10%</strong></div>
                 <div>• Penguasaan: <strong>15%</strong></div>
                 <div>• Menjawab: <strong>10%</strong></div>
@@ -73,7 +73,7 @@
 
                     @foreach($komponen as $key => $k)
                     <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $k['icon'] }}"></path>
                         </svg>
                         <div class="flex-1">
@@ -82,8 +82,8 @@
                                 <span class="text-xs text-gray-400">(Bobot {{ $k['bobot'] }})</span>
                             </label>
                             <div class="flex items-center gap-3 mt-1">
-                                <input type="range" wire:model.live="{{ $key }}" min="0" max="100" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-                                <input type="number" wire:model.live="{{ $key }}" min="0" max="100" class="w-20 px-3 py-1.5 border border-gray-300 rounded-lg text-center text-sm font-bold focus:ring-2 focus:ring-indigo-500">
+                                <input type="range" wire:model.live="{{ $key }}" min="0" max="100" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600">
+                                <input type="number" wire:model.live="{{ $key }}" min="0" max="100" class="w-20 px-3 py-1.5 border border-gray-300 rounded-lg text-center text-sm font-bold focus:ring-2 focus:ring-green-500">
                                 <span class="text-xs text-gray-400 w-12 text-right">{{ round($$key * \App\Models\Penilaian::BOBOT[$key], 1) }}</span>
                             </div>
                         </div>
@@ -100,20 +100,20 @@
                     Hasil Perhitungan
                 </h3>
 
-                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6">
+                <div class="bg-gradient-to-r from-green-50 to-green-50 rounded-2xl p-6">
                     <div class="grid grid-cols-3 gap-6 text-center">
                         <div>
                             <p class="text-sm text-gray-500">Nilai Akhir (NA)</p>
-                            <p class="text-4xl font-bold text-indigo-700">{{ $nilaiAkhir }}</p>
+                            <p class="text-4xl font-bold text-green-700">{{ $nilaiAkhir }}</p>
                             <p class="text-xs text-gray-400 mt-1">Skala 0-100</p>
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Nilai Huruf</p>
-                            <p class="text-4xl font-bold {{ $nilaiHuruf === 'A' ? 'text-green-600' : ($nilaiHuruf === 'B' ? 'text-blue-600' : ($nilaiHuruf === 'C' ? 'text-amber-600' : ($nilaiHuruf === 'D' ? 'text-orange-600' : 'text-red-600'))) }}">{{ $nilaiHuruf }}</p>
+                            <p class="text-4xl font-bold {{ $nilaiHuruf === 'A' ? 'text-green-600' : ($nilaiHuruf === 'B' ? 'text-green-600' : ($nilaiHuruf === 'C' ? 'text-amber-600' : ($nilaiHuruf === 'D' ? 'text-green-600' : 'text-red-600'))) }}">{{ $nilaiHuruf }}</p>
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Predikat</p>
-                            <p class="text-lg font-bold {{ $nilaiHuruf === 'A' ? 'text-green-700' : ($nilaiHuruf === 'B' ? 'text-blue-700' : ($nilaiHuruf === 'C' ? 'text-amber-700' : ($nilaiHuruf === 'D' ? 'text-orange-700' : 'text-red-700'))) }}">{{ $predikat }}</p>
+                            <p class="text-lg font-bold {{ $nilaiHuruf === 'A' ? 'text-green-700' : ($nilaiHuruf === 'B' ? 'text-green-700' : ($nilaiHuruf === 'C' ? 'text-amber-700' : ($nilaiHuruf === 'D' ? 'text-green-700' : 'text-red-700'))) }}">{{ $predikat }}</p>
                         </div>
                     </div>
 
@@ -126,7 +126,7 @@
                         <p class="text-xs text-gray-600 mt-1">
                             NA = {{ round($presentasi * 0.1, 1) }} + {{ round($penguasaan * 0.15, 1) }} + {{ round($menjawab * 0.1, 1) }} + {{ round($deskripsi * 0.1, 1) }} + {{ round($analisis * 0.2, 1) }} + {{ round($menyimpulkan * 0.15, 1) }} + {{ round($implikasi * 0.2, 1) }}
                         </p>
-                        <p class="text-xs font-bold text-indigo-700 mt-1">NA = <strong>{{ $nilaiAkhir }}</strong> → {{ $nilaiHuruf }} ({{ $predikat }})</p>
+                        <p class="text-xs font-bold text-green-700 mt-1">NA = <strong>{{ $nilaiAkhir }}</strong> → {{ $nilaiHuruf }} ({{ $predikat }})</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
             <!-- Catatan -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
-                <textarea wire:model="catatan" rows="3" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500" placeholder="Catatan tambahan untuk mahasiswa..."></textarea>
+                <textarea wire:model="catatan" rows="3" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500" placeholder="Catatan tambahan untuk mahasiswa..."></textarea>
             </div>
 
             <!-- Kaidah Keputusan -->
@@ -146,9 +146,9 @@
                 </h4>
                 <div class="grid grid-cols-5 gap-2 text-center text-xs">
                     <div class="bg-green-50 rounded-lg p-2"><span class="font-bold text-green-700">A</span><br><span class="text-green-600">&gt; 85</span><br><span class="text-green-500">Sangat Baik</span></div>
-                    <div class="bg-blue-50 rounded-lg p-2"><span class="font-bold text-blue-700">B</span><br><span class="text-blue-600">70-84</span><br><span class="text-blue-500">Baik</span></div>
+                    <div class="bg-green-50 rounded-lg p-2"><span class="font-bold text-green-700">B</span><br><span class="text-green-600">70-84</span><br><span class="text-green-500">Baik</span></div>
                     <div class="bg-amber-50 rounded-lg p-2"><span class="font-bold text-amber-700">C</span><br><span class="text-amber-600">55-69</span><br><span class="text-amber-500">Cukup</span></div>
-                    <div class="bg-orange-50 rounded-lg p-2"><span class="font-bold text-orange-700">D</span><br><span class="text-orange-600">50-54</span><br><span class="text-orange-500">Kurang</span></div>
+                    <div class="bg-green-50 rounded-lg p-2"><span class="font-bold text-green-700">D</span><br><span class="text-green-600">50-54</span><br><span class="text-green-500">Kurang</span></div>
                     <div class="bg-red-50 rounded-lg p-2"><span class="font-bold text-red-700">E</span><br><span class="text-red-600">0-49</span><br><span class="text-red-500">Gagal</span></div>
                 </div>
             </div>
@@ -161,7 +161,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         Hitung Ulang
                     </button>
-                    <button type="submit" class="px-6 py-2.5 bg-indigo-700 text-white rounded-xl hover:bg-indigo-800 font-medium shadow-sm shadow-indigo-200">
+                    <button type="submit" class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 font-medium shadow-sm shadow-green-200">
                         <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         {{ $editMode ? 'Perbarui' : 'Simpan' }} Nilai
                     </button>

@@ -21,24 +21,8 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
-    <!-- Sidebar berdasarkan role -->
-    @if(Auth::user()->hasRole('super_admin'))
-        <x-navigation.sidebar />
-    @elseif(Auth::user()->hasRole('kajur'))
-        <x-navigation.sidebar-kajur />
-    @elseif(Auth::user()->hasRole('sekjur'))
-        <x-navigation.sidebar-sekjur />
-    @elseif(Auth::user()->hasRole('mahasiswa'))
-        <x-navigation.sidebar-mahasiswa />
-    @elseif(Auth::user()->hasRole('panitia_verifikasi'))
-        <x-navigation.sidebar-panitia-verifikasi />
-    @elseif(Auth::user()->hasRole('panitia_penjadwalan'))
-        <x-navigation.sidebar-panitia-penjadwalan />
-    @elseif(Auth::user()->hasRole('panitia_administrasi'))
-        <x-navigation.sidebar-panitia-administrasi />
-    @elseif(Auth::user()->hasRole('dosen'))
-        <x-navigation.sidebar-dosen />
-    @endif
+    <!-- Sidebar Master (role-based) -->
+    <x-navigation.sidebar />
 
     <!-- Main Content -->
     <main class="p-4 sm:ml-64 mt-14 min-h-screen">

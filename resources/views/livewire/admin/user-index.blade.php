@@ -29,12 +29,12 @@
                     <input type="text"
                            wire:model.live.debounce.300ms="search"
                            placeholder="{{ $onlyKajurSekjur ? 'Cari berdasarkan nama, email, atau NIP...' : 'Cari user...' }}"
-                           class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl placeholder-gray-400 focus:ring-2 {{ $onlyKajurSekjur ? 'focus:ring-purple-500 focus:border-purple-500' : 'focus:ring-green-500 focus:border-green-500' }}">
+                           class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl placeholder-gray-400 focus:ring-2 {{ $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500' }}">
                     <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <a href="{{ route('admin.users.create') }}" class="px-5 py-2.5 text-white rounded-xl transition font-medium flex items-center justify-center gap-2 whitespace-nowrap {{ $onlyKajurSekjur ? 'bg-purple-700 hover:bg-purple-800' : 'bg-green-700 hover:bg-green-800' }}">
+                <a href="{{ route('admin.users.create') }}" class="px-5 py-2.5 text-white rounded-xl transition font-medium flex items-center justify-center gap-2 whitespace-nowrap {{ $onlyKajurSekjur ? 'bg-green-700 hover:bg-green-800' : 'bg-green-700 hover:bg-green-800' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -47,10 +47,10 @@
                 <button type="button" wire:click="$set('roleFilter', '')" class="px-3 py-1.5 rounded-full border text-sm font-medium transition {{ $roleFilter === '' ? 'bg-green-100 border-green-300 text-green-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50' }}">
                     Semua
                 </button>
-                <button type="button" wire:click="$set('roleFilter', 'kajur')" class="px-3 py-1.5 rounded-full border text-sm font-medium transition {{ $roleFilter === 'kajur' ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50' }}">
+                <button type="button" wire:click="$set('roleFilter', 'kajur')" class="px-3 py-1.5 rounded-full border text-sm font-medium transition {{ $roleFilter === 'kajur' ? 'bg-green-100 border-green-300 text-green-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50' }}">
                     Kajur
                 </button>
-                <button type="button" wire:click="$set('roleFilter', 'sekjur')" class="px-3 py-1.5 rounded-full border text-sm font-medium transition {{ $roleFilter === 'sekjur' ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50' }}">
+                <button type="button" wire:click="$set('roleFilter', 'sekjur')" class="px-3 py-1.5 rounded-full border text-sm font-medium transition {{ $roleFilter === 'sekjur' ? 'bg-green-100 border-green-300 text-green-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50' }}">
                     Sekjur
                 </button>
             </div>
@@ -58,7 +58,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <!-- Jurusan Filter -->
-                <select wire:model.change="jurusanFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-purple-500 focus:border-purple-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$jurusanFilter, 'text-gray-700' => $jurusanFilter])>
+                <select wire:model.change="jurusanFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$jurusanFilter, 'text-gray-700' => $jurusanFilter])>
                     <option value="">Semua Jurusan</option>
                     @foreach($jurusans as $jurusan)
                     <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
@@ -76,7 +76,7 @@
                 @endif
 
                 <!-- Role Filter -->
-                <select wire:model.change="roleFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-purple-500 focus:border-purple-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$roleFilter, 'text-gray-700' => $roleFilter])>
+                <select wire:model.change="roleFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$roleFilter, 'text-gray-700' => $roleFilter])>
                     <option value="">{{ $onlyKajurSekjur ? 'Semua Role (Kajur/Sekjur)' : 'Semua Role' }}</option>
                     @foreach($roles as $role)
                     <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
@@ -84,7 +84,7 @@
                 </select>
 
                 <!-- Status Filter -->
-                <select wire:model.change="statusFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-purple-500 focus:border-purple-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => $statusFilter === '', 'text-gray-700' => $statusFilter !== ''])>
+                <select wire:model.change="statusFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => $statusFilter === '', 'text-gray-700' => $statusFilter !== ''])>
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
                     <option value="0">Nonaktif</option>
@@ -113,7 +113,7 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-3">
                                 <img class="w-10 h-10 rounded-full"
-                                     src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background={{ $onlyKajurSekjur ? '7c3aed' : '16a34a' }}&color=fff"
+                                     src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background={{ $onlyKajurSekjur ? '16a34a' : '16a34a' }}&color=fff"
                                      alt="{{ $user->name }}">
                                 <div>
                                     <p class="font-medium text-gray-900">{{ $user->name }}</p>
@@ -126,7 +126,7 @@
                         </td>
                         <td class="px-6 py-4">
                             @foreach($user->getRoleNames() as $role)
-                            <span class="px-3 py-1 rounded-full text-xs font-medium capitalize {{ $onlyKajurSekjur ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800' }}">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium capitalize {{ $onlyKajurSekjur ? 'bg-green-100 text-green-800' : 'bg-green-100 text-green-800' }}">
                                 {{ $role }}
                             </span>
                             @endforeach

@@ -27,7 +27,7 @@ class MahasiswaIndex extends Component
 
     #[Url(history: true)]
     public $statusFilter = '';
-    public $showModal = false;
+    public $showForm = false;
     public $showImportView = false;
     public $file;
     public $editMode = false;
@@ -67,15 +67,15 @@ class MahasiswaIndex extends Component
         $this->resetPage();
     }
 
-    public function openCreateModal()
+    public function openCreate()
     {
         $this->authorize('create_mahasiswa');
         $this->resetForm();
         $this->editMode = false;
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function openEditModal($id)
+    public function openEdit($id)
     {
         $this->authorize('edit_mahasiswa');
         $this->resetForm();
@@ -91,12 +91,12 @@ class MahasiswaIndex extends Component
         $this->alamat = $user->alamat;
         $this->is_active = $user->is_active;
 
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function closeModal()
+    public function closeForm()
     {
-        $this->showModal = false;
+        $this->showForm = false;
         $this->resetForm();
     }
 
@@ -168,7 +168,7 @@ class MahasiswaIndex extends Component
             session()->flash('success', 'Mahasiswa berhasil ditambahkan.');
         }
 
-        $this->closeModal();
+        $this->closeForm();
     }
 
     public function toggleStatus($id)

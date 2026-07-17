@@ -16,7 +16,7 @@ class VerifikasiBerkas extends Component
 
     #[Url(history: true)]
     public $statusFilter = 'pending';
-    public $showDetailModal = false;
+    public $showDetail = false;
     public $selectedPendaftaran;
 
     public function mount()
@@ -42,12 +42,12 @@ class VerifikasiBerkas extends Component
             'jurusan',
             'prodi'
         ])->findOrFail($id);
-        $this->showDetailModal = true;
+        $this->showDetail = true;
     }
 
     public function closeDetail()
     {
-        $this->showDetailModal = false;
+        $this->showDetail = false;
         $this->selectedPendaftaran = null;
     }
 

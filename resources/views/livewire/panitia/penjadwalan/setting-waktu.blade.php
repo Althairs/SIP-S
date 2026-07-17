@@ -17,7 +17,7 @@
             </div>
             <div class="flex gap-3">
                 <button wire:click="resetToDefault" wire:confirm="Reset ke default?" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 text-sm font-medium">Reset Default</button>
-                <button wire:click="save" class="px-4 py-2 bg-teal-700 text-white rounded-xl hover:bg-teal-800 text-sm font-medium">Simpan</button>
+                <button wire:click="save" class="px-4 py-2 bg-green-700 text-white rounded-xl hover:bg-green-800 text-sm font-medium">Simpan</button>
             </div>
         </div>
 
@@ -29,19 +29,19 @@
 
                     <div class="flex-1">
                         <label class="block text-xs text-gray-500 mb-1">Label Sesi</label>
-                        <input type="text" wire:model="labelSesi.{{ $index }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500" placeholder="Sesi {{ $index + 1 }}">
+                        <input type="text" wire:model="labelSesi.{{ $index }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500" placeholder="Sesi {{ $index + 1 }}">
                     </div>
 
                     <div>
                         <label class="block text-xs text-gray-500 mb-1">Jam Mulai</label>
-                        <input type="time" wire:model="jamMulai.{{ $index }}" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                        <input type="time" wire:model="jamMulai.{{ $index }}" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500">
                     </div>
 
                     <span class="text-gray-400">s/d</span>
 
                     <div>
                         <label class="block text-xs text-gray-500 mb-1">Jam Selesai</label>
-                        <input type="time" wire:model="jamSelesai.{{ $index }}" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                        <input type="time" wire:model="jamSelesai.{{ $index }}" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500">
                     </div>
 
                     <button type="button" wire:click="removeSesi({{ $index }})" class="text-red-500 hover:text-red-700 p-2" title="Hapus sesi">
@@ -54,19 +54,19 @@
                 @error('jamSelesai.*') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <button type="button" wire:click="addSesi" class="mt-4 px-4 py-2 bg-teal-50 text-teal-700 border border-teal-200 rounded-xl hover:bg-teal-100 text-sm font-medium flex items-center gap-1">
+            <button type="button" wire:click="addSesi" class="mt-4 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl hover:bg-green-100 text-sm font-medium flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Sesi
             </button>
         </form>
 
         <!-- Preview -->
-        <div class="mt-6 p-4 bg-teal-50 rounded-xl">
-            <h3 class="text-sm font-semibold text-teal-800 mb-2">Preview Jadwal</h3>
+        <div class="mt-6 p-4 bg-green-50 rounded-xl">
+            <h3 class="text-sm font-semibold text-green-800 mb-2">Preview Jadwal</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 @foreach($jamMulai as $index => $value)
                 <div class="bg-white rounded-lg p-2 text-center text-xs">
-                    <p class="font-medium text-teal-700">{{ $labelSesi[$index] ?? 'Sesi '.($index+1) }}</p>
+                    <p class="font-medium text-green-700">{{ $labelSesi[$index] ?? 'Sesi '.($index+1) }}</p>
                     <p class="text-gray-500">{{ $jamMulai[$index] ?? '-' }} - {{ $jamSelesai[$index] ?? '-' }}</p>
                 </div>
                 @endforeach

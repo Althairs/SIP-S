@@ -13,7 +13,7 @@
     <div class="flex border-b border-gray-200 mb-6 gap-1 overflow-x-auto">
         @foreach($jenisUjianOptions as $key => $label)
         <button wire:click="$set('jenisUjian', '{{ $key }}')"
-                class="px-6 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap {{ $jenisUjian === $key ? 'border-cyan-600 text-cyan-700' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                class="px-6 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap {{ $jenisUjian === $key ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
             {{ $label }}
             @if(isset($allSettings[$key]) && $allSettings[$key]->is_active)
             <span class="ml-1 text-green-500">●</span>
@@ -30,7 +30,7 @@
                     <h3 class="text-lg font-bold text-gray-900">Konfigurasi: {{ $jenisUjianOptions[$jenisUjian] }}</h3>
                     <label class="flex items-center cursor-pointer">
                         <input type="checkbox" wire:model="isActive" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-cyan-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600 relative"></div>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600 relative"></div>
                         <span class="ml-3 text-sm text-gray-600">{{ $isActive ? 'Aktif' : 'Nonaktif' }}</span>
                     </label>
                 </div>
@@ -41,7 +41,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Deadline (Hari setelah ujian)</label>
                         <div class="flex items-center gap-3">
                             <input type="number" wire:model="deadlineDays" min="7" max="365"
-                                   class="w-32 px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 @error('deadlineDays') border-red-500 @enderror">
+                                   class="w-32 px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 @error('deadlineDays') border-red-500 @enderror">
                             <span class="text-sm text-gray-900">hari</span>
                         </div>
                         @error('deadlineDays') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
@@ -51,7 +51,7 @@
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Template Pesan</label>
                         <textarea wire:model="pesanTemplate" rows="3"
-                                  class="w-full px-4 py-2.5 border border-gray-900 rounded-xl focus:ring-2 focus:ring-cyan-500 text-sm text-gray-900/100"
+                                  class="w-full px-4 py-2.5 border border-gray-900 rounded-xl focus:ring-2 focus:ring-green-500 text-sm text-gray-900/100"
                                   placeholder="Template pesan..."></textarea>
                         <p class="text-xs text-gray-900 mt-1">
                             Variabel: <code>{jenis_ujian}</code> <code>{judul}</code> <code>{deadline}</code>
@@ -67,7 +67,7 @@
                             @foreach($reminders as $index => $reminder)
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                                 <div class="flex items-center gap-3">
-                                    <span class="w-8 h-8 {{ $reminder['type'] === 'daily' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700' }} rounded-full flex items-center justify-center">
+                                    <span class="w-8 h-8 {{ $reminder['type'] === 'daily' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' }} rounded-full flex items-center justify-center">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     </span>
                                     <div>
@@ -120,7 +120,7 @@
                                 @endif
 
                                 <div class="flex items-end">
-                                    <button type="button" wire:click="addReminder" class="w-full px-4 py-2 bg-cyan-700 text-white rounded-lg hover:bg-cyan-800 text-sm font-medium">
+                                    <button type="button" wire:click="addReminder" class="w-full px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 text-sm font-medium">
                                         + Tambah
                                     </button>
                                 </div>
@@ -132,7 +132,7 @@
                         <button type="button" wire:click="generateReminders" class="px-4 py-2.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl hover:bg-amber-100 text-sm font-medium">
                             Generate Reminder Sekarang
                         </button>
-                        <button type="submit" class="px-6 py-2.5 bg-cyan-700 text-white rounded-xl hover:bg-cyan-800 font-medium">
+                        <button type="submit" class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 font-medium">
                             Simpan Pengaturan
                         </button>
                     </div>
@@ -158,7 +158,7 @@
                     </div>
                     @foreach($reminders as $reminder)
                     <div class="flex items-start space-x-3">
-                        <div class="w-2 h-2 {{ $reminder['type'] === 'daily' ? 'bg-blue-500' : 'bg-amber-500' }} rounded-full mt-2"></div>
+                        <div class="w-2 h-2 {{ $reminder['type'] === 'daily' ? 'bg-green-500' : 'bg-amber-500' }} rounded-full mt-2"></div>
                         <div>
                             <p class="text-sm font-medium">{{ $reminder['label'] }}</p>
                             <p class="text-xs text-gray-500">

@@ -27,9 +27,7 @@ class JadwalUjians extends Component
     #[Url]
     public $tab = 'siap';
 
-    public $showScheduleModal = false;
-    public $showBatchModal = false;
-    public $showDetailModal = false;
+    public string $modalMode = '';
     public $selectedPendaftaran;
     public $selectedIds = [];
     public $selectAll = false;
@@ -145,12 +143,12 @@ class JadwalUjians extends Component
         $this->ruangan = $this->selectedPendaftaran->ruangan ?? '';
         $this->sesi = $this->selectedPendaftaran->sesi ?? 1;
         $this->scheduleMode = 'manual'; // Default manual
-        $this->showScheduleModal = true;
+        $this->modalMode = 'schedule';
     }
 
     public function closeScheduleModal()
     {
-        $this->showScheduleModal = false;
+        $this->modalMode = '';
         $this->resetValidation();
     }
 
@@ -182,23 +180,23 @@ class JadwalUjians extends Component
         $this->ruangan = '';
         $this->sesi = 1;
         $this->batchMode = true;
-        $this->showBatchModal = true;
+        $this->modalMode = 'batch';
     }
 
     public function closeBatchModal()
     {
-        $this->showBatchModal = false;
+        $this->modalMode = '';
     }
 
     public function openDetailModal($id)
     {
         $this->selectedPendaftaran = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])->findOrFail($id);
-        $this->showDetailModal = true;
+        $this->modalMode = 'detail';
     }
 
     public function closeDetailModal()
     {
-        $this->showDetailModal = false;
+        $this->modalMode = '';
         $this->selectedPendaftaran = null;
     }
 

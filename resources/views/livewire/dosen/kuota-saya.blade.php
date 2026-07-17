@@ -7,9 +7,9 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h3 class="text-lg font-semibold mb-4">Kuota Pembimbing</h3>
             <div class="grid grid-cols-3 gap-4 text-center">
-                <div class="bg-blue-50 rounded-xl p-3">
+                <div class="bg-green-50 rounded-xl p-3">
                     <p class="text-xs text-gray-500">Kuota</p>
-                    <p class="text-2xl font-bold text-blue-700">{{ $kuota?->kuota_pembimbing ?? 5 }}</p>
+                    <p class="text-2xl font-bold text-green-700">{{ $kuota?->kuota_pembimbing ?? 5 }}</p>
                 </div>
                 <div class="bg-amber-50 rounded-xl p-3">
                     <p class="text-xs text-gray-500">Terpakai</p>
@@ -25,9 +25,9 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h3 class="text-lg font-semibold mb-4">Kuota Penguji</h3>
             <div class="grid grid-cols-3 gap-4 text-center">
-                <div class="bg-purple-50 rounded-xl p-3">
+                <div class="bg-green-50 rounded-xl p-3">
                     <p class="text-xs text-gray-500">Kuota</p>
-                    <p class="text-2xl font-bold text-purple-700">{{ $kuota?->kuota_penguji ?? 10 }}</p>
+                    <p class="text-2xl font-bold text-green-700">{{ $kuota?->kuota_penguji ?? 10 }}</p>
                 </div>
                 <div class="bg-amber-50 rounded-xl p-3">
                     <p class="text-xs text-gray-500">Terpakai</p>

@@ -14,11 +14,24 @@
         </div>
     @endif
 
+    <!-- Breadcrumb -->
+    <nav class="mb-4 flex items-center text-sm text-gray-500">
+        <a href="{{ route('panitia.verifikasi.berkas') }}" class="text-green-600 hover:text-green-700 font-medium">Verifikasi</a>
+        <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <a href="{{ route('panitia.verifikasi.berkas') }}" class="text-green-600 hover:text-green-700 font-medium">Berkas</a>
+        @if($showDetail && $selectedPendaftaran)
+            <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <span class="text-gray-700 font-medium">Detail — {{ $selectedPendaftaran->mahasiswa->name }}</span>
+        @endif
+    </nav>
+
+    @unless($showDetail && $selectedPendaftaran)
+
     <!-- Filter -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
         <div class="flex flex-col md:flex-row gap-3">
             <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari mahasiswa atau judul..."
-                class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500">
+                class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500">
             <select wire:model.live="statusFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                 <option value="">Semua Status</option>
                 <option value="pending">Menunggu Verifikasi</option>
@@ -63,7 +76,7 @@
                                 class="px-2 py-1 bg-{{ $p->statusColor }}-100 text-{{ $p->statusColor }}-800 rounded-full text-xs font-medium">
                                 {{ $p->statusLabel }}
                             </span>
-                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                                 {{ ucwords(str_replace('_', ' ', $p->jenis_ujian)) }}
                             </span>
                             <span class="text-xs text-gray-400">{{ $p->created_at->format('d M Y H:i') }}</span>
@@ -88,7 +101,7 @@
                                 <p class="text-xs text-gray-500">Berkas</p>
                                 <div class="flex flex-wrap gap-1 mt-0.5">
                                     @if($p->file_proposal)
-                                        <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs flex items-center">
+                                        <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs flex items-center">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                             Proposal
                                         </span>
@@ -100,7 +113,7 @@
                                         </span>
                                     @endif
                                     @if($p->file_transkrip)
-                                        <span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs flex items-center">
+                                        <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs flex items-center">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                                             Transkrip
                                         </span>
@@ -115,7 +128,7 @@
                                 <div class="flex flex-wrap gap-1 mt-0.5">
                                     @forelse($p->bidangKeahlians as $bk)
                                         <span
-                                            class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs">{{ $bk->nama_bidang }}</span>
+                                            class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">{{ $bk->nama_bidang }}</span>
                                     @empty
                                         <span class="text-xs text-gray-400">-</span>
                                     @endforelse
@@ -126,7 +139,7 @@
 
                     <div class="flex flex-col gap-2 md:flex-shrink-0">
                         <button wire:click="showDetail({{ $p->id }})"
-                            class="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-xl hover:bg-blue-100 text-sm font-medium whitespace-nowrap">
+                            class="px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl hover:bg-green-100 text-sm font-medium whitespace-nowrap">
                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -193,206 +206,180 @@
 
     <div class="mt-4">{{ $pendaftarans->links() }}</div>
 
-    {{-- ============= MODAL DETAIL ============= --}}
-    @if($showDetailModal && $selectedPendaftaran)
-        <div class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4 py-8">
-                <div class="fixed inset-0 bg-black/50" wire:click="closeDetail"></div>
-                <div class="relative bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-                    <!-- Header -->
-                    <div
-                        class="bg-gradient-to-r from-orange-600 to-orange-800 rounded-t-3xl p-6 text-white sticky top-0 z-10">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span
-                                    class="px-3 py-1 bg-white/20 rounded-full text-xs">{{ ucwords(str_replace('_', ' ', $selectedPendaftaran->jenis_ujian)) }}</span>
-                                <h2 class="text-xl font-bold mt-2">Detail Pendaftaran</h2>
-                            </div>
-                            <button wire:click="closeDetail"
-                                class="text-white/80 hover:text-white bg-white/10 rounded-full p-2">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
+    @endunless
+
+    {{-- ============= INLINE DETAIL CARD ============= --}}
+    @if($showDetail && $selectedPendaftaran)
+        <div class="bg-white rounded-2xl shadow-sm border border-green-200 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-green-600 to-green-800 p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs">{{ ucwords(str_replace('_', ' ', $selectedPendaftaran->jenis_ujian)) }}</span>
+                        <h2 class="text-xl font-bold mt-2">Detail Pendaftaran</h2>
                     </div>
+                    <button wire:click="closeDetail" class="text-white/80 hover:text-white bg-white/10 rounded-full p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-                    <div class="p-6 space-y-6">
-                        <!-- Status -->
-                        <div class="flex items-center gap-3">
-                            <span
-                                class="px-3 py-1.5 bg-{{ $selectedPendaftaran->statusColor }}-100 text-{{ $selectedPendaftaran->statusColor }}-800 rounded-full text-sm font-medium">{{ $selectedPendaftaran->statusLabel }}</span>
+            <div class="p-6 space-y-6">
+                <!-- Status -->
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1.5 bg-{{ $selectedPendaftaran->statusColor }}-100 text-{{ $selectedPendaftaran->statusColor }}-800 rounded-full text-sm font-medium">{{ $selectedPendaftaran->statusLabel }}</span>
+                </div>
+
+                <!-- Judul & Abstrak -->
+                <div class="bg-gray-50 rounded-2xl p-5">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $selectedPendaftaran->judul_penelitian }}</h3>
+                    @if($selectedPendaftaran->abstrak)
+                        <div class="mt-3">
+                            <p class="text-sm font-medium text-gray-700 mb-1">Abstrak</p>
+                            <p class="text-sm text-gray-600 leading-relaxed">{{ $selectedPendaftaran->abstrak }}</p>
                         </div>
+                    @endif
+                </div>
 
-                        <!-- Judul & Abstrak -->
-                        <div class="bg-gray-50 rounded-2xl p-5">
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $selectedPendaftaran->judul_penelitian }}
-                            </h3>
-                            @if($selectedPendaftaran->abstrak)
-                                <div class="mt-3">
-                                    <p class="text-sm font-medium text-gray-700 mb-1">Abstrak</p>
-                                    <p class="text-sm text-gray-600 leading-relaxed">{{ $selectedPendaftaran->abstrak }}</p>
-                                </div>
+                <!-- Info Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="border rounded-xl p-3">
+                        <p class="text-xs text-gray-500">Nama</p>
+                        <p class="font-bold">{{ $selectedPendaftaran->mahasiswa->name }}</p>
+                    </div>
+                    <div class="border rounded-xl p-3">
+                        <p class="text-xs text-gray-500">NIM</p>
+                        <p class="font-bold">{{ $selectedPendaftaran->mahasiswa->nim }}</p>
+                    </div>
+                    <div class="border rounded-xl p-3">
+                        <p class="text-xs text-gray-500">Email</p>
+                        <p class="font-bold text-sm">{{ $selectedPendaftaran->mahasiswa->email }}</p>
+                    </div>
+                    <div class="border rounded-xl p-3">
+                        <p class="text-xs text-gray-500">Jurusan</p>
+                        <p class="font-bold">{{ $selectedPendaftaran->jurusan?->nama_jurusan }}</p>
+                    </div>
+                    <div class="border rounded-xl p-3">
+                        <p class="text-xs text-gray-500">Prodi</p>
+                        <p class="font-bold">{{ $selectedPendaftaran->prodi?->nama_prodi }}</p>
+                    </div>
+                    <div class="border rounded-xl p-3">
+                        <p class="text-xs text-gray-500">HP</p>
+                        <p class="font-bold">{{ $selectedPendaftaran->mahasiswa->nomor_hp ?? '-' }}</p>
+                    </div>
+                </div>
+
+                <!-- Pembimbing -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Dosen Pembimbing</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <p class="text-xs text-green-600 mb-1">Pembimbing 1</p>
+                            @if($selectedPendaftaran->pembimbing1?->dosen)
+                                <p class="font-bold">{{ $selectedPendaftaran->pembimbing1->dosen->name }}</p>
+                                <p class="text-xs text-gray-500">NIP: {{ $selectedPendaftaran->pembimbing1->dosen->nip }}</p>
+                            @else
+                                <p class="text-gray-400">-</p>
                             @endif
                         </div>
-
-                        <!-- Info Grid -->
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <div class="border rounded-xl p-3">
-                                <p class="text-xs text-gray-500">Nama</p>
-                                <p class="font-bold">{{ $selectedPendaftaran->mahasiswa->name }}</p>
-                            </div>
-                            <div class="border rounded-xl p-3">
-                                <p class="text-xs text-gray-500">NIM</p>
-                                <p class="font-bold">{{ $selectedPendaftaran->mahasiswa->nim }}</p>
-                            </div>
-                            <div class="border rounded-xl p-3">
-                                <p class="text-xs text-gray-500">Email</p>
-                                <p class="font-bold text-sm">{{ $selectedPendaftaran->mahasiswa->email }}</p>
-                            </div>
-                            <div class="border rounded-xl p-3">
-                                <p class="text-xs text-gray-500">Jurusan</p>
-                                <p class="font-bold">{{ $selectedPendaftaran->jurusan?->nama_jurusan }}</p>
-                            </div>
-                            <div class="border rounded-xl p-3">
-                                <p class="text-xs text-gray-500">Prodi</p>
-                                <p class="font-bold">{{ $selectedPendaftaran->prodi?->nama_prodi }}</p>
-                            </div>
-                            <div class="border rounded-xl p-3">
-                                <p class="text-xs text-gray-500">HP</p>
-                                <p class="font-bold">{{ $selectedPendaftaran->mahasiswa->nomor_hp ?? '-' }}</p>
-                            </div>
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <p class="text-xs text-green-600 mb-1">Pembimbing 2</p>
+                            @if($selectedPendaftaran->pembimbing2?->dosen)
+                                <p class="font-bold">{{ $selectedPendaftaran->pembimbing2->dosen->name }}</p>
+                                <p class="text-xs text-gray-500">NIP: {{ $selectedPendaftaran->pembimbing2->dosen->nip }}</p>
+                            @else
+                                <p class="text-gray-400">-</p>
+                            @endif
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Pembimbing -->
-                        <div>
-                            <p class="text-sm font-semibold text-gray-700 mb-3">Dosen Pembimbing</p>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                                    <p class="text-xs text-blue-600 mb-1">Pembimbing 1</p>
-                                    @if($selectedPendaftaran->pembimbing1?->dosen)
-                                        <p class="font-bold">{{ $selectedPendaftaran->pembimbing1->dosen->name }}</p>
-                                        <p class="text-xs text-gray-500">NIP:
-                                            {{ $selectedPendaftaran->pembimbing1->dosen->nip }}</p>
-                                    @else
-                                        <p class="text-gray-400">-</p>
-                                    @endif
-                                </div>
-                                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                                    <p class="text-xs text-blue-600 mb-1">Pembimbing 2</p>
-                                    @if($selectedPendaftaran->pembimbing2?->dosen)
-                                        <p class="font-bold">{{ $selectedPendaftaran->pembimbing2->dosen->name }}</p>
-                                        <p class="text-xs text-gray-500">NIP:
-                                            {{ $selectedPendaftaran->pembimbing2->dosen->nip }}</p>
-                                    @else
-                                        <p class="text-gray-400">-</p>
-                                    @endif
-                                </div>
-                            </div>
+                <!-- Bidang Keahlian -->
+                @if($selectedPendaftaran->bidangKeahlians->count() > 0)
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Bidang Keahlian</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($selectedPendaftaran->bidangKeahlians as $bk)
+                                <span class="px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">{{ $bk->nama_bidang }}</span>
+                            @endforeach
                         </div>
+                    </div>
+                @endif
 
-                        <!-- Bidang Keahlian -->
-                        @if($selectedPendaftaran->bidangKeahlians->count() > 0)
-                            <div>
-                                <p class="text-sm font-semibold text-gray-700 mb-2">Bidang Keahlian</p>
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach($selectedPendaftaran->bidangKeahlians as $bk)
-                                        <span
-                                            class="px-3 py-1.5 bg-teal-100 text-teal-800 rounded-full text-sm font-medium">{{ $bk->nama_bidang }}</span>
-                                    @endforeach
-                                </div>
-                            </div>
+                <!-- Berkas -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Berkas Pendaftaran</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        @if($selectedPendaftaran->file_proposal)
+                            <a href="{{ asset('storage/' . $selectedPendaftaran->file_proposal) }}" target="_blank"
+                                class="flex items-center gap-2 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition border border-green-200">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-sm font-medium text-green-700">File Proposal</span>
+                            </a>
                         @endif
-
-                        <!-- Berkas -->
-                        <div>
-                            <p class="text-sm font-semibold text-gray-700 mb-2">Berkas Pendaftaran</p>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                @if($selectedPendaftaran->file_proposal)
-                                    <a href="{{ asset('storage/' . $selectedPendaftaran->file_proposal) }}" target="_blank"
-                                        class="flex items-center gap-2 p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition border border-blue-200">
-                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                        <span class="text-sm font-medium text-blue-700">File Proposal</span>
-                                    </a>
-                                @endif
-                                @if($selectedPendaftaran->file_skripsi)
-                                    <a href="{{ asset('storage/' . $selectedPendaftaran->file_skripsi) }}" target="_blank"
-                                        class="flex items-center gap-2 p-3 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition border border-indigo-200">
-                                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                        <span class="text-sm font-medium text-indigo-700">File Skripsi</span>
-                                    </a>
-                                @endif
-                                @if($selectedPendaftaran->file_persetujuan)
-                                    <a href="{{ asset('storage/' . $selectedPendaftaran->file_persetujuan) }}" target="_blank"
-                                        class="flex items-center gap-2 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition border border-green-200">
-                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <span class="text-sm font-medium text-green-700">Persetujuan</span>
-                                    </a>
-                                @endif
-                                @if($selectedPendaftaran->file_krs)
-                                    <a href="{{ asset('storage/' . $selectedPendaftaran->file_krs) }}" target="_blank"
-                                        class="flex items-center gap-2 p-3 bg-amber-50 rounded-xl hover:bg-amber-100 transition border border-amber-200">
-                                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
-                                        </svg>
-                                        <span class="text-sm font-medium text-amber-700">KRS</span>
-                                    </a>
-                                @endif
-                                @if($selectedPendaftaran->file_transkrip)
-                                    <a href="{{ asset('storage/' . $selectedPendaftaran->file_transkrip) }}" target="_blank"
-                                        class="flex items-center gap-2 p-3 bg-purple-50 rounded-xl hover:bg-purple-100 transition border border-purple-200">
-                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z" />
-                                        </svg>
-                                        <span class="text-sm font-medium text-purple-700">Transkrip</span>
-                                    </a>
-                                @endif
-                                @if($selectedPendaftaran->file_bukti_bimbingan)
-                                    <a href="{{ asset('storage/' . $selectedPendaftaran->file_bukti_bimbingan) }}"
-                                        target="_blank"
-                                        class="flex items-center gap-2 p-3 bg-rose-50 rounded-xl hover:bg-rose-100 transition border border-rose-200">
-                                        <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        <span class="text-sm font-medium text-rose-700">Bukti Bimbingan</span>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        @if($selectedPendaftaran->status === 'pending')
-                            <div class="flex justify-end gap-3 pt-4 border-t">
-                                <button wire:click="updateStatus({{ $selectedPendaftaran->id }}, 'ditolak_panitia')"
-                                    wire:confirm="Tolak pendaftaran ini?"
-                                    class="px-6 py-2.5 bg-red-50 text-red-700 border border-red-200 rounded-xl hover:bg-red-100 font-medium">Tolak</button>
-                                <button wire:click="updateStatus({{ $selectedPendaftaran->id }}, 'disetujui_panitia')"
-                                    wire:confirm="Setujui dan teruskan ke Sekjur?"
-                                    class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 font-medium">Setujui
-                                    & Lanjutkan</button>
-                            </div>
+                        @if($selectedPendaftaran->file_skripsi)
+                            <a href="{{ asset('storage/' . $selectedPendaftaran->file_skripsi) }}" target="_blank"
+                                class="flex items-center gap-2 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition border border-green-200">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-sm font-medium text-green-700">File Skripsi</span>
+                            </a>
+                        @endif
+                        @if($selectedPendaftaran->file_persetujuan)
+                            <a href="{{ asset('storage/' . $selectedPendaftaran->file_persetujuan) }}" target="_blank"
+                                class="flex items-center gap-2 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition border border-green-200">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="text-sm font-medium text-green-700">Persetujuan</span>
+                            </a>
+                        @endif
+                        @if($selectedPendaftaran->file_krs)
+                            <a href="{{ asset('storage/' . $selectedPendaftaran->file_krs) }}" target="_blank"
+                                class="flex items-center gap-2 p-3 bg-amber-50 rounded-xl hover:bg-amber-100 transition border border-amber-200">
+                                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+                                </svg>
+                                <span class="text-sm font-medium text-amber-700">KRS</span>
+                            </a>
+                        @endif
+                        @if($selectedPendaftaran->file_transkrip)
+                            <a href="{{ asset('storage/' . $selectedPendaftaran->file_transkrip) }}" target="_blank"
+                                class="flex items-center gap-2 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition border border-green-200">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z" />
+                                </svg>
+                                <span class="text-sm font-medium text-green-700">Transkrip</span>
+                            </a>
+                        @endif
+                        @if($selectedPendaftaran->file_bukti_bimbingan)
+                            <a href="{{ asset('storage/' . $selectedPendaftaran->file_bukti_bimbingan) }}" target="_blank"
+                                class="flex items-center gap-2 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition border border-green-200">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span class="text-sm font-medium text-green-700">Bukti Bimbingan</span>
+                            </a>
                         @endif
                     </div>
                 </div>
+
+                <!-- Actions -->
+                @if($selectedPendaftaran->status === 'pending')
+                    <div class="flex justify-end gap-3 pt-4 border-t">
+                        <button wire:click="updateStatus({{ $selectedPendaftaran->id }}, 'ditolak_panitia')"
+                            wire:confirm="Tolak pendaftaran ini?"
+                            class="px-6 py-2.5 bg-red-50 text-red-700 border border-red-200 rounded-xl hover:bg-red-100 font-medium">Tolak</button>
+                        <button wire:click="updateStatus({{ $selectedPendaftaran->id }}, 'disetujui_panitia')"
+                            wire:confirm="Setujui dan teruskan ke Sekjur?"
+                            class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 font-medium">Setujui & Lanjutkan</button>
+                    </div>
+                @endif
             </div>
         </div>
     @endif

@@ -2,9 +2,9 @@
     @section('title', 'Dashboard Sekjur')
     @section('page-title', 'Dashboard Sekretaris Jurusan')
 
-    <div class="bg-gradient-to-r from-violet-600 to-violet-800 rounded-2xl p-6 mb-6 text-white">
+    <div class="bg-gradient-to-r from-green-600 to-green-800 rounded-2xl p-6 mb-6 text-white">
         <h2 class="text-2xl font-bold">Selamat Datang, {{ Auth::user()->name }}</h2>
-        <p class="text-violet-100 mt-1">Sekretaris Jurusan {{ Auth::user()->jurusan?->nama_jurusan ?? 'Belum ditentukan' }}</p>
+        <p class="text-green-100 mt-1">Sekretaris Jurusan {{ Auth::user()->jurusan?->nama_jurusan ?? 'Belum ditentukan' }}</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -20,9 +20,9 @@
                     <div class="text-xs text-gray-500">Disetujui Panitia</div>
                     <div class="text-2xl font-bold text-gray-900">{{ $stats['disetujui_panitia'] ?? 0 }}</div>
                 </div>
-                <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                    <div class="text-xs text-orange-600">Menunggu Penguji</div>
-                    <div class="text-2xl font-bold text-orange-700">{{ $stats['menunggu_penguji'] ?? 0 }}</div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div class="text-xs text-green-600">Menunggu Penguji</div>
+                    <div class="text-2xl font-bold text-green-700">{{ $stats['menunggu_penguji'] ?? 0 }}</div>
                 </div>
             </div>
 
@@ -46,8 +46,8 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h3>
             <p class="text-gray-500 mb-4">Tautan cepat untuk tugas Sekjur.</p>
             <div class="flex flex-col gap-2">
-                <a href="{{ route('sekjur.data-master.penguji') }}" class="text-left px-4 py-2 bg-violet-600 text-white rounded-md">Kelola Penguji</a>
-                <a href="{{ route('sekjur.data-master.penguji') }}" class="text-left px-4 py-2 border border-violet-600 text-violet-600 rounded-md">Lihat Penguji</a>
+                <a href="{{ route('sekjur.data-master.penguji') }}" class="text-left px-4 py-2 bg-green-600 text-white rounded-md">Kelola Penguji</a>
+                <a href="{{ route('sekjur.data-master.penguji') }}" class="text-left px-4 py-2 border border-green-600 text-green-600 rounded-md">Lihat Penguji</a>
             </div>
         </div>
     </div>

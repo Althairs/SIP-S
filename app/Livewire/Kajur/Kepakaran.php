@@ -13,7 +13,7 @@ class Kepakaran extends Component
 
     #[Url(history: true)]
     public $search = '';
-    public $showModal = false;
+    public $showForm = false;
     public $editMode = false;
     public $kepakaranId;
 
@@ -27,14 +27,14 @@ class Kepakaran extends Component
         $this->resetPage();
     }
 
-    public function openCreateModal()
+    public function openCreate()
     {
         $this->resetForm();
         $this->editMode = false;
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function openEditModal($id)
+    public function openEdit($id)
     {
         $this->resetForm();
         $this->editMode = true;
@@ -46,16 +46,16 @@ class Kepakaran extends Component
         $this->deskripsi = $k->deskripsi;
         $this->is_active = $k->is_active;
 
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function closeModal()
+    public function closeForm()
     {
-        $this->showModal = false;
+        $this->showForm = false;
         $this->resetForm();
     }
 
-    private function resetForm()
+    public function resetForm()
     {
         $this->reset(['nama_kepakaran', 'hierarki_level', 'deskripsi', 'is_active', 'kepakaranId', 'editMode']);
         $this->hierarki_level = 1;
@@ -90,7 +90,7 @@ class Kepakaran extends Component
             session()->flash('success', 'Kepakaran berhasil ditambahkan.');
         }
 
-        $this->closeModal();
+        $this->closeForm();
     }
 
     public function toggleStatus($id)

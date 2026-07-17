@@ -10,15 +10,24 @@ use App\Models\Pendaftaran;
 class DaftarRevisi extends Component
 {
     public $selectedRevisiId = null;
+    public $showDetail = false;
     public $catatan_dosen = '';
 
     public function selectRevisi($id)
     {
         $this->selectedRevisiId = $id;
+        $this->showDetail = true;
         $revisi = Revisi::find($id);
         if ($revisi) {
             $this->catatan_dosen = $revisi->catatan_dosen ?? '';
         }
+    }
+
+    public function closeDetail()
+    {
+        $this->showDetail = false;
+        $this->selectedRevisiId = null;
+        $this->catatan_dosen = '';
     }
 
     public function approveRevisi()
@@ -32,7 +41,7 @@ class DaftarRevisi extends Component
             'catatan_dosen' => $this->catatan_dosen,
         ]);
 
-        $this->reset(['selectedRevisiId', 'catatan_dosen']);
+        $this->closeDetail();
         session()->flash('success', 'Revisi berhasil disetujui.');
     }
 
@@ -53,7 +62,7 @@ class DaftarRevisi extends Component
             'catatan_dosen' => $this->catatan_dosen,
         ]);
 
-        $this->reset(['selectedRevisiId', 'catatan_dosen']);
+        $this->closeDetail();
         session()->flash('success', 'Mahasiswa diminta untuk mengunggah revisi baru.');
     }
 

@@ -24,8 +24,8 @@
                     <p class="text-sm text-gray-500">Total Prodi</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalProdi }}</p>
                 </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                     </svg>
                 </div>
@@ -38,8 +38,8 @@
                     <p class="text-sm text-gray-500">Total Users</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalUsers }}</p>
                 </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
                 </div>
@@ -67,17 +67,17 @@
             <p class="text-2xl font-bold text-green-700">{{ $totalKajur }}</p>
             <p class="text-sm text-green-600">Kajur</p>
         </div>
-        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-blue-700">{{ $totalSekjur }}</p>
-            <p class="text-sm text-blue-600">Sekjur</p>
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-green-700">{{ $totalSekjur }}</p>
+            <p class="text-sm text-green-600">Sekjur</p>
         </div>
         <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 text-center">
             <p class="text-2xl font-bold text-amber-700">{{ $totalDosen }}</p>
             <p class="text-sm text-amber-600">Dosen</p>
         </div>
-        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-purple-700">{{ $totalMahasiswa }}</p>
-            <p class="text-sm text-purple-600">Mahasiswa</p>
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-green-700">{{ $totalMahasiswa }}</p>
+            <p class="text-sm text-green-600">Mahasiswa</p>
         </div>
     </div> --}}
 

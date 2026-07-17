@@ -15,6 +15,10 @@ class KelolaNilaiBerkas extends Component
     public $statusFilter = '';
     public $selectedPenilaianId = null;
 
+    // --- VISIBILITY STATE ---
+    public $showForm = false;
+    public $showDetail = false;
+
     // --- PROPERTI UNTUK INPUT NILAI ---
     public $inputPenilaianId = null;
     public $penilaianToInput = null;
@@ -45,19 +49,21 @@ class KelolaNilaiBerkas extends Component
         $this->resetPage();
     }
 
-    public function selectPenilaian($id)
+    public function openDetail($id)
     {
         $this->selectedPenilaianId = $id;
+        $this->showDetail = true;
     }
 
     public function closeDetail()
     {
         $this->selectedPenilaianId = null;
+        $this->showDetail = false;
     }
 
     // --- FITUR INPUT NILAI OLEH PANITIA ---
 
-    public function openInputModal($id)
+    public function openForm($id)
     {
         $this->inputPenilaianId = $id;
         $this->penilaianToInput = Penilaian::with(['pendaftaran.mahasiswa', 'dosen'])->findOrFail($id);
@@ -77,13 +83,16 @@ class KelolaNilaiBerkas extends Component
         } else {
             $this->showPreview = false;
         }
+
+        $this->showForm = true;
     }
 
-    public function closeInputModal()
+    public function closeForm()
     {
         $this->inputPenilaianId = null;
         $this->penilaianToInput = null;
         $this->reset(['presentasi', 'penguasaan', 'menjawab', 'deskripsi', 'analisis', 'menyimpulkan', 'implikasi', 'nilaiAkhir', 'nilaiHuruf', 'predikat', 'catatanPanitia', 'showPreview']);
+        $this->showForm = false;
     }
 
     public function updated($field)
@@ -152,7 +161,7 @@ class KelolaNilaiBerkas extends Component
         $this->updateNilaiAkhirPendaftaran($penilaian->pendaftaran_id);
 
         session()->flash('success', 'Nilai mahasiswa berhasil diinput berdasarkan berkas dosen.');
-        $this->closeInputModal();
+        $this->closeForm();
     }
 
     private function updateNilaiAkhirPendaftaran($pendaftaranId)

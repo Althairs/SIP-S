@@ -21,7 +21,7 @@ class KuotaDosen extends Component
     #[Url(history: true)]
     public $prodiFilter = '';
 
-    public $showEditModal = false;
+    public $showForm = false;
 
     public $editDosenId;
 
@@ -56,7 +56,7 @@ class KuotaDosen extends Component
         $this->resetPage();
     }
 
-    public function openEditModal($dosenId)
+    public function openEdit($dosenId)
     {
         $dosen = User::with('kuota')->findOrFail($dosenId);
         $this->editDosenId = $dosen->id;
@@ -66,12 +66,12 @@ class KuotaDosen extends Component
         $this->editKuotaPenguji = $dosen->kuota?->kuota_penguji ?? $this->defaultKuotaPenguji;
         $this->editTerpakaiPembimbing = $dosen->kuota?->terpakai_pembimbing ?? 0;
         $this->editTerpakaiPenguji = $dosen->kuota?->terpakai_penguji ?? 0;
-        $this->showEditModal = true;
+        $this->showForm = true;
     }
 
-    public function closeEditModal()
+    public function closeForm()
     {
-        $this->showEditModal = false;
+        $this->showForm = false;
         $this->reset(['editDosenId', 'editNama', 'editNip', 'editKuotaPembimbing', 'editKuotaPenguji', 'editTerpakaiPembimbing', 'editTerpakaiPenguji']);
     }
 
@@ -92,7 +92,7 @@ class KuotaDosen extends Component
         );
 
         session()->flash('success', 'Kuota dosen berhasil diperbarui.');
-        $this->closeEditModal();
+        $this->closeForm();
     }
 
     public function saveDefaultKuota()

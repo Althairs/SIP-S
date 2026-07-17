@@ -46,7 +46,7 @@
                     <option value="0">Nonaktif</option>
                 </select>
             </div>
-            <a href="{{ route('admin.prodis.create') }}" class="px-5 py-2.5 bg-blue-700 text-white rounded-xl hover:bg-blue-800 transition font-medium flex items-center gap-2 whitespace-nowrap">
+            <a href="{{ route('admin.prodis.create') }}" class="px-5 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 transition font-medium flex items-center gap-2 whitespace-nowrap">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -82,7 +82,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                                 {{ $prodi->users_count }} Users
                             </span>
                         </td>

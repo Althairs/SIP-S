@@ -22,7 +22,7 @@ class AturAtributDosen extends Component
     #[Url]
     public $bidangFilter = '';
 
-    public $showModal = false;
+    public $showForm = false;
     public $editDosenId;
     public $editDosenNama;
     public $editDosenNip;
@@ -59,7 +59,7 @@ class AturAtributDosen extends Component
         }
     }
 
-    public function openEditModal($id)
+    public function openEdit($id)
     {
         $dosen = User::with(['kepakaran', 'bidangKeahlians'])->findOrFail($id);
         $this->editDosenId = $dosen->id;
@@ -67,12 +67,12 @@ class AturAtributDosen extends Component
         $this->editDosenNip = $dosen->nip;
         $this->selectedKepakaran = $dosen->kepakaran_id ?? '';
         $this->selectedBidangKeahlian = $dosen->bidangKeahlians->pluck('id')->toArray();
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function closeModal()
+    public function closeForm()
     {
-        $this->showModal = false;
+        $this->showForm = false;
         $this->reset(['editDosenId', 'editDosenNama', 'editDosenNip', 'selectedKepakaran', 'selectedBidangKeahlian']);
     }
 
@@ -102,7 +102,7 @@ class AturAtributDosen extends Component
         $dosen->bidangKeahlians()->sync($this->selectedBidangKeahlian ?: []);
 
         session()->flash('success', "Atribut dosen <strong>{$dosen->name}</strong> berhasil diperbarui.");
-        $this->closeModal();
+        $this->closeForm();
     }
 
     public function applyQuickAssign()

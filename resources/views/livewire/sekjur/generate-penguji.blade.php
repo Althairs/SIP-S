@@ -33,7 +33,7 @@
             <p class="text-sm text-gray-500 mb-1">Bidang Keahlian:</p>
             <div class="flex flex-wrap gap-1">
                 @foreach($pendaftaran->bidangKeahlians as $bk)
-                <span class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-xs">{{ $bk->nama_bidang }}</span>
+                <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">{{ $bk->nama_bidang }}</span>
                 @endforeach
             </div>
         </div>
@@ -42,11 +42,11 @@
 
     <!-- Mode Selection -->
     <div class="flex gap-3 mb-6">
-        <button wire:click="generatePenguji" class="px-5 py-2.5 {{ $mode === 'auto' ? 'bg-orange-700 text-white' : 'bg-gray-100 text-gray-700' }} rounded-xl font-medium transition">
+        <button wire:click="generatePenguji" class="px-5 py-2.5 {{ $mode === 'auto' ? 'bg-green-700 text-white' : 'bg-gray-100 text-gray-700' }} rounded-xl font-medium transition">
             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
             Generate Otomatis
         </button>
-        <button wire:click="setManual" class="px-5 py-2.5 {{ $mode === 'manual' ? 'bg-orange-700 text-white' : 'bg-gray-100 text-gray-700' }} rounded-xl font-medium transition">
+        <button wire:click="setManual" class="px-5 py-2.5 {{ $mode === 'manual' ? 'bg-green-700 text-white' : 'bg-gray-100 text-gray-700' }} rounded-xl font-medium transition">
             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
             Pilih Manual
         </button>
@@ -57,7 +57,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-green-200 p-6">
             <div class="flex items-center space-x-2 mb-4">
                 <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Penguji 1 (Utama)</span>
-                <span class="text-xs text-gray-500">Hierarki Tertinggi</span>
+                <span class="text-xs text-gray-500">Jabatan Fungsional Tertinggi</span>
             </div>
 
             @if($mode === 'auto')
@@ -65,7 +65,7 @@
                     <div class="space-y-2">
                         <p class="font-semibold text-lg">{{ $penguji1['name'] ?? '-' }}</p>
                         <p class="text-sm text-gray-500">NIP: {{ $penguji1['nip'] ?? '-' }}</p>
-                        <p class="text-sm">JaFung: <span class="font-medium text-purple-700">{{ $penguji1Kepakaran }}</span></p>
+                        <p class="text-sm">JaFung: <span class="font-medium text-green-700">{{ $penguji1Kepakaran }}</span></p>
                         <p class="text-sm">
                             Kuota Tersisa:
                             <span class="font-medium {{ $penguji1Overload ? 'text-red-600' : 'text-green-600' }}">
@@ -75,16 +75,16 @@
                         </p>
                         <p class="text-sm">
                             Skor:
-                            <span class="font-medium text-orange-600">{{ $penguji1Score }}</span>
+                            <span class="font-medium text-green-600">{{ $penguji1Score }}</span>
                         </p>
                         @if($penguji1ScoreBreakdown)
-                        <div class="mt-3 p-3 bg-orange-50 rounded-lg text-xs space-y-1">
-                            <p class="font-medium text-orange-800 mb-1">Detail Perhitungan Skor:</p>
+                        <div class="mt-3 p-3 bg-green-50 rounded-lg text-xs space-y-1">
+                            <p class="font-medium text-green-800 mb-1">Detail Perhitungan Skor:</p>
                             <p>JaFung: <span class="font-medium">{{ $penguji1ScoreBreakdown['kepakaran'] ?? 0 }}</span></p>
                             <p>Bidang Keahlian: <span class="font-medium">{{ $penguji1ScoreBreakdown['bidang_keahlian'] ?? 0 }}</span> ({{ $penguji1ScoreBreakdown['bidang_match_count'] ?? 0 }} match)</p>
                             <p>Kuota: <span class="font-medium">{{ $penguji1ScoreBreakdown['kuota'] ?? 0 }}</span> (sisa: {{ $penguji1ScoreBreakdown['sisa_kuota'] ?? 0 }})</p>
                             <p>Overload Penalty: <span class="font-medium">{{ $penguji1ScoreBreakdown['overload_penalty'] ?? 0 }}</span></p>
-                            <p class="font-bold text-orange-900 mt-1 pt-1 border-t border-orange-200">Total: {{ $penguji1ScoreBreakdown['total'] ?? 0 }}</p>
+                            <p class="font-bold text-green-900 mt-1 pt-1 border-t border-green-200">Total: {{ $penguji1ScoreBreakdown['total'] ?? 0 }}</p>
                         </div>
                         @endif
                     </div>
@@ -94,7 +94,7 @@
             @else
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Dosen Penguji 1</label>
-                    <select wire:model="manualPenguji1" wire:change="setManual" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500">
+                    <select wire:model="manualPenguji1" wire:change="setManual" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500">
                         <option value="">-- Pilih Dosen --</option>
                         @foreach($availableDosens as $d)
                         <option value="{{ $d->id }}" {{ $d->id == $manualPenguji2 ? 'disabled' : '' }}>
@@ -107,9 +107,9 @@
         </div>
 
         <!-- Penguji 2 -->
-        <div class="bg-white rounded-2xl shadow-sm border border-blue-200 p-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-green-200 p-6">
             <div class="flex items-center space-x-2 mb-4">
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Penguji 2</span>
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Penguji 2</span>
                 <span class="text-xs text-gray-500">Kuota Terbanyak / Manual</span>
             </div>
 
@@ -118,7 +118,7 @@
                     <div class="space-y-2">
                         <p class="font-semibold text-lg">{{ $penguji2['name'] ?? '-' }}</p>
                         <p class="text-sm text-gray-500">NIP: {{ $penguji2['nip'] ?? '-' }}</p>
-                        <p class="text-sm">JaFung: <span class="font-medium text-purple-700">{{ $penguji2Kepakaran }}</span></p>
+                        <p class="text-sm">JaFung: <span class="font-medium text-green-700">{{ $penguji2Kepakaran }}</span></p>
                         <p class="text-sm">
                             Kuota Tersisa:
                             <span class="font-medium {{ $penguji2Overload ? 'text-red-600' : 'text-green-600' }}">
@@ -128,16 +128,16 @@
                         </p>
                         <p class="text-sm">
                             Skor:
-                            <span class="font-medium text-orange-600">{{ $penguji2Score }}</span>
+                            <span class="font-medium text-green-600">{{ $penguji2Score }}</span>
                         </p>
                         @if($penguji2ScoreBreakdown)
-                        <div class="mt-3 p-3 bg-blue-50 rounded-lg text-xs space-y-1">
-                            <p class="font-medium text-blue-800 mb-1">Detail Perhitungan Skor:</p>
+                        <div class="mt-3 p-3 bg-green-50 rounded-lg text-xs space-y-1">
+                            <p class="font-medium text-green-800 mb-1">Detail Perhitungan Skor:</p>
                             <p>JaFung: <span class="font-medium">{{ $penguji2ScoreBreakdown['kepakaran'] ?? 0 }}</span></p>
                             <p>Bidang Keahlian: <span class="font-medium">{{ $penguji2ScoreBreakdown['bidang_keahlian'] ?? 0 }}</span> ({{ $penguji2ScoreBreakdown['bidang_match_count'] ?? 0 }} match)</p>
                             <p>Kuota: <span class="font-medium">{{ $penguji2ScoreBreakdown['kuota'] ?? 0 }}</span> (sisa: {{ $penguji2ScoreBreakdown['sisa_kuota'] ?? 0 }})</p>
                             <p>Overload Penalty: <span class="font-medium">{{ $penguji2ScoreBreakdown['overload_penalty'] ?? 0 }}</span></p>
-                            <p class="font-bold text-blue-900 mt-1 pt-1 border-t border-blue-200">Total: {{ $penguji2ScoreBreakdown['total'] ?? 0 }}</p>
+                            <p class="font-bold text-green-900 mt-1 pt-1 border-t border-green-200">Total: {{ $penguji2ScoreBreakdown['total'] ?? 0 }}</p>
                         </div>
                         @endif
                     </div>
@@ -147,7 +147,7 @@
             @else
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Dosen Penguji 2</label>
-                    <select wire:model="manualPenguji2" wire:change="setManual" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500">
+                    <select wire:model="manualPenguji2" wire:change="setManual" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500">
                         <option value="">-- Pilih Dosen (Opsional) --</option>
                         @foreach($availableDosens as $d)
                         <option value="{{ $d->id }}" {{ $d->id == $manualPenguji1 ? 'disabled' : '' }}>
@@ -179,7 +179,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @foreach($availableDosens->take(10) as $d)
-                    <tr class="hover:bg-gray-50 {{ $d->id == $penguji1Id ? 'bg-green-50' : '' }} {{ $d->id == $penguji2Id ? 'bg-blue-50' : '' }}">
+                    <tr class="hover:bg-gray-50 {{ $d->id == $penguji1Id ? 'bg-green-50' : '' }} {{ $d->id == $penguji2Id ? 'bg-green-50' : '' }}">
                         <td class="px-4 py-3">
                             <p class="font-medium text-gray-900 text-sm">{{ $d->name }}</p>
                             <p class="text-xs text-gray-500">{{ $d->nip }}</p>
@@ -207,7 +207,7 @@
 
     <!-- Actions -->
     <div class="flex items-center gap-4">
-        <button wire:click="simpanPenguji" class="px-6 py-3 bg-orange-700 text-white rounded-xl hover:bg-orange-800 font-medium" {{ !$penguji1Id ? 'disabled' : '' }}>
+        <button wire:click="simpanPenguji" class="px-6 py-3 bg-green-700 text-white rounded-xl hover:bg-green-800 font-medium" {{ !$penguji1Id ? 'disabled' : '' }}>
             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             Simpan Penguji & Teruskan ke Penjadwalan
         </button>

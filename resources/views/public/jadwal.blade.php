@@ -14,17 +14,17 @@
 
             <!-- Stats -->
             <div class="grid grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
-                <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-blue-100">
-                    <p class="text-2xl font-bold text-blue-700">{{ $totalSeminarProposal }}</p>
-                    <p class="text-xs text-blue-600">Seminar Proposal</p>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-green-100">
+                    <p class="text-2xl font-bold text-green-700">{{ $totalSeminarProposal }}</p>
+                    <p class="text-xs text-green-600">Seminar Proposal</p>
                 </div>
                 <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-amber-100">
                     <p class="text-2xl font-bold text-amber-700">{{ $totalSeminarHasil }}</p>
                     <p class="text-xs text-amber-600">Seminar Hasil</p>
                 </div>
-                <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-purple-100">
-                    <p class="text-2xl font-bold text-purple-700">{{ $totalSidang }}</p>
-                    <p class="text-xs text-purple-600">Sidang Skripsi</p>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-green-100">
+                    <p class="text-2xl font-bold text-green-700">{{ $totalSidang }}</p>
+                    <p class="text-xs text-green-600">Sidang Skripsi</p>
                 </div>
             </div>
 
@@ -83,7 +83,7 @@
 
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                <span class="px-2 py-1 bg-{{ $jadwal->jenis_ujian === 'seminar_proposal' ? 'blue' : ($jadwal->jenis_ujian === 'seminar_hasil' ? 'amber' : 'purple') }}-100 text-{{ $jadwal->jenis_ujian === 'seminar_proposal' ? 'blue' : ($jadwal->jenis_ujian === 'seminar_hasil' ? 'amber' : 'purple') }}-800 rounded-full text-xs font-medium">
+                                <span class="px-2 py-1 bg-{{ $jadwal->jenis_ujian === 'seminar_proposal' ? 'green' : ($jadwal->jenis_ujian === 'seminar_hasil' ? 'amber' : 'green') }}-100 text-{{ $jadwal->jenis_ujian === 'seminar_proposal' ? 'green' : ($jadwal->jenis_ujian === 'seminar_hasil' ? 'amber' : 'green') }}-800 rounded-full text-xs font-medium">
                                     {{ ucwords(str_replace('_', ' ', $jadwal->jenis_ujian)) }}
                                 </span>
                                 <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">

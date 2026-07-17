@@ -19,7 +19,7 @@
                 <div class="space-y-6">
                     <!-- Enable/Disable -->
                     <div class="flex items-center">
-                        <input type="checkbox" id="whatsapp_enabled" wire:model="whatsapp_enabled" class="w-5 h-5 text-cyan-600 rounded border-gray-300 focus:ring-cyan-500">
+                        <input type="checkbox" id="whatsapp_enabled" wire:model="whatsapp_enabled" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500">
                         <label for="whatsapp_enabled" class="ml-3 block text-sm font-medium text-gray-700">Aktifkan Notifikasi WhatsApp Sistem</label>
                     </div>
 
@@ -28,11 +28,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Provider Aktif</label>
                         <div class="flex space-x-4">
                             <label class="flex items-center">
-                                <input type="radio" wire:model.live="whatsapp_provider" value="fonnte" class="text-cyan-600 focus:ring-cyan-500">
+                                <input type="radio" wire:model.live="whatsapp_provider" value="fonnte" class="text-green-600 focus:ring-green-500">
                                 <span class="ml-2 text-sm text-gray-700">Fonnte</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="radio" wire:model.live="whatsapp_provider" value="netflie" class="text-cyan-600 focus:ring-cyan-500">
+                                <input type="radio" wire:model.live="whatsapp_provider" value="netflie" class="text-green-600 focus:ring-green-500">
                                 <span class="ml-2 text-sm text-gray-700">Netflie (Meta Cloud API)</span>
                             </label>
                         </div>
@@ -44,7 +44,7 @@
                         <h3 class="text-sm font-semibold text-gray-800 mb-3">Konfigurasi Fonnte</h3>
                         <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">API Token</label>
-                            <input type="password" wire:model="whatsapp_fonnte_token" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 text-sm">
+                            <input type="password" wire:model="whatsapp_fonnte_token" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm">
                             <p class="text-xs text-gray-500 mt-1">Dapatkan token ini dari dashboard Fonnte.</p>
                         </div>
                     </div>
@@ -56,17 +56,17 @@
                         <h3 class="text-sm font-semibold text-gray-800 mb-2">Konfigurasi Netflie (Meta Cloud API)</h3>
                         <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">Access Token</label>
-                            <input type="password" wire:model="whatsapp_netflie_token" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 text-sm">
+                            <input type="password" wire:model="whatsapp_netflie_token" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">Phone Number ID</label>
-                            <input type="text" wire:model="whatsapp_netflie_phone_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 text-sm">
+                            <input type="text" wire:model="whatsapp_netflie_phone_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm">
                         </div>
                     </div>
                     @endif
 
                     <div class="pt-4 border-t border-gray-100 flex justify-end">
-                        <button type="submit" class="px-6 py-2.5 bg-cyan-700 text-white rounded-xl hover:bg-cyan-800 font-medium text-sm transition shadow-sm shadow-cyan-200">
+                        <button type="submit" class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 font-medium text-sm transition shadow-sm shadow-green-200">
                             Simpan Pengaturan
                         </button>
                     </div>

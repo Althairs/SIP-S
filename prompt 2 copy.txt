@@ -1,6 +1,6 @@
 buatkan issue.md, berisi planning memebuat ini:
 
-- ganti layout semua modal menjadi 
+- bagian dashboard kajur, sekjur, dosen, panitia penjadwalan,verifikasi,administrasi dan super admin ganti mengikuti contoh design di folder z-contohdashboard agar lebih futuristik
 - gunakan context7
 
 jangan terlalu low level atau detail

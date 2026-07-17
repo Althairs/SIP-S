@@ -41,7 +41,7 @@ class DaftarRevisi extends Component
         $this->resetErrorBag();
     }
 
-    public function closeModal()
+    public function closeDetail()
     {
         $this->selectedRevisiId = null;
         $this->reset(['file_revisi', 'catatan_mahasiswa']);
@@ -63,7 +63,7 @@ class DaftarRevisi extends Component
             'uploaded_at' => now(),
         ]);
 
-        $this->closeModal();
+        $this->closeDetail();
         $this->loadRevisis();
         session()->flash('success', 'File revisi berhasil diunggah.');
     }

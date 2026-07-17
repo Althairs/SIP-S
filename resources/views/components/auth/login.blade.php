@@ -75,7 +75,7 @@
                                                     <span class="text-green-600">| NIM: <span x-text="account.nim"></span></span>
                                                 </template>
                                                 <template x-if="account.nip">
-                                                    <span class="text-blue-600">| NIP: <span x-text="account.nip"></span></span>
+                                                    <span class="text-green-600">| NIP: <span x-text="account.nip"></span></span>
                                                 </template>
                                             </div>
                                         </div>
@@ -83,12 +83,12 @@
                                             <span x-show="account.role"
                                                   class="px-2 py-0.5 text-xs rounded-full"
                                                   :class="{
-                                                      'bg-purple-100 text-purple-700': account.role === 'super_admin',
+                                                      'bg-green-100 text-green-700': account.role === 'super_admin',
                                                       'bg-emerald-100 text-emerald-700': account.role === 'kajur',
-                                                      'bg-violet-100 text-violet-700': account.role === 'sekjur',
-                                                      'bg-blue-100 text-blue-700': account.role === 'dosen',
+                                                      'bg-green-100 text-green-700': account.role === 'sekjur',
+                                                      'bg-green-100 text-green-700': account.role === 'dosen',
                                                       'bg-amber-100 text-amber-700': account.role === 'panitia_verifikasi' || account.role === 'panitia_penjadwalan' || account.role === 'panitia_administrasi',
-                                                      'bg-purple-100 text-purple-700': account.role === 'mahasiswa'
+                                                      'bg-green-100 text-green-700': account.role === 'mahasiswa'
                                                   }"
                                                   x-text="account.role_label || account.role"></span>
                                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,12 +166,12 @@
                             </div>
                             <span class="px-2 py-0.5 text-xs rounded-full flex-shrink-0 ml-2"
                                   :class="{
-                                      'bg-purple-100 text-purple-700': account.role === 'Super Admin',
+                                      'bg-green-100 text-green-700': account.role === 'Super Admin',
                                       'bg-emerald-100 text-emerald-700': account.role === 'Kajur',
-                                      'bg-violet-100 text-violet-700': account.role === 'Sekjur',
-                                      'bg-blue-100 text-blue-700': account.role === 'Dosen',
+                                      'bg-green-100 text-green-700': account.role === 'Sekjur',
+                                      'bg-green-100 text-green-700': account.role === 'Dosen',
                                       'bg-amber-100 text-amber-700': account.role === 'Panitia',
-                                      'bg-purple-100 text-purple-700': account.role === 'Mahasiswa'
+                                      'bg-green-100 text-green-700': account.role === 'Mahasiswa'
                                   }"
                                   x-text="account.role"></span>
                         </div>

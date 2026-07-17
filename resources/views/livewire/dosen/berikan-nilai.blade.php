@@ -44,11 +44,11 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="{{ route('dosen.nilai.input', $p->id) }}" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 text-xs font-medium flex items-center" title="Input via Sistem">
+                            <a href="{{ route('dosen.nilai.input', $p->id) }}" class="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-xs font-medium flex items-center" title="Input via Sistem">
                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                 {{ $sudahNilai && $nilai->tipe_input === 'sistem' ? 'Edit' : 'Input' }}
                             </a>
-                            <a href="{{ route('dosen.nilai.upload', $p->id) }}" class="px-3 py-1.5 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 text-xs font-medium flex items-center" title="Upload Berkas">
+                            <a href="{{ route('dosen.nilai.upload', $p->id) }}" class="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-xs font-medium flex items-center" title="Upload Berkas">
                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                                 {{ $sudahNilai && $nilai->tipe_input === 'berkas' ? 'Re-upload' : 'Upload' }}
                             </a>

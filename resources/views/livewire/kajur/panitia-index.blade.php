@@ -11,6 +11,96 @@
     </div>
     @endif
 
+    @if($showForm)
+    <!-- Breadcrumb (Form Mode) -->
+    <nav class="mb-6 text-sm text-gray-500">
+        <ol class="flex items-center gap-1.5">
+            <li><a href="{{ route('kajur.data-master.panitia') }}" class="hover:text-green-700 transition">Data Master</a></li>
+            <li><span class="mx-1">/</span></li>
+            <li><a href="{{ route('kajur.data-master.panitia') }}" class="hover:text-green-700 transition">Data Panitia</a></li>
+            <li><span class="mx-1">/</span></li>
+            <li class="text-green-700 font-medium">{{ $editMode ? 'Edit' : 'Tambah' }}</li>
+        </ol>
+    </nav>
+
+    <!-- Inline Form Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-900">{{ $editMode ? 'Edit Panitia' : 'Tambah Panitia' }}</h3>
+            <button wire:click="closeForm" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <form wire:submit="save">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama <span class="text-red-500">*</span></label>
+                    <input type="text" wire:model="name" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('name') border-red-500 @enderror">
+                    @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
+                    <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('email') border-red-500 @enderror">
+                    @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password {{ $editMode ? '' : '*' }}</label>
+                        <input type="password" wire:model="password" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="{{ $editMode ? 'Kosongkan jika tidak diubah' : '' }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
+                        <input type="password" wire:model="password_confirmation" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">NIP <span class="text-red-500">*</span></label>
+                    <input type="text" wire:model="nip" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 @error('nip') border-red-500 @enderror" placeholder="Masukkan NIP">
+                    @error('nip') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Role Panitia <span class="text-red-500">*</span></label>
+                    <select wire:model="role" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-900 @error('role') border-red-500 @enderror {{ !$role ? 'text-gray-900' : 'text-gray-900' }}">
+                        <option value="">Pilih Role Panitia</option>
+                        <option value="panitia_verifikasi">Panitia Verifikasi</option>
+                        <option value="panitia_penjadwalan">Panitia Penjadwalan</option>
+                        <option value="panitia_administrasi">Panitia Administrasi</option>
+                    </select>
+                    @error('role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
+                    <input type="text" wire:model="nomor_hp" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400" placeholder="Contoh: 081234567890">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                    <textarea wire:model="alamat" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400" placeholder="Alamat lengkap..."></textarea>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" wire:model="is_active" class="w-4 h-4 text-green-700 border-gray-300 rounded focus:ring-green-500">
+                    <label class="ml-2 text-sm text-gray-700">Akun Aktif</label>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-end gap-4">
+                <button type="button" wire:click="closeForm" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition font-medium">Batal</button>
+                <button type="submit" class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 transition font-medium">{{ $editMode ? 'Perbarui' : 'Simpan' }}</button>
+            </div>
+        </form>
+    </div>
+
+    @else
+
+    <!-- Breadcrumb (List Mode) -->
+    <nav class="mb-6 text-sm text-gray-500">
+        <ol class="flex items-center gap-1.5">
+            <li><a href="{{ route('kajur.data-master.panitia') }}" class="hover:text-green-700 transition">Data Master</a></li>
+            <li><span class="mx-1">/</span></li>
+            <li class="text-green-700 font-medium">Data Panitia</li>
+        </ol>
+    </nav>
+
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
@@ -23,7 +113,7 @@
         </div>
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
             <p class="text-sm text-gray-500">Penjadwalan</p>
-            <p class="text-3xl font-semibold text-cyan-700 mt-3">{{ $summary['penjadwalan'] ?? 0 }}</p>
+            <p class="text-3xl font-semibold text-green-700 mt-3">{{ $summary['penjadwalan'] ?? 0 }}</p>
         </div>
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
             <p class="text-sm text-gray-500">Administrasi</p>
@@ -37,30 +127,30 @@
             <div class="flex-1 flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
                     <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari panitia..."
-                           class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                           class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <select wire:model="roleFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-amber-500 focus:border-amber-500">
+                <select wire:model="roleFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Role</option>
                     <option value="panitia_verifikasi">Panitia Verifikasi</option>
                     <option value="panitia_penjadwalan">Panitia Penjadwalan</option>
                     <option value="panitia_administrasi">Panitia Administrasi</option>
                 </select>
-                <select wire:model="prodiFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-amber-500 focus:border-amber-500">
+                <select wire:model="prodiFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Prodi</option>
                     @foreach($prodis as $prodi)
                         <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
-                <select wire:model.change="statusFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-amber-500 focus:border-amber-500">
+                <select wire:model.change="statusFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
                     <option value="0">Nonaktif</option>
                 </select>
             </div>
-            <button wire:click="openCreateModal" class="px-5 py-2.5 bg-amber-700 text-white rounded-xl hover:bg-amber-800 transition font-medium flex items-center gap-2">
+            <button wire:click="openCreate" class="px-5 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 transition font-medium flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Tambah Panitia
             </button>
@@ -101,7 +191,7 @@
                                 $roleName = $panitia->getRoleNames()->first();
                                 $roleBadge = [
                                     'panitia_verifikasi' => 'bg-amber-100 text-amber-800',
-                                    'panitia_penjadwalan' => 'bg-cyan-100 text-cyan-800',
+                                    'panitia_penjadwalan' => 'bg-green-100 text-green-800',
                                     'panitia_administrasi' => 'bg-emerald-100 text-emerald-800',
                                 ][$roleName] ?? 'bg-gray-900 text-gray-900';
                             @endphp
@@ -118,7 +208,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">
-                                <button wire:click="openEditModal({{ $panitia->id }})"
+                                <button wire:click="openEdit({{ $panitia->id }})"
                                         class="px-3 py-1.5 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition text-sm font-medium">
                                     Edit
                                 </button>
@@ -143,77 +233,5 @@
         </div>
     </div>
 
-    <!-- Modal Create/Edit -->
-    @if($showModal)
-    <div class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-black/50" wire:click="closeModal"></div>
-            <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">{{ $editMode ? 'Edit Panitia' : 'Tambah Panitia' }}</h3>
-                    <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <form wire:submit="save">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="name" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 @error('name') border-red-500 @enderror">
-                            @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
-                            <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 @error('email') border-red-500 @enderror">
-                            @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Password {{ $editMode ? '' : '*' }}</label>
-                                <input type="password" wire:model="password" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="{{ $editMode ? 'Kosongkan jika tidak diubah' : '' }}">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
-                                <input type="password" wire:model="password_confirmation" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">NIP <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="nip" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400 @error('nip') border-red-500 @enderror" placeholder="Masukkan NIP">
-                            @error('nip') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Role Panitia <span class="text-red-500">*</span></label>
-                            <select wire:model="role" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-900 @error('role') border-red-500 @enderror {{ !$role ? 'text-gray-900' : 'text-gray-900' }}">
-                                <option value="">Pilih Role Panitia</option>
-                                <option value="panitia_verifikasi">Panitia Verifikasi</option>
-                                <option value="panitia_penjadwalan">Panitia Penjadwalan</option>
-                                <option value="panitia_administrasi">Panitia Administrasi</option>
-                            </select>
-                            @error('role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
-                            <input type="text" wire:model="nomor_hp" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400" placeholder="Contoh: 081234567890">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
-                            <textarea wire:model="alamat" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 placeholder-gray-400" placeholder="Alamat lengkap..."></textarea>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="checkbox" wire:model="is_active" class="w-4 h-4 text-amber-700 border-gray-300 rounded focus:ring-amber-500">
-                            <label class="ml-2 text-sm text-gray-700">Akun Aktif</label>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex items-center justify-end gap-4">
-                        <button type="button" wire:click="closeModal" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition font-medium">Batal</button>
-                        <button type="submit" class="px-6 py-2.5 bg-amber-700 text-white rounded-xl hover:bg-amber-800 transition font-medium">{{ $editMode ? 'Perbarui' : 'Simpan' }}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     @endif
 </div>

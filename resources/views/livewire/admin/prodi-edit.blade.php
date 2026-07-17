@@ -21,7 +21,7 @@
                         <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
-                        <span class="text-blue-700 font-medium">Edit: {{ $prodi->kode_prodi }}</span>
+                        <span class="text-green-700 font-medium">Edit: {{ $prodi->kode_prodi }}</span>
                     </div>
                 </li>
             </ol>
@@ -87,7 +87,7 @@
                         <input type="checkbox"
                                id="is_active"
                                wire:model="is_active"
-                               class="w-4 h-4 text-blue-700 border-gray-300 rounded focus:ring-blue-500">
+                               class="w-4 h-4 text-green-700 border-gray-300 rounded focus:ring-green-500">
                         <label for="is_active" class="ml-2 text-sm text-gray-700">
                             Prodi Aktif
                         </label>
@@ -100,7 +100,7 @@
                         Batal
                     </a>
                     <button type="submit"
-                            class="px-6 py-2.5 bg-blue-700 text-white rounded-xl hover:bg-blue-800 transition font-medium">
+                            class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 transition font-medium">
                         Perbarui Prodi
                     </button>
                 </div>

@@ -19,12 +19,11 @@ class BerikanRevisi extends Component
     public $deadlineDays = 14;
     public $existingRevisis = [];
     public $editRevisiId = null;
-    public $showForm = false;
+    public $modalMode = '';
 
     // Untuk review file mahasiswa
     public $catatanDosenReview = '';
     public $reviewRevisiId = null;
-    public $showReviewModal = false;
 
     public function mount($pendaftaran)
     {
@@ -65,12 +64,12 @@ class BerikanRevisi extends Component
             $this->kategori = 'minor';
             $this->deadlineDays = 14;
         }
-        $this->showForm = true;
+        $this->modalMode = 'input';
     }
 
     public function closeForm()
     {
-        $this->showForm = false;
+        $this->modalMode = '';
         $this->reset(['isiRevisi', 'kategori', 'deadlineDays', 'editRevisiId']);
     }
 
@@ -109,12 +108,12 @@ class BerikanRevisi extends Component
         $this->reviewRevisiId = $revisiId;
         $rev = Revisi::findOrFail($revisiId);
         $this->catatanDosenReview = $rev->catatan_dosen ?? '';
-        $this->showReviewModal = true;
+        $this->modalMode = 'review';
     }
 
     public function closeReviewModal()
     {
-        $this->showReviewModal = false;
+        $this->modalMode = '';
         $this->reset(['reviewRevisiId', 'catatanDosenReview']);
     }
 

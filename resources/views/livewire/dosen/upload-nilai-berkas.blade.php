@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Jenis Ujian</p>
-                    <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">{{ ucwords(str_replace('_', ' ', $pendaftaran->jenis_ujian)) }}</span>
                 </div>
                 <div class="col-span-2">
                     <p class="text-sm text-gray-500">Judul</p>
@@ -31,7 +31,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Tipe Input</p>
-                    <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs inline-flex items-center">
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs inline-flex items-center">
                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                         Upload Berkas
                     </span>
@@ -57,7 +57,7 @@
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Berkas Sebelumnya
             </h3>
-            <a href="{{ asset('storage/' . $existingPenilaian->file_penilaian) }}" target="_blank" class="flex items-center gap-2 p-3 bg-blue-50 rounded-xl text-blue-700 hover:bg-blue-100 border border-blue-100">
+            <a href="{{ asset('storage/' . $existingPenilaian->file_penilaian) }}" target="_blank" class="flex items-center gap-2 p-3 bg-green-50 rounded-xl text-green-700 hover:bg-green-100 border border-green-100">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                 <span class="text-sm font-medium">Lihat Berkas Sebelumnya</span>
             </a>
@@ -74,7 +74,7 @@
                 <div class="space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">File Penilaian <span class="text-red-500">*</span></label>
-                        <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-indigo-400 transition cursor-pointer"
+                        <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-green-400 transition cursor-pointer"
                              x-data
                              x-on:click="$refs.fileInput.click()">
                             <input type="file" wire:model="filePenilaian" x-ref="fileInput" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
@@ -96,13 +96,13 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Catatan untuk Panitia (Opsional)</label>
-                        <textarea wire:model="catatan" rows="3" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Catatan tambahan untuk panitia administrasi..."></textarea>
+                        <textarea wire:model="catatan" rows="3" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 text-sm" placeholder="Catatan tambahan untuk panitia administrasi..."></textarea>
                     </div>
                 </div>
 
                 <div class="mt-6 flex justify-between items-center pt-4 border-t border-gray-100">
                     <a href="{{ route('dosen.nilai.index') }}" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium text-sm">Kembali</a>
-                    <button type="submit" class="px-6 py-2.5 bg-indigo-700 text-white rounded-xl hover:bg-indigo-800 font-medium shadow-sm text-sm inline-flex items-center gap-2" wire:loading.attr="disabled" wire:target="save">
+                    <button type="submit" class="px-6 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 font-medium shadow-sm text-sm inline-flex items-center gap-2" wire:loading.attr="disabled" wire:target="save">
                         <svg wire:loading wire:target="save" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
                         <svg wire:loading.remove wire:target="save" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                         {{ $existingPenilaian ? 'Upload Ulang' : 'Kirim ke Panitia Administrasi' }}

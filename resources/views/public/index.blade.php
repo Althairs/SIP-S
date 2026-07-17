@@ -84,11 +84,11 @@
                 </div>
 
                 <!-- Seminar Proposal -->
-                <div class="bg-blue-50 rounded-lg p-6 text-center hover:shadow-md transition-shadow duration-200">
-                    <div class="text-3xl font-bold text-blue-700">
+                <div class="bg-green-50 rounded-lg p-6 text-center hover:shadow-md transition-shadow duration-200">
+                    <div class="text-3xl font-bold text-green-700">
                         {{ $jadwalMingguIni->where('jenis_ujian', 'seminar_proposal')->count() }}
                     </div>
-                    <div class="text-sm text-blue-600 mt-2">Seminar Proposal</div>
+                    <div class="text-sm text-green-600 mt-2">Seminar Proposal</div>
                 </div>
 
                 <!-- Seminar Hasil -->
@@ -146,7 +146,7 @@
                             </td>
                             <td class="p-4">
                                 <span class="px-3 py-1 text-xs font-medium rounded-full
-                                    @if($jadwal->jenis_ujian == 'seminar_proposal') bg-blue-100 text-blue-800
+                                    @if($jadwal->jenis_ujian == 'seminar_proposal') bg-green-100 text-green-800
                                     @elseif($jadwal->jenis_ujian == 'seminar_hasil') bg-yellow-100 text-yellow-800
                                     @else bg-red-100 text-red-800 @endif">
                                     {{ ucwords(str_replace('_', ' ', $jadwal->jenis_ujian)) }}
@@ -193,23 +193,23 @@
             </h3>
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Aturan Ruangan -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                    <h4 class="text-lg font-semibold text-green-800 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                         Aturan Ruangan
                     </h4>
-                    <ul class="space-y-3 text-blue-700">
+                    <ul class="space-y-3 text-green-700">
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                             <span><strong>Seminar Proposal & Hasil:</strong> Maksimal 5 mahasiswa dalam 1 ruangan</span>
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                             <span><strong>Sidang Skripsi:</strong> 1 ruangan hanya untuk 1 mahasiswa</span>

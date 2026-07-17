@@ -13,7 +13,7 @@ class SettingRuangan extends Component
 
     #[Url(history: true)]
     public $search = '';
-    public $showModal = false;
+    public $showForm = false;
     public $editMode = false;
     public $ruanganId;
 
@@ -31,14 +31,14 @@ class SettingRuangan extends Component
         $this->resetPage();
     }
 
-    public function openCreateModal()
+    public function openCreate()
     {
         $this->resetForm();
         $this->editMode = false;
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function openEditModal($id)
+    public function openEdit($id)
     {
         $this->resetForm();
         $this->editMode = true;
@@ -52,16 +52,16 @@ class SettingRuangan extends Component
         $this->deskripsi = $r->deskripsi;
         $this->is_active = $r->is_active;
 
-        $this->showModal = true;
+        $this->showForm = true;
     }
 
-    public function closeModal()
+    public function closeForm()
     {
-        $this->showModal = false;
+        $this->showForm = false;
         $this->resetForm();
     }
 
-    private function resetForm()
+    public function resetForm()
     {
         $this->reset(['kode_ruangan', 'nama_ruangan', 'lokasi', 'kapasitas', 'deskripsi', 'is_active', 'ruanganId', 'editMode']);
         $this->kapasitas = 20;
@@ -92,7 +92,7 @@ class SettingRuangan extends Component
             session()->flash('success', 'Ruangan berhasil ditambahkan.');
         }
 
-        $this->closeModal();
+        $this->closeForm();
     }
 
     public function toggleStatus($id)

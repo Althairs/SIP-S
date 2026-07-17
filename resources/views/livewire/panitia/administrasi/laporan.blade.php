@@ -2,15 +2,15 @@
     @section('title', 'Laporan')
     @section('page-title', 'Unduh Laporan')
 
-    <div class="bg-gradient-to-r from-slate-700 to-slate-900 rounded-2xl p-6 mb-6 text-white">
+    <div class="bg-gradient-to-r from-green-700 to-green-900 rounded-2xl p-6 mb-6 text-white">
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-2xl font-bold">Laporan Administrasi</h2>
-                <p class="text-slate-200 mt-1">{{ Auth::user()->jurusan?->nama_jurusan }}</p>
-                <p class="text-slate-300 text-sm mt-2">Unduh laporan PDF untuk arsip dan rekap administrasi ujian.</p>
+                <p class="text-green-200 mt-1">{{ Auth::user()->jurusan?->nama_jurusan }}</p>
+                <p class="text-green-300 text-sm mt-2">Unduh laporan PDF untuk arsip dan rekap administrasi ujian.</p>
             </div>
             <div class="hidden md:block">
-                <svg class="w-16 h-16 text-slate-300 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-16 h-16 text-green-300 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
             </div>
@@ -70,7 +70,7 @@
             <div class="mt-6">
                 <a href="{{ $this->downloadUrl($laporan['jenis']) }}"
                    target="_blank"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-900 font-medium text-sm">
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-800 text-white rounded-xl hover:bg-green-900 font-medium text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
