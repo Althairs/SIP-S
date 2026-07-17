@@ -3,7 +3,6 @@
     @section('page-title', 'Edit Role: ' . str_replace('_', ' ', $role->name))
 
     <div class="max-w-4xl mx-auto">
-        <!-- Breadcrumb -->
         <nav class="flex mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
@@ -28,7 +27,6 @@
             </ol>
         </nav>
 
-        <!-- Info -->
         @if($roleUsersCount > 0)
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
             <p class="text-sm text-amber-800">
@@ -39,7 +37,6 @@
         @endif
 
         <form wire:submit="update">
-            <!-- Role Name -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Informasi Role</h2>
                 <div>
@@ -58,26 +55,51 @@
                 </div>
             </div>
 
-            <!-- Permissions -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Permissions</h2>
-                <p class="text-sm text-gray-500 mb-6">Pilih permissions yang akan diberikan ke role ini.</p>
+                <p class="text-sm text-gray-500 mb-6">
+                    Centang permission yang ingin diberikan. Setiap subjek memiliki akses <strong>View</strong>, <strong>Create</strong>, <strong>Edit</strong>, dan <strong>Delete</strong> secara terpisah.
+                </p>
 
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($allPermissions as $subject => $permissions)
+                    @php
+                        $actionLabels = [
+                            'view' => ['label' => 'View', 'color' => 'text-blue-600 bg-blue-50'],
+                            'create' => ['label' => 'Create', 'color' => 'text-green-600 bg-green-50'],
+                            'edit' => ['label' => 'Edit', 'color' => 'text-amber-600 bg-amber-50'],
+                            'delete' => ['label' => 'Delete', 'color' => 'text-red-600 bg-red-50'],
+                            'verify' => ['label' => 'Verify', 'color' => 'text-purple-600 bg-purple-50'],
+                            'manage' => ['label' => 'Manage', 'color' => 'text-indigo-600 bg-indigo-50'],
+                            'assign' => ['label' => 'Assign', 'color' => 'text-teal-600 bg-teal-50'],
+                            'activate' => ['label' => 'Activate', 'color' => 'text-cyan-600 bg-cyan-50'],
+                            'import' => ['label' => 'Import', 'color' => 'text-orange-600 bg-orange-50'],
+                            'export' => ['label' => 'Export', 'color' => 'text-pink-600 bg-pink-50'],
+                            'schedule' => ['label' => 'Schedule', 'color' => 'text-violet-600 bg-violet-50'],
+                            'generate' => ['label' => 'Generate', 'color' => 'text-slate-600 bg-slate-50'],
+                        ];
+                    @endphp
+
+                    @foreach($permissionGroups as $subject => $perms)
                     <div class="border border-gray-200 rounded-xl p-4">
                         <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3">
                             {{ ucfirst(str_replace('_', ' ', $subject)) }}
                         </h3>
                         <div class="space-y-2">
-                            @foreach($permissions as $permission)
-                            <label class="flex items-center space-x-2 cursor-pointer">
+                            @foreach($perms as $permName)
+                            @php
+                                $action = explode('_', $permName)[0];
+                                $actionInfo = $actionLabels[$action] ?? ['label' => ucfirst($action), 'color' => 'text-gray-600 bg-gray-50'];
+                            @endphp
+                            <label class="flex items-center space-x-2 cursor-pointer group">
                                 <input type="checkbox"
                                        wire:model="selectedPermissions"
-                                       value="{{ $permission['name'] }}"
+                                       value="{{ $permName }}"
                                        class="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500">
-                                <span class="text-sm text-gray-700">
-                                    {{ ucfirst(str_replace('_', ' ', $permission['name'])) }}
+                                <span class="text-sm text-gray-700 flex items-center gap-1.5">
+                                    {{ str_replace('_', ' ', $permName) }}
+                                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded {{ $actionInfo['color'] }}">
+                                        {{ $actionInfo['label'] }}
+                                    </span>
                                 </span>
                             </label>
                             @endforeach

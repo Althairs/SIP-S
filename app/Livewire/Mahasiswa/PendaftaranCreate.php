@@ -8,6 +8,7 @@ use App\Models\Pendaftaran;
 use App\Models\User;
 use App\Models\BidangKeahlian;
 use App\Livewire\Forms\PendaftaranForm;
+use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
 
 class PendaftaranCreate extends Component
@@ -43,7 +44,7 @@ class PendaftaranCreate extends Component
         $this->nomor_hp = $user->nomor_hp;
         $this->email = $user->email;
         $this->jurusan = $user->jurusan?->nama_jurusan;
-        $this->jurusan_id = $user->jurusan_id;
+        $this->jurusan_id = PermissionService::getJurusanId();
 
         // Load bidang keahlian berdasarkan jurusan
         $this->loadBidangKeahlian();
@@ -180,7 +181,7 @@ class PendaftaranCreate extends Component
 
     public function render()
     {
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $dosens = User::role('dosen')->where('jurusan_id', $jurusanId)->active()->get();
 
         return view('livewire.mahasiswa.pendaftaran-create', [

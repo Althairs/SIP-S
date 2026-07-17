@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
@@ -76,7 +77,7 @@ class BidangKeahlians extends Component
         $validated = $this->validate();
 
         $data = [
-            'jurusan_id' => Auth::user()->jurusan_id,
+            'jurusan_id' => PermissionService::getJurusanId(),
             'kode' => $this->kode,
             'nama_bidang' => $this->nama_bidang,
             'deskripsi' => $this->deskripsi,
@@ -109,7 +110,7 @@ class BidangKeahlians extends Component
 
     public function render()
     {
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $bidangs = BidangKeahlian::where('jurusan_id', $jurusanId)
             ->when($this->search, function ($query) {

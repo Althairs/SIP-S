@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Penjadwalan;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use App\Models\PengaturanJadwal;
 
@@ -15,7 +16,7 @@ class SettingWaktu extends Component
 
     public function mount()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $pengaturan = PengaturanJadwal::where('jurusan_id', $jurusanId)->first();
 
         if ($pengaturan) {
@@ -60,7 +61,7 @@ class SettingWaktu extends Component
             'jamSelesai.*.after' => 'Jam selesai harus lebih besar dari jam mulai.',
         ]);
 
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         PengaturanJadwal::updateOrCreate(
             ['id' => $this->pengaturanId],

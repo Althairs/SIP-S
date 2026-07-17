@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Administrasi;
 
+use App\Services\PermissionService;
 use App\Models\Pendaftaran;
 use App\Models\Penilaian;
 use App\Models\Revisi;
@@ -23,7 +24,7 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $pendaftaranQuery = Pendaftaran::where('jurusan_id', $jurusanId);
 

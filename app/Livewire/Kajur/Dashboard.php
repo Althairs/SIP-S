@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Services\PermissionService;
 use App\Models\Pendaftaran;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +42,7 @@ class Dashboard extends Component
             default => 'Selamat Malam',
         };
 
-        $jurusanId = $user->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $this->totalDosen = User::role('dosen')->where('jurusan_id', $jurusanId)->count();
         $this->totalMahasiswa = User::role('mahasiswa')->where('jurusan_id', $jurusanId)->count();
         $this->totalPanitia = User::role(self::PANITIA_ROLES)->where('jurusan_id', $jurusanId)->count();

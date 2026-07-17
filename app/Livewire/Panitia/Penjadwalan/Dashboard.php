@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Penjadwalan;
 
+use App\Services\PermissionService;
 use App\Models\Pendaftaran;
 use App\Models\UjianPenguji;
 use Carbon\Carbon;
@@ -29,7 +30,7 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         // Auto-check ujian yang sudah lewat
         Pendaftaran::where('jurusan_id', $jurusanId)

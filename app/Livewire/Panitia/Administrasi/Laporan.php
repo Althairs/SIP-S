@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Administrasi;
 
+use App\Services\PermissionService;
 use App\Models\Prodi;
 use Livewire\Component;
 
@@ -33,9 +34,14 @@ class Laporan extends Component
         return route('panitia.administrasi.laporan.download', array_merge(['jenis' => $jenis], $params));
     }
 
+    public function updatedProdiFilter()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $prodis = Prodi::where('jurusan_id', $jurusanId)->active()->get();
 

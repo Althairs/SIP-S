@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Verifikasi;
 
+use App\Services\PermissionService;
 use App\Models\Pendaftaran;
 use Livewire\Component;
 
@@ -30,7 +31,7 @@ class Dashboard extends Component
 
     public function loadStats()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $this->totalPending = Pendaftaran::where('jurusan_id', $jurusanId)
             ->where('status', 'pending')->count();

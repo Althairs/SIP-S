@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire\Kajur;
+use App\Services\PermissionService;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Pendaftaran;
@@ -10,10 +11,10 @@ class VerifikasiSidangSkripsi extends VerifikasiSeminarProposal
 {
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $pendaftarans = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
-            ->where('jurusan_id', $jurusanId)
+            ->where(PermissionService::jurusanScope())
             ->where('jenis_ujian', 'sidang_skripsi')
             ->whereIn('status', ['disetujui_sekjur', 'disetujui_kajur', 'ditolak_kajur'])
             ->when($this->search, function ($query) {

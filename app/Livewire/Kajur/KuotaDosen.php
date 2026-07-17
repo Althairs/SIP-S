@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Services\PermissionService;
 use App\Models\Jurusan;
 use App\Models\KuotaDosen as ModelKuotaDosen;
 use App\Models\Prodi;
@@ -45,10 +46,15 @@ class KuotaDosen extends Component
 
     public function mount(): void
     {
-        $jurusan = Jurusan::find(auth()->user()->jurusan_id);
+        $jurusan = Jurusan::find(PermissionService::getJurusanId());
 
         $this->defaultKuotaPembimbing = $jurusan?->default_kuota_pembimbing ?? KuotaDosenService::DEFAULT_KUOTA_PEMBIMBING;
         $this->defaultKuotaPenguji = $jurusan?->default_kuota_penguji ?? KuotaDosenService::DEFAULT_KUOTA_PENGUJI;
+    }
+
+    public function updatedProdiFilter()
+    {
+        $this->resetPage();
     }
 
     public function updatingSearch()
@@ -85,7 +91,7 @@ class KuotaDosen extends Component
         ModelKuotaDosen::updateOrCreate(
             ['dosen_id' => $this->editDosenId],
             [
-                'jurusan_id' => auth()->user()->jurusan_id,
+                'jurusan_id' => PermissionService::getJurusanId(),
                 'kuota_pembimbing' => $this->editKuotaPembimbing,
                 'kuota_penguji' => $this->editKuotaPenguji,
             ]
@@ -102,7 +108,7 @@ class KuotaDosen extends Component
             'defaultKuotaPenguji' => 'required|integer|min:1|max:50',
         ]);
 
-        Jurusan::where('id', auth()->user()->jurusan_id)->update([
+        Jurusan::where('id', PermissionService::getJurusanId())->update([
             'default_kuota_pembimbing' => $this->defaultKuotaPembimbing,
             'default_kuota_penguji' => $this->defaultKuotaPenguji,
         ]);
@@ -112,13 +118,13 @@ class KuotaDosen extends Component
 
     public function resetKuota($dosenId)
     {
-        $jurusan = Jurusan::findOrFail(auth()->user()->jurusan_id);
+        $jurusan = Jurusan::findOrFail(PermissionService::getJurusanId());
         $defaults = app(KuotaDosenService::class)->defaultsForJurusan($jurusan);
 
         ModelKuotaDosen::updateOrCreate(
             ['dosen_id' => $dosenId],
             [
-                'jurusan_id' => auth()->user()->jurusan_id,
+                'jurusan_id' => PermissionService::getJurusanId(),
                 'kuota_pembimbing' => $defaults['kuota_pembimbing'],
                 'kuota_penguji' => $defaults['kuota_penguji'],
                 'terpakai_pembimbing' => 0,
@@ -131,7 +137,7 @@ class KuotaDosen extends Component
 
     public function resetKuotaBulanan()
     {
-        $jurusan = Jurusan::findOrFail(auth()->user()->jurusan_id);
+        $jurusan = Jurusan::findOrFail(PermissionService::getJurusanId());
         $count = app(KuotaDosenService::class)->resetBulananForJurusan($jurusan);
 
         session()->flash('success', "Kuota {$count} dosen berhasil direset ke default bulanan.");
@@ -139,11 +145,11 @@ class KuotaDosen extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $jurusan = Jurusan::find($jurusanId);
 
         $dosens = User::role('dosen')
-            ->where('jurusan_id', $jurusanId)
+            ->where(PermissionService::jurusanScope())
             ->with(['kuota', 'prodi'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {

@@ -6,6 +6,7 @@ use Livewire\Form;
 use App\Models\Pendaftaran;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Services\PermissionService;
 use Illuminate\Validation\ValidationException;
 
 class PendaftaranForm extends Form
@@ -123,7 +124,7 @@ class PendaftaranForm extends Form
 
         $data = [
             'mahasiswa_id' => Auth::id(),
-            'jurusan_id' => Auth::user()->jurusan_id,
+            'jurusan_id' => PermissionService::getJurusanId(),
             'prodi_id' => Auth::user()->prodi_id,
             'jenis_ujian' => $this->jenis_ujian,
             'judul_penelitian' => $this->judul_penelitian,

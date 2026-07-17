@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire\Kajur;
+use App\Services\PermissionService;
 use App\Models\Pendaftaran;
 use Illuminate\Support\Facades\Auth;
 
@@ -9,10 +10,10 @@ class VerifikasiSeminarHasil extends VerifikasiSeminarProposal
 {
     public function render()
     {
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $pendaftarans = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
-            ->where('jurusan_id', $jurusanId)
+            ->where(PermissionService::jurusanScope())
             ->where('jenis_ujian', 'seminar_hasil')
             ->whereIn('status', ['disetujui_sekjur', 'disetujui_kajur', 'ditolak_kajur'])
             ->when($this->search, function ($query) {

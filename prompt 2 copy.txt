@@ -1,6 +1,7 @@
 buatkan issue.md, berisi planning memebuat ini:
 
-- bagian dashboard kajur, sekjur, dosen, panitia penjadwalan,verifikasi,administrasi dan super admin ganti mengikuti contoh design di folder z-contohdashboard agar lebih futuristik
+- bagus sekarang sudah bisa di akses hanya saja karena ini baerbasis jurusan jadi buat agar admin bisa melihat semua data bukan perjurusan (hanya untuk admin)
+- kemudian cek semua fungsi filter karena ada beberapa yg tidak berfungsi atau harus di refresh seperti di admin/user saat filtering harus di refres dlu
 - gunakan context7
 
 jangan terlalu low level atau detail

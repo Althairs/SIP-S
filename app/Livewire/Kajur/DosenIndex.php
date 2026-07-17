@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
@@ -55,7 +56,7 @@ class DosenIndex extends Component
 
     public function loadMasterData()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $this->listBidangKeahlian = BidangKeahlian::active()->byJurusan($jurusanId)->orderBy('nama_bidang')->get();
         $this->listKepakaran = Kepakaran::active()->orderBy('hierarki_level')->get();
     }
@@ -173,14 +174,12 @@ class DosenIndex extends Component
 
         $validated = $this->validate();
 
-        $jurusanId = auth()->user()->jurusan_id;
-
         $data = [
             'name' => $this->name,
             'email' => $this->email,
             'nip' => $this->nip,
             'prodi_id' => $this->prodi_id ?: null,
-            'jurusan_id' => $jurusanId,
+            'jurusan_id' => PermissionService::getJurusanId(),
             'nomor_hp' => $this->nomor_hp,
             'alamat' => $this->alamat,
             'is_active' => $this->is_active,
@@ -234,10 +233,10 @@ class DosenIndex extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $dosens = User::role('dosen')
-            ->where('jurusan_id', $jurusanId)
+            ->where(PermissionService::jurusanScope())
             ->with(['prodi', 'bidangKeahlians', 'kepakaran', 'kuota'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {

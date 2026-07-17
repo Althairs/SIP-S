@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Administrasi;
 
+use App\Services\PermissionService;
 use App\Models\Penilaian;
 use App\Models\Pendaftaran;
 use Livewire\Component;
@@ -45,6 +46,11 @@ class KelolaNilaiBerkas extends Component
     }
 
     public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }
@@ -184,11 +190,9 @@ class KelolaNilaiBerkas extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
-
         $penilaians = Penilaian::with(['pendaftaran.mahasiswa', 'dosen'])
             ->where('tipe_input', 'berkas')
-            ->whereHas('pendaftaran', fn ($q) => $q->where('jurusan_id', $jurusanId))
+            ->whereHas('pendaftaran', fn ($q) => $q->where(PermissionService::jurusanScope()))
             ->when($this->search, function ($q) {
                 $q->where(function ($query) {
                     $query->whereHas('pendaftaran.mahasiswa', fn ($mq) => $mq->where('name', 'like', '%' . $this->search . '%')

@@ -22,6 +22,11 @@ class JurusanIndex extends Component
         $this->resetPage();
     }
 
+    public function updatedFilterStatus()
+    {
+        $this->resetPage();
+    }
+
     public function deleteJurusan($id)
     {
         $jurusan = Jurusan::findOrFail($id);

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Penjadwalan;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
@@ -92,7 +93,7 @@ class JadwalUjians extends Component
 
     private function loadRuanganOptions()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $this->ruanganOptions = Ruangan::where('jurusan_id', $jurusanId)
             ->active()
             ->pluck('nama_ruangan')
@@ -105,7 +106,7 @@ class JadwalUjians extends Component
 
     private function loadSesiOptions()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $pengaturan = PengaturanJadwal::where('jurusan_id', $jurusanId)->where('is_active', true)->first();
 
         if ($pengaturan) {
@@ -383,7 +384,7 @@ class JadwalUjians extends Component
 
     public function checkCompletedUjian()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         Pendaftaran::where('jurusan_id', $jurusanId)
             ->where('status', 'dijadwalkan')
             ->where('tanggal_ujian', '<', now())
@@ -395,9 +396,8 @@ class JadwalUjians extends Component
 
     private function getSiapList()
     {
-        $jurusanId = auth()->user()->jurusan_id;
         return Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
-            ->where('jurusan_id', $jurusanId)
+            ->where(PermissionService::jurusanScope())
             ->where('status', 'disetujui_kajur')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
@@ -417,10 +417,10 @@ class JadwalUjians extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $query = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
-            ->where('jurusan_id', $jurusanId);
+            ->where(PermissionService::jurusanScope());
 
         switch ($this->tab) {
             case 'siap':

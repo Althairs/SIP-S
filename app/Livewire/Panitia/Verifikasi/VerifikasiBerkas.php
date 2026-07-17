@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Verifikasi;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
@@ -27,6 +28,11 @@ class VerifikasiBerkas extends Component
     }
 
     public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
     {
         $this->resetPage();
     }
@@ -65,8 +71,6 @@ class VerifikasiBerkas extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
-
         $pendaftarans = Pendaftaran::with([
             'mahasiswa',
             'bidangKeahlians',
@@ -74,7 +78,7 @@ class VerifikasiBerkas extends Component
             'pembimbing1.dosen',
             'pembimbing2.dosen'
         ])
-            ->where('jurusan_id', $jurusanId)
+            ->where(PermissionService::jurusanScope())
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->whereHas('mahasiswa', function ($sq) {

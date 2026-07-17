@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panitia\Penjadwalan;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
@@ -82,7 +83,7 @@ class SettingRuangan extends Component
     public function save()
     {
         $validated = $this->validate();
-        $validated['jurusan_id'] = auth()->user()->jurusan_id;
+        $validated['jurusan_id'] = PermissionService::getJurusanId();
 
         if ($this->editMode) {
             Ruangan::findOrFail($this->ruanganId)->update($validated);
@@ -110,7 +111,7 @@ class SettingRuangan extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $ruangans = Ruangan::where('jurusan_id', $jurusanId)
             ->when($this->search, function ($query) {

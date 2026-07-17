@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use App\Models\PengaturanReminder as PengaturanReminderModel;
 
@@ -42,7 +43,7 @@ class PengaturanReminder extends Component
             $this->jenisUjian = 'revisi';
         }
 
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
         $setting = PengaturanReminderModel::where('jurusan_id', $jurusanId)
             ->where('jenis_ujian', $this->jenisUjian)
             ->first();
@@ -101,7 +102,7 @@ class PengaturanReminder extends Component
             'reminders' => 'required|array|min:1',
         ]);
 
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         PengaturanReminderModel::updateOrCreate(
             [
@@ -123,7 +124,7 @@ class PengaturanReminder extends Component
     public function generateReminders()
     {
         // Generate reminder untuk semua mahasiswa yang sudah selesai ujian
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $pendaftarans = \App\Models\Pendaftaran::where('jurusan_id', $jurusanId)
             ->where('status', 'selesai')
@@ -192,7 +193,7 @@ class PengaturanReminder extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $allSettings = PengaturanReminderModel::where('jurusan_id', $jurusanId)
             ->get()

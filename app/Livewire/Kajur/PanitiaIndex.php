@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Services\PermissionService;
 use App\Models\Prodi;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -146,14 +147,12 @@ class PanitiaIndex extends Component
     {
         $validated = $this->validate();
 
-        $jurusanId = Auth::user()->jurusan_id;
-
         $data = [
             'name' => $this->name,
             'email' => $this->email,
             'nip' => $this->nip,
             'prodi_id' => $this->prodi_id ?: null,
-            'jurusan_id' => $jurusanId,
+            'jurusan_id' => PermissionService::getJurusanId(),
             'nomor_hp' => $this->nomor_hp,
             'alamat' => $this->alamat,
             'is_active' => $this->is_active,
@@ -200,10 +199,10 @@ class PanitiaIndex extends Component
 
     public function render()
     {
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $baseQuery = User::role(self::PANITIA_ROLES)
-            ->where('jurusan_id', $jurusanId);
+            ->where(PermissionService::jurusanScope());
 
         $this->summary = [
             'total' => (clone $baseQuery)->count(),

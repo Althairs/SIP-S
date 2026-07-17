@@ -112,37 +112,37 @@ Route::middleware(['auth', 'active'])->group(function () {
     | Super Admin Routes
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['role:super_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', AdminDashboard::class)->name('dashboard');
 
         Route::prefix('jurusans')->name('jurusans.')->group(function () {
-            Route::get('/', JurusanIndex::class)->name('index');
-            Route::get('/create', JurusanCreate::class)->name('create');
-            Route::get('/{jurusan}/edit', JurusanEdit::class)->name('edit');
+            Route::get('/', JurusanIndex::class)->name('index')->middleware('can:view_jurusan');
+            Route::get('/create', JurusanCreate::class)->name('create')->middleware('can:create_jurusan');
+            Route::get('/{jurusan}/edit', JurusanEdit::class)->name('edit')->middleware('can:edit_jurusan');
         });
 
         Route::prefix('prodis')->name('prodis.')->group(function () {
-            Route::get('/', ProdiIndex::class)->name('index');
-            Route::get('/create', ProdiCreate::class)->name('create');
-            Route::get('/{prodi}/edit', ProdiEdit::class)->name('edit');
+            Route::get('/', ProdiIndex::class)->name('index')->middleware('can:view_prodi');
+            Route::get('/create', ProdiCreate::class)->name('create')->middleware('can:create_prodi');
+            Route::get('/{prodi}/edit', ProdiEdit::class)->name('edit')->middleware('can:edit_prodi');
         });
 
-        Route::get('/kajur-sekjur', UserIndex::class)->name('kajur-sekjur.index');
+        Route::get('/kajur-sekjur', UserIndex::class)->name('kajur-sekjur.index')->middleware('can:view_users');
 
         Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', UserIndex::class)->name('index');
-            Route::get('/create', UserCreate::class)->name('create');
+            Route::get('/', UserIndex::class)->name('index')->middleware('can:view_users');
+            Route::get('/create', UserCreate::class)->name('create')->middleware('can:create_users');
         });
 
         Route::prefix('roles')->name('roles.')->group(function () {
-            Route::get('/', RoleIndex::class)->name('index');
-            Route::get('/create', RoleCreate::class)->name('create');
-            Route::get('/{role}/edit', RoleEdit::class)->name('edit');
+            Route::get('/', RoleIndex::class)->name('index')->middleware('can:view_roles');
+            Route::get('/create', RoleCreate::class)->name('create')->middleware('can:assign_roles');
+            Route::get('/{role}/edit', RoleEdit::class)->name('edit')->middleware('can:assign_roles');
         });
 
         Route::get('/profile', Profile::class)->name('profile');
         Route::get('/settings', Settings::class)->name('settings');
-        Route::get('/notification-settings', NotificationSettings::class)->name('notification-settings');
+        Route::get('/notification-settings', NotificationSettings::class)->name('notification-settings')->middleware('can:view_notification_settings');
     });
 
     /*
@@ -150,30 +150,26 @@ Route::middleware(['auth', 'active'])->group(function () {
     | Kajur Routes
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['role:kajur'])->prefix('kajur')->name('kajur.')->group(function () {
-        // Dashboard
+    Route::prefix('kajur')->name('kajur.')->group(function () {
         Route::get('/', KajurDashboard::class)->name('dashboard');
 
-        // Data Master
         Route::prefix('data-master')->name('data-master.')->group(function () {
-            Route::get('/dosen', DosenIndex::class)->name('dosen');
-            Route::get('/mahasiswa', MahasiswaIndex::class)->name('mahasiswa');
-            Route::get('/panitia', PanitiaIndex::class)->name('panitia');
-            Route::get('/kuota-dosen', KuotaDosen::class)->name('kuota-dosen');
-            Route::get('/bidang-keahlian', BidangKeahlians::class)->name('bidang-keahlian');
-            Route::get('/kepakaran', Kepakaran::class)->name('kepakaran');
-            Route::get('/atur-atribut-dosen', AturAtributDosen::class)->name('atur-atribut-dosen');
-            Route::get('/pengaturan-reminder', PengaturanReminder::class)->name('pengaturan-reminder');
+            Route::get('/dosen', DosenIndex::class)->name('dosen')->middleware('can:view_dosen');
+            Route::get('/mahasiswa', MahasiswaIndex::class)->name('mahasiswa')->middleware('can:view_mahasiswa');
+            Route::get('/panitia', PanitiaIndex::class)->name('panitia')->middleware('can:view_panitia');
+            Route::get('/kuota-dosen', KuotaDosen::class)->name('kuota-dosen')->middleware('can:view_kuota_dosen');
+            Route::get('/bidang-keahlian', BidangKeahlians::class)->name('bidang-keahlian')->middleware('can:view_bidang_keahlian');
+            Route::get('/kepakaran', Kepakaran::class)->name('kepakaran')->middleware('can:view_kepakaran');
+            Route::get('/atur-atribut-dosen', AturAtributDosen::class)->name('atur-atribut-dosen')->middleware('can:view_atribut_dosen');
+            Route::get('/pengaturan-reminder', PengaturanReminder::class)->name('pengaturan-reminder')->middleware('can:view_pengaturan_reminder');
         });
 
-        // Verifikasi
         Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
-            Route::get('/seminar-proposal', VerifikasiSeminarProposal::class)->name('seminar-proposal');
-            Route::get('/seminar-hasil', VerifikasiSeminarHasil::class)->name('seminar-hasil');
-            Route::get('/sidang-skripsi', VerifikasiSidangSkripsi::class)->name('sidang-skripsi');
+            Route::get('/seminar-proposal', VerifikasiSeminarProposal::class)->name('seminar-proposal')->middleware('can:verify_seminar_proposal');
+            Route::get('/seminar-hasil', VerifikasiSeminarHasil::class)->name('seminar-hasil')->middleware('can:verify_seminar_hasil');
+            Route::get('/sidang-skripsi', VerifikasiSidangSkripsi::class)->name('sidang-skripsi')->middleware('can:verify_sidang_skripsi');
         });
 
-        // Profile & Settings
         Route::get('/profile', Profile::class)->name('profile');
         Route::get('/settings', Settings::class)->name('settings');
     });
@@ -183,28 +179,25 @@ Route::middleware(['auth', 'active'])->group(function () {
 | Sekjur Routes
 |--------------------------------------------------------------------------
 */
-    Route::middleware(['role:sekjur'])->prefix('sekjur')->name('sekjur.')->group(function () {
+    Route::prefix('sekjur')->name('sekjur.')->group(function () {
         Route::get('/', SekjurDashboard::class)->name('dashboard');
 
-        // Data Master (View Only + Penguji)
         Route::prefix('data-master')->name('data-master.')->group(function () {
-            Route::get('/dosen', DosenIndex::class)->name('dosen');
-            Route::get('/mahasiswa', MahasiswaIndex::class)->name('mahasiswa');
-            Route::get('/panitia', PanitiaIndex::class)->name('panitia');
-            Route::get('/kuota-dosen', KuotaDosen::class)->name('kuota-dosen');
-            Route::get('/bidang-keahlian', BidangKeahlians::class)->name('bidang-keahlian');
-            Route::get('/kepakaran', Kepakaran::class)->name('kepakaran');
+            Route::get('/dosen', DosenIndex::class)->name('dosen')->middleware('can:view_dosen');
+            Route::get('/mahasiswa', MahasiswaIndex::class)->name('mahasiswa')->middleware('can:view_mahasiswa');
+            Route::get('/panitia', PanitiaIndex::class)->name('panitia')->middleware('can:view_panitia');
+            Route::get('/kuota-dosen', KuotaDosen::class)->name('kuota-dosen')->middleware('can:view_kuota_dosen');
+            Route::get('/bidang-keahlian', BidangKeahlians::class)->name('bidang-keahlian')->middleware('can:view_bidang_keahlian');
+            Route::get('/kepakaran', Kepakaran::class)->name('kepakaran')->middleware('can:view_kepakaran');
 
-            // Penguji - SEKJUR yang mengelola
-            Route::get('/penguji', PengujiIndex::class)->name('penguji');
-            Route::get('/penguji/{pendaftaran}/generate', GeneratePengujiSekjur::class)->name('penguji.generate');
+            Route::get('/penguji', PengujiIndex::class)->name('penguji')->middleware('can:view_penguji');
+            Route::get('/penguji/{pendaftaran}/generate', GeneratePengujiSekjur::class)->name('penguji.generate')->middleware('can:create_penguji');
         });
 
-        // Verifikasi (View Only)
         Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
-            Route::get('/seminar-proposal', VerifikasiSeminarProposal::class)->name('seminar-proposal');
-            Route::get('/seminar-hasil', VerifikasiSeminarHasil::class)->name('seminar-hasil');
-            Route::get('/sidang-skripsi', VerifikasiSidangSkripsi::class)->name('sidang-skripsi');
+            Route::get('/seminar-proposal', VerifikasiSeminarProposal::class)->name('seminar-proposal')->middleware('can:verify_seminar_proposal');
+            Route::get('/seminar-hasil', VerifikasiSeminarHasil::class)->name('seminar-hasil')->middleware('can:verify_seminar_hasil');
+            Route::get('/sidang-skripsi', VerifikasiSidangSkripsi::class)->name('sidang-skripsi')->middleware('can:verify_sidang_skripsi');
         });
 
         Route::get('/profile', Profile::class)->name('profile');
@@ -215,27 +208,18 @@ Route::middleware(['auth', 'active'])->group(function () {
     | Mahasiswa Routes
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
-        // Dashboard
+    Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         Route::get('/', MahasiswaDashboard::class)->name('dashboard');
 
-        // Pendaftaran
         Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
-            Route::get('/', PendaftaranIndex::class)->name('index');
-            Route::get('/create', PendaftaranCreate::class)->name('create');
-            Route::get('/{pendaftaran}/edit', PendaftaranCreate::class)->name('edit');
+            Route::get('/', PendaftaranIndex::class)->name('index')->middleware('can:view_pendaftaran');
+            Route::get('/create', PendaftaranCreate::class)->name('create')->middleware('can:create_pendaftaran');
+            Route::get('/{pendaftaran}/edit', PendaftaranCreate::class)->name('edit')->middleware('can:edit_pendaftaran');
         });
 
-        // Jadwal Ujian
-        Route::get('/jadwal', JadwalUjian::class)->name('jadwal');
-
-        // Revisi
-        Route::get('/revisi', MahasiswaDaftarRevisi::class)->name('revisi');
-
-        // Nilai
-        Route::get('/nilai', Nilai::class)->name('nilai');
-
-        // Profile
+        Route::get('/jadwal', JadwalUjian::class)->name('jadwal')->middleware('can:view_jadwal');
+        Route::get('/revisi', MahasiswaDaftarRevisi::class)->name('revisi')->middleware('can:view_revisi');
+        Route::get('/nilai', Nilai::class)->name('nilai')->middleware('can:view_nilai');
         Route::get('/profile', MahasiswaProfile::class)->name('profile');
     });
 
@@ -244,9 +228,9 @@ Route::middleware(['auth', 'active'])->group(function () {
 | Panitia Verifikasi Routes
 |--------------------------------------------------------------------------
 */
-    Route::middleware(['role:panitia_verifikasi'])->prefix('panitia/verifikasi')->name('panitia.verifikasi.')->group(function () {
+    Route::prefix('panitia/verifikasi')->name('panitia.verifikasi.')->group(function () {
         Route::get('/', PanitiaVerifikasiDashboard::class)->name('dashboard');
-        Route::get('/berkas', VerifikasiBerkas::class)->name('berkas');
+        Route::get('/berkas', VerifikasiBerkas::class)->name('berkas')->middleware('can:verify_berkas');
         Route::get('/profile', Profile::class)->name('profile');
     });
 
@@ -255,24 +239,24 @@ Route::middleware(['auth', 'active'])->group(function () {
     | Panitia Penjadwalan Routes
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['role:panitia_penjadwalan'])->prefix('panitia/penjadwalan')->name('panitia.penjadwalan.')->group(function () {
+    Route::prefix('panitia/penjadwalan')->name('panitia.penjadwalan.')->group(function () {
         Route::get('/', PanitiaPenjadwalanDashboard::class)->name('dashboard');
-        Route::get('/jadwal', JadwalUjians::class)->name('jadwal');
-        Route::get('/setting-waktu', SettingWaktu::class)->name('setting-waktu');
-        Route::get('/setting-ruangan', SettingRuangan::class)->name('setting-ruangan');
+        Route::get('/jadwal', JadwalUjians::class)->name('jadwal')->middleware('can:manage_jadwal');
+        Route::get('/setting-waktu', SettingWaktu::class)->name('setting-waktu')->middleware('can:manage_jadwal');
+        Route::get('/setting-ruangan', SettingRuangan::class)->name('setting-ruangan')->middleware('can:manage_jadwal');
         Route::get('/profile', Profile::class)->name('profile');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Panitia Administrasi Routes (Placeholder)
+    | Panitia Administrasi Routes
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['role:panitia_administrasi'])->prefix('panitia/administrasi')->name('panitia.administrasi.')->group(function () {
+    Route::prefix('panitia/administrasi')->name('panitia.administrasi.')->group(function () {
         Route::get('/', PanitiaAdminDashboard::class)->name('dashboard');
-        Route::get('/nilai-berkas', PanitiaAdminKelolaNilaiBerkas::class)->name('nilai-berkas');
-        Route::get('/laporan', PanitiaAdminLaporan::class)->name('laporan');
-        Route::get('/laporan/{jenis}/download', [PanitiaLaporanController::class, 'download'])->name('laporan.download');
+        Route::get('/nilai-berkas', PanitiaAdminKelolaNilaiBerkas::class)->name('nilai-berkas')->middleware('can:view_nilai_berkas');
+        Route::get('/laporan', PanitiaAdminLaporan::class)->name('laporan')->middleware('can:view_laporan');
+        Route::get('/laporan/{jenis}/download', [PanitiaLaporanController::class, 'download'])->name('laporan.download')->middleware('can:export_laporan');
         Route::get('/profile', Profile::class)->name('profile');
     });
 
@@ -281,29 +265,22 @@ Route::middleware(['auth', 'active'])->group(function () {
 | Dosen Routes
 |--------------------------------------------------------------------------
 */
-    Route::middleware(['role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
+    Route::prefix('dosen')->name('dosen.')->group(function () {
         Route::get('/', DosenDashboard::class)->name('dashboard');
 
-        // Revisi
         Route::prefix('revisi')->name('revisi.')->group(function () {
-            Route::get('/', DaftarRevisi::class)->name('index');
-            Route::get('/{pendaftaran}/berikan', BerikanRevisi::class)->name('berikan');
+            Route::get('/', DaftarRevisi::class)->name('index')->middleware('can:view_revisi');
+            Route::get('/{pendaftaran}/berikan', BerikanRevisi::class)->name('berikan')->middleware('can:create_revisi');
         });
 
-        // Nilai
         Route::prefix('nilai')->name('nilai.')->group(function () {
-            Route::get('/', BerikanNilai::class)->name('index');
-            Route::get('/{pendaftaran}/input', InputNilaiSistem::class)->name('input');
-            Route::get('/{pendaftaran}/upload', UploadNilaiBerkas::class)->name('upload');
+            Route::get('/', BerikanNilai::class)->name('index')->middleware('can:view_nilai');
+            Route::get('/{pendaftaran}/input', InputNilaiSistem::class)->name('input')->middleware('can:create_nilai');
+            Route::get('/{pendaftaran}/upload', UploadNilaiBerkas::class)->name('upload')->middleware('can:create_nilai');
         });
 
-        // Kuota
-        Route::get('/kuota', KuotaSaya::class)->name('kuota');
-
-        // Jadwal Menguji
-        Route::get('/jadwal', JadwalMenguji::class)->name('jadwal');
-
-        // Profile
+        Route::get('/kuota', KuotaSaya::class)->name('kuota')->middleware('can:view_kuota_saya');
+        Route::get('/jadwal', JadwalMenguji::class)->name('jadwal')->middleware('can:view_jadwal_dosen');
         Route::get('/profile', DosenProfile::class)->name('profile');
     });
 

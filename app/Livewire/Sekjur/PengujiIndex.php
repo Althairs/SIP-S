@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Pendaftaran;
+use App\Services\PermissionService;
 
 class PengujiIndex extends Component
 {
@@ -30,11 +31,11 @@ class PengujiIndex extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         // Pendaftaran yang sudah disetujui kaprodi (siap ditambahkan penguji)
         $pendaftarans = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pengujis.dosen.kepakaran'])
-            ->where('jurusan_id', $jurusanId)
+            ->where(PermissionService::jurusanScope())
             ->whereIn('status', ['disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {

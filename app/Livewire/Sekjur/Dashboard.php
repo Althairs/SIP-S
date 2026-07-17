@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use App\Models\Pendaftaran;
 use Carbon\Carbon;
+use App\Services\PermissionService;
 
 class Dashboard extends Component
 {
@@ -22,7 +23,7 @@ class Dashboard extends Component
     {
         $now = Carbon::now();
 
-        $jurusanId = Auth::user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $baseQuery = Pendaftaran::where('jurusan_id', $jurusanId);
 

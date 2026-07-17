@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Kajur;
 
+use App\Services\PermissionService;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
@@ -143,7 +144,7 @@ class AturAtributDosen extends Component
 
     private function getFilteredDosens()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         return User::role('dosen')
             ->where('jurusan_id', $jurusanId)
@@ -175,7 +176,7 @@ class AturAtributDosen extends Component
 
     public function render()
     {
-        $jurusanId = auth()->user()->jurusan_id;
+        $jurusanId = PermissionService::getJurusanId();
 
         $dosens = $this->getFilteredDosens()->paginate(12);
 
