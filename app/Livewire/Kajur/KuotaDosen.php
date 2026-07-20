@@ -52,7 +52,7 @@ class KuotaDosen extends Component
         $this->defaultKuotaPenguji = $jurusan?->default_kuota_penguji ?? KuotaDosenService::DEFAULT_KUOTA_PENGUJI;
     }
 
-    public function updatedProdiFilter()
+    public function updatingProdiFilter()
     {
         $this->resetPage();
     }

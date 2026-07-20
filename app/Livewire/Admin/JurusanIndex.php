@@ -22,7 +22,7 @@ class JurusanIndex extends Component
         $this->resetPage();
     }
 
-    public function updatedFilterStatus()
+    public function updatingFilterStatus()
     {
         $this->resetPage();
     }

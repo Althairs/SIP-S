@@ -52,6 +52,6 @@ class BidangKeahlian extends Model
      */
     public function scopeByJurusan($query, $jurusanId)
     {
-        return $query->where('jurusan_id', $jurusanId);
+        return $jurusanId ? $query->where('jurusan_id', $jurusanId) : $query;
     }
 }

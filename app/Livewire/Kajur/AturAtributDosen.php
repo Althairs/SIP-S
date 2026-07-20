@@ -36,17 +36,17 @@ class AturAtributDosen extends Component
     public $selectedDosenIds = [];
     public $selectAll = false;
 
-    public function updatedSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function updatedKepakaranFilter()
+    public function updatingKepakaranFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedBidangFilter()
+    public function updatingBidangFilter()
     {
         $this->resetPage();
     }
@@ -145,14 +145,18 @@ class AturAtributDosen extends Component
     private function getFilteredDosens()
     {
         $jurusanId = PermissionService::getJurusanId();
+        $isSuperAdmin = auth()->user()->hasRole('super_admin');
 
         return User::role('dosen')
-            ->where('jurusan_id', $jurusanId)
+            // ->where('jurusan_id', $jurusanId)
+            ->when(!$isSuperAdmin, function ($query) use ($jurusanId) {
+                return $query->where('jurusan_id', $jurusanId);
+            })
             ->with(['kepakaran', 'bidangKeahlians', 'prodi'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('nip', 'like', '%' . $this->search . '%');
+                        ->orWhere('nip', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->kepakaranFilter, function ($query) {
@@ -177,12 +181,22 @@ class AturAtributDosen extends Component
     public function render()
     {
         $jurusanId = PermissionService::getJurusanId();
+        $isSuperAdmin = auth()->user()->hasRole('super_admin');
 
         $dosens = $this->getFilteredDosens()->paginate(12);
 
         $listKepakaran = Kepakaran::active()->orderBy('hierarki_level')->get();
-        $listBidangKeahlian = BidangKeahlian::active()->byJurusan($jurusanId)->orderBy('nama_bidang')->get();
+        // $listBidangKeahlian = BidangKeahlian::active()->byJurusan($jurusanId)->orderBy('nama_bidang')->get();
+        $listBidangKeahlian = BidangKeahlian::active()
+            ->when(!$isSuperAdmin, function ($query) use ($jurusanId) {
+                return $query->byJurusan($jurusanId);
+            })
+            ->orderBy('nama_bidang')->get();
 
+        $baseDosenQuery = User::role('dosen')
+            ->when(!$isSuperAdmin, function ($query) use ($jurusanId) {
+                return $query->where('jurusan_id', $jurusanId);
+            });    
         $totalDosen = User::role('dosen')->where('jurusan_id', $jurusanId)->count();
         $dosenDenganKepakaran = User::role('dosen')->where('jurusan_id', $jurusanId)->whereNotNull('kepakaran_id')->count();
         $dosenDenganBidang = User::role('dosen')->where('jurusan_id', $jurusanId)->whereHas('bidangKeahlians')->count();

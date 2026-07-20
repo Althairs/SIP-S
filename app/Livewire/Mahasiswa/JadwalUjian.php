@@ -4,8 +4,7 @@ namespace App\Livewire\Mahasiswa;
 
 use Livewire\Component;
 use App\Models\Pendaftaran;
-use App\Models\UjianPenguji;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class JadwalUjian extends Component
 {
@@ -21,25 +20,34 @@ class JadwalUjian extends Component
 
     protected function loadJadwal(): void
     {
-        $userId = auth()->id();
+        $user = Auth::user();
+        $isSuperAdmin = $user->hasRole('super_admin');
 
+        // Upcoming Ujian Query
         $this->upcomingUjian = Pendaftaran::with([
+            'mahasiswa',
             'pembimbing1.dosen',
             'bidangKeahlians',
             'jurusan',
             'prodi',
         ])
-            ->where('mahasiswa_id', $userId)
+            ->when(!$isSuperAdmin, function ($query) use ($user) {
+                $query->where('mahasiswa_id', $user->id);
+            })
             ->where('status', 'dijadwalkan')
             ->where('tanggal_ujian', '>=', now())
             ->orderBy('tanggal_ujian')
             ->get();
 
+        // Riwayat Ujian Query
         $this->riwayatUjian = Pendaftaran::with([
+            'mahasiswa',
             'pembimbing1.dosen',
             'bidangKeahlians',
         ])
-            ->where('mahasiswa_id', $userId)
+            ->when(!$isSuperAdmin, function ($query) use ($user) {
+                $query->where('mahasiswa_id', $user->id);
+            })
             ->where(function ($query) {
                 $query->whereIn('status', ['selesai', 'revisi'])
                     ->orWhere(function ($q) {
@@ -53,8 +61,11 @@ class JadwalUjian extends Component
 
     public function showDetailUjian($id)
     {
+        $user = Auth::user();
+        $isSuperAdmin = $user->hasRole('super_admin');
+
         $this->selectedUjian = Pendaftaran::with([
-            'mahasiswa',
+            'mahasiswa.jurusan',
             'dosens.dosen.kepakaran',
             'bidangKeahlians',
             'jurusan',
@@ -63,8 +74,11 @@ class JadwalUjian extends Component
             'pembimbing1.dosen.kepakaran',
             'pembimbing2.dosen.kepakaran'
         ])
-            ->where('mahasiswa_id', auth()->id())
+            ->when(!$isSuperAdmin, function ($query) use ($user) {
+                $query->where('mahasiswa_id', $user->id);
+            })
             ->findOrFail($id);
+
         $this->showDetail = true;
     }
 
@@ -76,6 +90,8 @@ class JadwalUjian extends Component
 
     public function render()
     {
-        return view('livewire.mahasiswa.jadwal-ujian')->layout('components.layouts.app-auth');
+        return view('livewire.mahasiswa.jadwal-ujian', [
+            'isSuperAdmin' => Auth::user()->hasRole('super_admin'),
+        ])->layout('components.layouts.app-auth');
     }
 }

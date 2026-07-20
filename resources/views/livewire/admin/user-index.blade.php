@@ -58,7 +58,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <!-- Jurusan Filter -->
-                <select wire:model.change="jurusanFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$jurusanFilter, 'text-gray-700' => $jurusanFilter])>
+                <select wire:model.live="jurusanFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$jurusanFilter, 'text-gray-700' => $jurusanFilter])>
                     <option value="">Semua Jurusan</option>
                     @foreach($jurusans as $jurusan)
                     <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
@@ -67,7 +67,7 @@
 
                 <!-- Prodi Filter (Hanya tampil di normal mode) -->
                 @if(!$onlyKajurSekjur)
-                <select wire:model.change="prodiFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$prodiFilter, 'text-gray-700' => $prodiFilter])>
+                <select wire:model.live="prodiFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$prodiFilter, 'text-gray-700' => $prodiFilter])>
                     <option value="">Semua Program Studi</option>
                     @foreach($prodis as $prodi)
                     <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
@@ -76,7 +76,7 @@
                 @endif
 
                 <!-- Role Filter -->
-                <select wire:model.change="roleFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$roleFilter, 'text-gray-700' => $roleFilter])>
+                <select wire:model.live="roleFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => !$roleFilter, 'text-gray-700' => $roleFilter])>
                     <option value="">{{ $onlyKajurSekjur ? 'Semua Role (Kajur/Sekjur)' : 'Semua Role' }}</option>
                     @foreach($roles as $role)
                     <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
@@ -84,7 +84,7 @@
                 </select>
 
                 <!-- Status Filter -->
-                <select wire:model.change="statusFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => $statusFilter === '', 'text-gray-700' => $statusFilter !== ''])>
+                <select wire:model.live="statusFilter" @class(['px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white', $onlyKajurSekjur ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-green-500 focus:border-green-500', 'text-gray-900' => $statusFilter === '', 'text-gray-700' => $statusFilter !== ''])>
                     <option value="">Semua Status</option>
                     <option value="1">Aktif</option>
                     <option value="0">Nonaktif</option>

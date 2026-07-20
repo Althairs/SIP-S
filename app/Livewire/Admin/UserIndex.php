@@ -39,27 +39,27 @@ class UserIndex extends Component
         }
     }
 
-    public function updatedSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function updatedJurusanFilter()
+    public function updatingJurusanFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedProdiFilter()
+    public function updatingProdiFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedRoleFilter()
+    public function updatingRoleFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }

@@ -4,7 +4,7 @@
 
     <!-- Breadcrumb -->
     <nav class="flex items-center text-sm text-gray-500 mb-6">
-        <a href="{{ route('dosen.informasi.index') }}" class="hover:text-green-700 transition">Informasi</a>
+        <a href="{{ route('dosen.jadwal') }}" class="hover:text-green-700 transition">Informasi</a>
         <svg class="w-4 h-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         @if($showDetail)
             <a wire:click="closeDetail" class="hover:text-green-700 transition cursor-pointer">Jadwal Menguji</a>

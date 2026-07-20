@@ -19,12 +19,12 @@ class PengujiIndex extends Component
     public $statusFilter = '';
 
 
-    public function updatedSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }

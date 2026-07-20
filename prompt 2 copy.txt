@@ -1,7 +1,7 @@
 buatkan issue.md, berisi planning memebuat ini:
 
-- bagus sekarang sudah bisa di akses hanya saja karena ini baerbasis jurusan jadi buat agar admin bisa melihat semua data bukan perjurusan (hanya untuk admin)
-- kemudian cek semua fungsi filter karena ada beberapa yg tidak berfungsi atau harus di refresh seperti di admin/user saat filtering harus di refres dlu
+- di pendaftaran index, verifikasi proposal,hasil,skripsi kajur dan lainnya seperti di dosen nilai , panitia penjadwalan ,panitia verifikasi, sekjur tambahkan modal untuk lihat detail masing masing agar bisa meninjau berkas nya
+- gunakan livewire 4 dan laravel 13
 - gunakan context7
 
 jangan terlalu low level atau detail

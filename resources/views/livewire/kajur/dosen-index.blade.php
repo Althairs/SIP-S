@@ -225,14 +225,14 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <select wire:model.change="prodiFilter"
+                    <select wire:model.live="prodiFilter"
                         class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
                         <option value="">Semua Prodi</option>
                         @foreach($prodis as $prodi)
                             <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
                         @endforeach
                     </select>
-                    <select wire:model.change="statusFilter"
+                    <select wire:model.live="statusFilter"
                         class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
                         <option value="">Semua Status</option>
                         <option value="1">Aktif</option>

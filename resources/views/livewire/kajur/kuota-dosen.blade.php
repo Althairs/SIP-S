@@ -128,7 +128,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
             </div>
-            <select wire:model.change="prodiFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl">
+            <select wire:model.live="prodiFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl">
                 <option value="">Semua Prodi</option>
                 @foreach($prodis as $prodi)
                 <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>

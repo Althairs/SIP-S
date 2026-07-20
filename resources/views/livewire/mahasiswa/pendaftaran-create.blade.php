@@ -62,6 +62,25 @@
         </div>
         @endif
 
+        @if($isSuperAdmin)
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-2">Akses Super Admin: Pilih Mahasiswa</h2>
+        <p class="text-xs text-gray-500 mb-4">Silakan pilih mahasiswa untuk mendaftarkan ujian atau melihat bidang keahlian terkait.</p>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Mahasiswa <span class="text-red-500">*</span></label>
+            <select wire:model.live="selectedMahasiswaId"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500"
+                    {{ $editMode ? 'disabled' : '' }}>
+                <option value="">-- Pilih Mahasiswa --</option>
+                @foreach($listMahasiswa as $mhs)
+                    <option value="{{ $mhs->id }}">{{ $mhs->name }} (NIM: {{ $mhs->nim }})</option>
+                @endforeach
+            </select>
+            @error('form.mahasiswa_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+        </div>
+    </div>
+    @endif
+
         <form wire:submit="save" enctype="multipart/form-data">
             <!-- Data Mahasiswa (Read Only) -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
@@ -127,53 +146,40 @@
 
                     <!-- BIDANG KEAHLIAN - VERSI CHECKBOX -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Bidang Keahlian <span class="text-red-500">*</span>
-                            <span class="text-xs text-gray-400 font-normal ml-2">(Pilih minimal satu)</span>
-                        </label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Bidang Keahlian <span class="text-red-500">*</span>
+                        <span class="text-xs text-gray-400 font-normal ml-2">(Pilih minimal satu)</span>
+                    </label>
 
-                        @if($listBidangKeahlian->isEmpty())
-                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                            <p class="text-sm text-amber-700">
-                                <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-                                Belum ada bidang keahlian tersedia untuk jurusan Anda. Silakan hubungi Kajur.
-                            </p>
-                        </div>
-                        @else
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-2 border border-gray-200 rounded-xl {{ !$editMode && $hasExistingRegistration ? 'opacity-60 pointer-events-none' : '' }}">
-                            @foreach($listBidangKeahlian as $bidang)
-                            <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 hover:border-green-300 transition {{ in_array($bidang->id, $form->selectedBidangKeahlian) ? 'bg-green-50 border-green-400 ring-1 ring-green-400' : '' }}">
-                                <input type="checkbox"
-                                       wire:model="form.selectedBidangKeahlian"
-                                       value="{{ $bidang->id }}"
-                                       class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                                       {{ !$editMode && $hasExistingRegistration ? 'disabled' : '' }}>
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium text-gray-900">{{ $bidang->nama_bidang }}</p>
-                                    <p class="text-xs text-gray-500">{{ $bidang->kode }}</p>
-                                    @if($bidang->deskripsi)
-                                    <p class="text-xs text-gray-400 mt-0.5">{{ Str::limit($bidang->deskripsi, 60) }}</p>
-                                    @endif
-                                </div>
-                                @if(in_array($bidang->id, $form->selectedBidangKeahlian))
-                                <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                @endif
-                            </label>
-                            @endforeach
-                        </div>
-                        @endif
-
-                        @error('form.selectedBidangKeahlian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-
-                        <!-- Selected Count -->
-                        @if(count($form->selectedBidangKeahlian) > 0)
-                        <p class="mt-2 text-xs text-green-600 font-medium">
-                            {{ count($form->selectedBidangKeahlian) }} bidang keahlian dipilih
+                    @if($listBidangKeahlian->isEmpty())
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                        <p class="text-sm text-amber-700">
+                            <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                            @if($isSuperAdmin && !$jurusan_id)
+                                Belum ada bidang keahlian aktif secara global. Silakan pilih mahasiswa terlebih dahulu untuk memfilter bidang berdasarkan Jurusan.
+                            @else
+                                Belum ada bidang keahlian tersedia untuk jurusan ini. Silakan hubungi Kajur.
+                            @endif
                         </p>
-                        @endif
                     </div>
+                    @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-2 border border-gray-200 rounded-xl">
+                        @foreach($listBidangKeahlian as $bidang)
+                        <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 hover:border-green-300 transition {{ in_array($bidang->id, $form->selectedBidangKeahlian) ? 'bg-green-50 border-green-400 ring-1 ring-green-400' : '' }}">
+                            <input type="checkbox"
+                                   wire:model="form.selectedBidangKeahlian"
+                                   value="{{ $bidang->id }}"
+                                   class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">{{ $bidang->nama_bidang }}</p>
+                                <p class="text-xs text-gray-500">{{ $bidang->kode }} @if($isSuperAdmin) <span class="text-gray-400">({{ $bidang->jurusan?->nama_jurusan ?? 'Global' }})</span> @endif</p>
+                            </div>
+                        </label>
+                        @endforeach
+                    </div>
+                    @endif
+                    @error('form.selectedBidangKeahlian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Abstrak</label>

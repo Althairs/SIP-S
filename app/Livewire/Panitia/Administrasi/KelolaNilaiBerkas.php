@@ -50,11 +50,6 @@ class KelolaNilaiBerkas extends Component
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
-    {
-        $this->resetPage();
-    }
-
     public function openDetail($id)
     {
         $this->selectedPenilaianId = $id;

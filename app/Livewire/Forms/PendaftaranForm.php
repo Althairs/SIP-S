@@ -13,6 +13,11 @@ class PendaftaranForm extends Form
 {
     public ?Pendaftaran $pendaftaran = null;
 
+    // Disediakan secara dinamis untuk handle pendaftaran oleh Super Admin
+    public $mahasiswa_id;
+    public $jurusan_id;
+    public $prodi_id;
+
     public $jenis_ujian = '';
     public $judul_penelitian = '';
     public $abstrak = '';
@@ -33,6 +38,9 @@ class PendaftaranForm extends Form
     public function setPendaftaran(Pendaftaran $pendaftaran)
     {
         $this->pendaftaran = $pendaftaran;
+        $this->mahasiswa_id = $pendaftaran->mahasiswa_id;
+        $this->jurusan_id = $pendaftaran->jurusan_id;
+        $this->prodi_id = $pendaftaran->prodi_id;
 
         $this->jenis_ujian = $pendaftaran->jenis_ujian;
         $this->judul_penelitian = $pendaftaran->judul_penelitian;
@@ -55,6 +63,7 @@ class PendaftaranForm extends Form
     public function rules()
     {
         $rules = [
+            'mahasiswa_id' => 'required|exists:users,id',
             'jenis_ujian' => 'required|in:seminar_proposal,seminar_hasil,sidang_skripsi',
             'judul_penelitian' => 'required|string|max:255',
             'abstrak' => 'nullable|string',
@@ -64,7 +73,6 @@ class PendaftaranForm extends Form
             'dosen_pembimbing_2' => 'nullable|exists:users,id|different:dosen_pembimbing_1',
         ];
 
-        // Validasi File
         if (!$this->pendaftaran || $this->file_proposal) {
             $rules['file_proposal'] = 'nullable|file|mimes:pdf|max:10240';
         }
@@ -75,71 +83,56 @@ class PendaftaranForm extends Form
         return $rules;
     }
 
-    public function validationAttributes()
-    {
-        return [
-            'judul_penelitian' => 'Judul penelitian',
-            'selectedBidangKeahlian' => 'Bidang keahlian',
-            'dosen_pembimbing_1' => 'Dosen pembimbing 1',
-            'dosen_pembimbing_2' => 'Dosen pembimbing 2',
-        ];
-    }
-
     public function save()
     {
         $this->validate();
 
-        // Prevent duplicate registration for the same jenis_ujian
+        $mId = $this->mahasiswa_id ?? Auth::id();
+        $jId = $this->jurusan_id ?? PermissionService::getJurusanId();
+        $pId = $this->prodi_id ?? Auth::user()->prodi_id;
+
         if (!$this->pendaftaran) {
             $activeStatuses = ['pending', 'disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan', 'revisi'];
-            $exists = Pendaftaran::where('mahasiswa_id', Auth::id())
+            $exists = Pendaftaran::where('mahasiswa_id', $mId)
                 ->where('jenis_ujian', $this->jenis_ujian)
                 ->whereIn('status', $activeStatuses)
                 ->exists();
 
             if ($exists) {
                 throw ValidationException::withMessages([
-                    'jenis_ujian' => ['Anda sudah memiliki pendaftaran aktif untuk jenis ujian ini.'],
+                    'jenis_ujian' => ['Mahasiswa sudah memiliki pendaftaran aktif untuk jenis ujian ini.'],
                 ]);
             }
 
-            // Prevent registration for completed exam type
-            $completed = Pendaftaran::where('mahasiswa_id', Auth::id())
+            $completed = Pendaftaran::where('mahasiswa_id', $mId)
                 ->where('jenis_ujian', $this->jenis_ujian)
                 ->where('status', 'selesai')
                 ->exists();
 
             if ($completed) {
-                $labels = [
-                    'seminar_proposal' => 'Seminar Proposal',
-                    'seminar_hasil' => 'Seminar Hasil',
-                    'sidang_skripsi' => 'Sidang Skripsi',
-                ];
-                $jenisLabel = $labels[$this->jenis_ujian] ?? $this->jenis_ujian;
                 throw ValidationException::withMessages([
-                    'jenis_ujian' => ["Anda sudah pernah mendaftar dan menyelesaikan ujian jenis {$jenisLabel}. Silakan memilih jenis ujian yang berbeda."],
+                    'jenis_ujian' => ["Mahasiswa sudah menyelesaikan ujian jenis ini."],
                 ]);
             }
         }
 
         $data = [
-            'mahasiswa_id' => Auth::id(),
-            'jurusan_id' => PermissionService::getJurusanId(),
-            'prodi_id' => Auth::user()->prodi_id,
+            'mahasiswa_id' => $mId,
+            'jurusan_id' => $jId,
+            'prodi_id' => $pId,
             'jenis_ujian' => $this->jenis_ujian,
             'judul_penelitian' => $this->judul_penelitian,
             'abstrak' => $this->abstrak,
             'status' => 'pending',
         ];
 
-        // Handle file uploads
         $fileFields = ['file_proposal', 'file_skripsi', 'file_persetujuan', 'file_krs', 'file_transkrip', 'file_bukti_bimbingan'];
         foreach ($fileFields as $field) {
             if ($this->$field) {
                 if ($this->pendaftaran && !empty($this->existingFiles[$field])) {
                     Storage::disk('public')->delete($this->existingFiles[$field]);
                 }
-                $data[$field] = $this->$field->store('pendaftaran/' . Auth::id(), 'public');
+                $data[$field] = $this->$field->store('pendaftaran/' . $mId, 'public');
             } elseif (!$this->pendaftaran) {
                 $data[$field] = null;
             }
@@ -161,16 +154,10 @@ class PendaftaranForm extends Form
     private function saveDosens($pendaftaran)
     {
         if ($this->dosen_pembimbing_1) {
-            $pendaftaran->dosens()->create([
-                'dosen_id' => $this->dosen_pembimbing_1,
-                'peran' => 'pembimbing_1',
-            ]);
+            $pendaftaran->dosens()->create(['dosen_id' => $this->dosen_pembimbing_1, 'peran' => 'pembimbing_1']);
         }
         if ($this->dosen_pembimbing_2) {
-            $pendaftaran->dosens()->create([
-                'dosen_id' => $this->dosen_pembimbing_2,
-                'peran' => 'pembimbing_2',
-            ]);
+            $pendaftaran->dosens()->create(['dosen_id' => $this->dosen_pembimbing_2, 'peran' => 'pembimbing_2']);
         }
     }
 }

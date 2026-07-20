@@ -34,7 +34,7 @@ class Laporan extends Component
         return route('panitia.administrasi.laporan.download', array_merge(['jenis' => $jenis], $params));
     }
 
-    public function updatedProdiFilter()
+    public function updatingProdiFilter()
     {
         $this->resetPage();
     }

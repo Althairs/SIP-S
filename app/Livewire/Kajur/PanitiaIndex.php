@@ -64,22 +64,22 @@ class PanitiaIndex extends Component
 
     protected $queryString = ['search', 'prodiFilter', 'roleFilter', 'statusFilter'];
 
-    public function updatedSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function updatedProdiFilter()
+    public function updatingProdiFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedRoleFilter()
+    public function updatingRoleFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }

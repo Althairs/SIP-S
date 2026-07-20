@@ -11,8 +11,6 @@ class VerifikasiSidangSkripsi extends VerifikasiSeminarProposal
 {
     public function render()
     {
-        $jurusanId = PermissionService::getJurusanId();
-
         $pendaftarans = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where(PermissionService::jurusanScope())
             ->where('jenis_ujian', 'sidang_skripsi')

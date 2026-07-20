@@ -429,7 +429,7 @@
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <select wire:model.change="jenisFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
+                <select wire:model.live="jenisFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
                     <option value="">Semua Jenis Ujian</option>
                     <option value="seminar_proposal">Seminar Proposal</option>
                     <option value="seminar_hasil">Seminar Hasil</option>

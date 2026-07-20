@@ -84,13 +84,16 @@ class PermissionService
         $resolved = [];
 
         foreach ($items as $item) {
+            // Cek apakah user memiliki permission yang dibutuhkan
             if (isset($item['permission']) && !$user->can($item['permission'])) {
                 continue;
             }
 
             $route = $item['route'];
             if (is_array($route)) {
-                $route = $route[$role] ?? null;
+                // Perbaikan Fallback: Jika role aktif tidak didefinisikan (seperti super_admin),
+                // ambil route pertama yang tersedia di dalam array sebagai fallback.
+                $route = $route[$role] ?? reset($route);
             }
 
             if (!$route && $item['label'] !== 'Dashboard' && $item['label'] !== 'Profile' && $item['label'] !== 'Settings') {
@@ -166,7 +169,7 @@ class PermissionService
 
     public static function permissionGroups(): array
     {
-        return [
+       return [
             'jurusan' => ['view_jurusan', 'create_jurusan', 'edit_jurusan', 'delete_jurusan'],
             'prodi' => ['view_prodi', 'create_prodi', 'edit_prodi', 'delete_prodi'],
             'users' => ['view_users', 'create_users', 'edit_users', 'delete_users', 'activate_users'],
@@ -185,9 +188,12 @@ class PermissionService
             'sidang_skripsi' => ['view_sidang_skripsi', 'verify_sidang_skripsi'],
             'verifikasi_berkas' => ['view_verify_berkas', 'verify_berkas'],
             'jadwal' => ['view_jadwal', 'manage_jadwal', 'schedule_ujian', 'generate_penguji'],
-            'pendaftaran' => ['view_pendaftaran', 'create_pendaftaran', 'edit_pendaftaran'],
-            'revisi' => ['view_revisi', 'create_revisi'],
-            'nilai' => ['view_nilai', 'create_nilai'],
+            // Sinkronisasi pendaftaran (ditambahkan delete_pendaftaran)
+            'pendaftaran' => ['view_pendaftaran', 'create_pendaftaran', 'edit_pendaftaran', 'delete_pendaftaran'],
+            // Sinkronisasi revisi (ditambahkan edit_revisi, delete_revisi)
+            'revisi' => ['view_revisi', 'create_revisi', 'edit_revisi', 'delete_revisi'],
+            // Sinkronisasi nilai (ditambahkan edit_nilai, delete_nilai)
+            'nilai' => ['view_nilai', 'create_nilai', 'edit_nilai', 'delete_nilai'],
             'jadwal_dosen' => ['view_jadwal_dosen'],
             'kuota_saya' => ['view_kuota_saya'],
             'nilai_berkas' => ['view_nilai_berkas', 'manage_nilai_berkas'],

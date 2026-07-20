@@ -32,7 +32,7 @@ class VerifikasiBerkas extends Component
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }

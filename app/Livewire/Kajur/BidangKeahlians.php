@@ -7,6 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\BidangKeahlian;
+use App\Models\Jurusan;
 use Illuminate\Support\Facades\Auth;
 
 class BidangKeahlians extends Component
@@ -24,6 +25,9 @@ class BidangKeahlians extends Component
     public $deskripsi = '';
     public $is_active = true;
 
+    public $selectedJurusan = '';
+    public $listJurusan = [];
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -34,6 +38,9 @@ class BidangKeahlians extends Component
         $this->resetForm();
         $this->editMode = false;
         $this->showForm = true;
+        if (auth()->user()->hasRole('super_admin')) {
+            $this->listJurusan = Jurusan::active()->get();
+        }
     }
 
     public function openEdit($id)
@@ -49,6 +56,10 @@ class BidangKeahlians extends Component
         $this->is_active = $bidang->is_active;
 
         $this->showForm = true;
+        if (auth()->user()->hasRole('super_admin')) {
+            $this->listJurusan = Jurusan::active()->get();
+            $this->selectedJurusan = $bidang->jurusan_id;
+        }
     }
 
     public function closeForm()
@@ -59,25 +70,35 @@ class BidangKeahlians extends Component
 
     public function resetForm()
     {
-        $this->reset(['kode', 'nama_bidang', 'deskripsi', 'is_active', 'bidangId', 'editMode']);
+        $this->reset(['kode', 'nama_bidang', 'deskripsi', 'is_active', 'bidangId', 'editMode', 'selectedJurusan', 'listJurusan']);
     }
 
     protected function rules()
     {
-        return [
+        $rules = [
             'kode' => ['required', 'string', 'max:10', 'unique:bidang_keahlians,kode,' . $this->bidangId],
             'nama_bidang' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'is_active' => ['boolean'],
         ];
+
+        if (auth()->user()->hasRole('super_admin')) {
+            $rules['selectedJurusan'] = ['required', 'exists:jurusans,id'];
+        }
+
+        return $rules;
     }
 
     public function save()
     {
         $validated = $this->validate();
 
+        $jurusanId = auth()->user()->hasRole('super_admin')
+            ? $this->selectedJurusan
+            : PermissionService::getJurusanId();
+
         $data = [
-            'jurusan_id' => PermissionService::getJurusanId(),
+            'jurusan_id' => $jurusanId,
             'kode' => $this->kode,
             'nama_bidang' => $this->nama_bidang,
             'deskripsi' => $this->deskripsi,
@@ -110,9 +131,7 @@ class BidangKeahlians extends Component
 
     public function render()
     {
-        $jurusanId = PermissionService::getJurusanId();
-
-        $bidangs = BidangKeahlian::where('jurusan_id', $jurusanId)
+        $bidangs = BidangKeahlian::where(PermissionService::jurusanScope())
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama_bidang', 'like', '%' . $this->search . '%')

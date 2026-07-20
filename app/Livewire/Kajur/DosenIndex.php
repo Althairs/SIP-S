@@ -61,17 +61,17 @@ class DosenIndex extends Component
         $this->listKepakaran = Kepakaran::active()->orderBy('hierarki_level')->get();
     }
 
-    public function updatedSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function updatedProdiFilter()
+    public function updatingProdiFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }

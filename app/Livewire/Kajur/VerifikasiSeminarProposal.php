@@ -23,7 +23,7 @@ class VerifikasiSeminarProposal extends Component
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }
@@ -54,8 +54,6 @@ class VerifikasiSeminarProposal extends Component
 
     public function render()
     {
-        $jurusanId = PermissionService::getJurusanId();
-
         $pendaftarans = Pendaftaran::with(['mahasiswa', 'bidangKeahlians', 'pengujis.dosen', 'pembimbing1.dosen', 'pembimbing2.dosen'])
             ->where(PermissionService::jurusanScope())
             ->where('jenis_ujian', 'seminar_proposal')

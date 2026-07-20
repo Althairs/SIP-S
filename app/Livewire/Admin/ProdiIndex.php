@@ -21,17 +21,17 @@ class ProdiIndex extends Component
     #[Url(history: true)]
     public $filterStatus = '';
 
-    public function updatedSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function updatedJurusanFilter()
+    public function updatingJurusanFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedFilterStatus()
+    public function updatingFilterStatus()
     {
         $this->resetPage();
     }

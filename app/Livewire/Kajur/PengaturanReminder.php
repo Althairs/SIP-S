@@ -32,7 +32,7 @@ class PengaturanReminder extends Component
         $this->loadSettings();
     }
 
-    public function updatedJenisUjian()
+    public function updatingJenisUjian()
     {
         $this->loadSettings();
     }

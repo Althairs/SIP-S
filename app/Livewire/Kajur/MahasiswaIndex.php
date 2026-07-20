@@ -48,22 +48,22 @@ class MahasiswaIndex extends Component
 
     protected $queryString = ['search', 'prodiFilter', 'angkatanFilter', 'statusFilter'];
 
-    public function updatedSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    public function updatedProdiFilter()
+    public function updatingProdiFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedAngkatanFilter()
+    public function updatingAngkatanFilter()
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }

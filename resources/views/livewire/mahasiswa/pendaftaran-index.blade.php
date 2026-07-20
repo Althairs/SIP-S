@@ -9,10 +9,15 @@
     @endif
 
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Daftar Pendaftaran</h1>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Daftar Pendaftaran</h1>
+            @if($isSuperAdmin)
+                <p class="text-xs text-green-700 font-medium mt-0.5">Mode Super Admin: Menampilkan seluruh pendaftaran mahasiswa</p>
+            @endif
+        </div>
         <a href="{{ route('mahasiswa.pendaftaran.create') }}" class="px-5 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 transition font-medium flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Daftar Baru
+            Tambah Pendaftaran Baru
         </a>
     </div>
 
@@ -29,8 +34,22 @@
                         <span class="text-sm text-gray-500">{{ $pendaftaran->created_at->format('d M Y H:i') }}</span>
                     </div>
 
+                    {{-- Informasi Mahasiswa (Diperlukan jika diakses Super Admin atau untuk memperjelas pemilik pendaftaran) --}}
+                    @if($pendaftaran->mahasiswa)
+                    <div class="mb-2 p-2.5 bg-gray-50 rounded-xl border border-gray-100 inline-block w-full sm:w-auto">
+                        <p class="text-xs text-gray-500 font-medium">Pemohon / Mahasiswa:</p>
+                        <p class="text-sm font-semibold text-gray-800">
+                            {{ $pendaftaran->mahasiswa->name }}
+                            <span class="text-xs font-normal text-gray-500">({{ $pendaftaran->mahasiswa->nim ?? 'NIM -' }})</span>
+                        </p>
+                        @if($pendaftaran->mahasiswa->jurusan)
+                            <p class="text-xs text-gray-500">{{ $pendaftaran->mahasiswa->jurusan->nama_jurusan }}</p>
+                        @endif
+                    </div>
+                    @endif
+
                     {{-- Judul --}}
-                    <h3 class="font-semibold text-gray-900 text-lg">{{ $pendaftaran->judul_penelitian }}</h3>
+                    <h3 class="font-semibold text-gray-900 text-lg mt-1">{{ $pendaftaran->judul_penelitian }}</h3>
 
                     {{-- Jenis Ujian --}}
                     <p class="text-sm text-gray-500 mt-1">
@@ -71,14 +90,14 @@
 
                 {{-- Action Buttons --}}
                 <div class="flex gap-2 ml-4 flex-shrink-0">
-                    @if(in_array($pendaftaran->status, ['draft', 'revisi']))
+                    @if($isSuperAdmin || in_array($pendaftaran->status, ['draft', 'revisi']))
                     <a href="{{ route('mahasiswa.pendaftaran.edit', $pendaftaran->id) }}"
                        class="px-3 py-1.5 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition text-sm font-medium">
                         Edit
                     </a>
                     @endif
 
-                    @if($pendaftaran->status === 'draft')
+                    @if($isSuperAdmin || $pendaftaran->status === 'draft')
                     <button wire:click="deletePendaftaran({{ $pendaftaran->id }})"
                             wire:confirm="Hapus pendaftaran ini?"
                             class="px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition text-sm font-medium">
@@ -96,7 +115,9 @@
                 </svg>
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Belum Ada Pendaftaran</h3>
-            <p class="text-gray-500 mb-4">Anda belum mendaftarkan ujian apapun.</p>
+            <p class="text-gray-500 mb-4">
+                {{ $isSuperAdmin ? 'Belum ada pendaftaran mahasiswa yang tersimpan di sistem.' : 'Anda belum mendaftarkan ujian apapun.' }}
+            </p>
             <a href="{{ route('mahasiswa.pendaftaran.create') }}"
                class="inline-flex px-5 py-2.5 bg-green-700 text-white rounded-xl hover:bg-green-800 transition font-medium">
                 Daftar Sekarang
