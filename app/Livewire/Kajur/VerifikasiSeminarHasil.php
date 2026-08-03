@@ -33,6 +33,7 @@ class VerifikasiSeminarHasil extends VerifikasiSeminarProposal
             'pendaftarans' => $pendaftarans,
             'title' => 'Verifikasi Seminar Hasil',
             'jenisUjian' => 'seminar_hasil',
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

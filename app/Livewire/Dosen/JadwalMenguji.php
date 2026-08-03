@@ -14,9 +14,11 @@ class JadwalMenguji extends Component
     public $selectedUjian = null;
     public $showDetail = false;
     public $tab = 'upcoming';
+    public $isSuperAdmin = false;
 
     public function mount()
     {
+        $this->isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
         $this->loadData();
     }
 
@@ -25,7 +27,9 @@ class JadwalMenguji extends Component
         $dosenId = auth()->id();
 
         // Jadwal akan datang
-        $this->jadwalAkanDatang = UjianPenguji::where('dosen_id', $dosenId)
+        $this->jadwalAkanDatang = UjianPenguji::when(!$this->isSuperAdmin, function ($query) use ($dosenId) {
+                $query->where('dosen_id', $dosenId);
+            })
             ->whereHas('pendaftaran', function ($q) {
                 $q->where('status', 'dijadwalkan')
                   ->where('tanggal_ujian', '>=', now());
@@ -37,7 +41,9 @@ class JadwalMenguji extends Component
             });
 
         // Riwayat menguji
-        $this->jadwalSelesai = UjianPenguji::where('dosen_id', $dosenId)
+        $this->jadwalSelesai = UjianPenguji::when(!$this->isSuperAdmin, function ($query) use ($dosenId) {
+                $query->where('dosen_id', $dosenId);
+            })
             ->whereHas('pendaftaran', function ($q) {
                 $q->where(function ($sq) {
                     $sq->where('status', 'selesai')
@@ -61,7 +67,9 @@ class JadwalMenguji extends Component
 
     public function showDetailUjian($id)
     {
-        $this->selectedUjian = UjianPenguji::where('dosen_id', auth()->id())
+        $this->selectedUjian = UjianPenguji::when(!$this->isSuperAdmin, function ($query) {
+                $query->where('dosen_id', auth()->id());
+            })
             ->where('pendaftaran_id', $id)
             ->with([
                 'pendaftaran.mahasiswa',
@@ -87,6 +95,8 @@ class JadwalMenguji extends Component
 
     public function render()
     {
-        return view('livewire.dosen.jadwal-menguji')->layout('components.layouts.app-auth');
+        return view('livewire.dosen.jadwal-menguji', [
+            'isSuperAdmin' => $this->isSuperAdmin,
+        ])->layout('components.layouts.app-auth');
     }
 }

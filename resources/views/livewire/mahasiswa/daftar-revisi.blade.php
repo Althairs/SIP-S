@@ -33,7 +33,13 @@
                 <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Belum Ada Revisi</h3>
-            <p class="text-gray-500">Anda belum memiliki catatan revisi dari dosen.</p>
+            <p class="text-gray-500">
+                @if($isSuperAdmin)
+                    Belum ada data pendaftaran dari mahasiswa.
+                @else
+                    Anda belum memiliki catatan revisi dari dosen.
+                @endif
+            </p>
         </div>
         @else
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -41,6 +47,9 @@
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
+                            @if($isSuperAdmin)
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mahasiswa</th>
+                            @endif
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Judul Ujian</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosen (Peran)</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kategori</th>
@@ -51,6 +60,13 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach($revisis as $revisi)
                         <tr class="hover:bg-gray-50 transition">
+                            @if($isSuperAdmin)
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    <div class="font-semibold">{{ $revisi->pendaftaran->mahasiswa?->name ?? '-' }}</div>
+                                    <div class="text-xs text-gray-500">{{ $revisi->pendaftaran->mahasiswa?->nim ?? '-' }}</div>
+                                    <div class="text-xs text-gray-400">{{ $revisi->pendaftaran->mahasiswa?->jurusan?->nama_jurusan ?? '-' }}</div>
+                                </td>
+                            @endif
                             <td class="px-6 py-4">
                                 <p class="text-sm font-medium text-gray-900 line-clamp-2" title="{{ $revisi->pendaftaran->judul_penelitian ?? '-' }}">
                                     {{ Str::limit($revisi->pendaftaran->judul_penelitian ?? '-', 50) }}

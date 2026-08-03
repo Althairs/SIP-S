@@ -88,7 +88,7 @@
                 <!-- Requirements Info -->
                 <div class="p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl">
                     <h3 class="font-bold text-sm">Daftar Kolom Wajib di Excel:</h3>
-                    <p class="text-xs mt-1">File Excel harus memiliki header di baris pertama dengan kolom-kolom berikut (tidak sensitif huruf besar/kecil, urutan bebas):</p>
+                    <p class="text-xs mt-1">File Excel harus memiliki header di baris pertama dengan kolom-kolom berikut :</p>
                     <div class="mt-2 flex flex-wrap gap-2">
                         @foreach(['No', 'Nama', 'NIM', 'Fakultas', 'Prodi', 'Status Awal', 'Semester Awal Terdaftar', 'Status Aktif'] as $col)
                             <span class="px-2.5 py-1 bg-green-100 text-green-800 rounded-md text-xs font-semibold">{{ $col }}</span>
@@ -217,14 +217,14 @@
                         </svg>
                     </div>
                     <select wire:model.live="prodiFilter"
-                        class="px-4 py-2.5 pr-10 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
+                        class="w-35 px-4 py-2.5 pr-10 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
                         <option value="">Semua Prodi</option>
                         @foreach($prodis as $prodi)
                             <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
                         @endforeach
                     </select>
                     <select wire:model.live="statusFilter"
-                        class="px-4 py-2.5 pr-10 border border-gray-300 text-gray-400 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
+                        class="w-35 px-4 py-2.5 pr-10 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 appearance-none cursor-pointer bg-white focus:ring-green-500 focus:border-green-500">
                         <option value="">Semua Status</option>
                         <option value="1">Aktif</option>
                         <option value="0">Nonaktif</option>

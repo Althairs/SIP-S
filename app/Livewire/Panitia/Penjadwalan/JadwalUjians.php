@@ -94,7 +94,9 @@ class JadwalUjians extends Component
     private function loadRuanganOptions()
     {
         $jurusanId = PermissionService::getJurusanId();
-        $this->ruanganOptions = Ruangan::where('jurusan_id', $jurusanId)
+        $this->ruanganOptions = Ruangan::when($jurusanId, function($q) use ($jurusanId) {
+                $q->where('jurusan_id', $jurusanId);
+            })
             ->active()
             ->pluck('nama_ruangan')
             ->toArray();
@@ -107,7 +109,12 @@ class JadwalUjians extends Component
     private function loadSesiOptions()
     {
         $jurusanId = PermissionService::getJurusanId();
-        $pengaturan = PengaturanJadwal::where('jurusan_id', $jurusanId)->where('is_active', true)->first();
+        $pengaturan = null;
+        if ($jurusanId) {
+            $pengaturan = PengaturanJadwal::where('jurusan_id', $jurusanId)->where('is_active', true)->first();
+        } else {
+            $pengaturan = PengaturanJadwal::where('is_active', true)->first();
+        }
 
         if ($pengaturan) {
             $this->jamMulaiOptions = $pengaturan->jam_mulai;
@@ -450,15 +457,16 @@ class JadwalUjians extends Component
 
         $pendaftarans = $query->paginate(10);
 
-        $countSiap = Pendaftaran::where('jurusan_id', $jurusanId)->where('status', 'disetujui_kajur')->count();
-        $countScheduled = Pendaftaran::where('jurusan_id', $jurusanId)->where('status', 'dijadwalkan')->count();
-        $countCompleted = Pendaftaran::where('jurusan_id', $jurusanId)->where('status', 'selesai')->count();
+        $countSiap = Pendaftaran::when($jurusanId, fn($q) => $q->where('jurusan_id', $jurusanId))->where('status', 'disetujui_kajur')->count();
+        $countScheduled = Pendaftaran::when($jurusanId, fn($q) => $q->where('jurusan_id', $jurusanId))->where('status', 'dijadwalkan')->count();
+        $countCompleted = Pendaftaran::when($jurusanId, fn($q) => $q->where('jurusan_id', $jurusanId))->where('status', 'selesai')->count();
 
         return view('livewire.panitia.penjadwalan.jadwal-ujians', [
             'pendaftarans' => $pendaftarans,
             'countSiap' => $countSiap,
             'countScheduled' => $countScheduled,
             'countCompleted' => $countCompleted,
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

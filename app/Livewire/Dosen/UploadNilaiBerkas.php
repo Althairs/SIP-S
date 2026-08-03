@@ -27,14 +27,19 @@ class UploadNilaiBerkas extends Component
             $this->pendaftaran = Pendaftaran::with('mahasiswa')->findOrFail($pendaftaran);
         }
 
+        $isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+
         $peran = UjianPenguji::where('pendaftaran_id', $this->pendaftaran->id)
-            ->where('dosen_id', auth()->id())
+            ->when(!$isSuperAdmin, function ($query) {
+                $query->where('dosen_id', auth()->id());
+            })
             ->first();
 
         $this->peranDosen = $peran?->peran ?? 'penguji_1';
+        $targetDosenId = $peran ? $peran->dosen_id : auth()->id();
 
         $this->existingPenilaian = Penilaian::where('pendaftaran_id', $this->pendaftaran->id)
-            ->where('dosen_id', auth()->id())
+            ->where('dosen_id', $targetDosenId)
             ->where('tipe_input', 'berkas')
             ->first();
 
@@ -56,9 +61,17 @@ class UploadNilaiBerkas extends Component
 
         $filePath = $this->filePenilaian->store('penilaian/' . $this->pendaftaran->id, 'public');
 
+        $isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+        $peran = UjianPenguji::where('pendaftaran_id', $this->pendaftaran->id)
+            ->when(!$isSuperAdmin, function ($query) {
+                $query->where('dosen_id', auth()->id());
+            })
+            ->first();
+        $targetDosenId = $peran ? $peran->dosen_id : auth()->id();
+
         $data = [
             'pendaftaran_id' => $this->pendaftaran->id,
-            'dosen_id' => auth()->id(),
+            'dosen_id' => $targetDosenId,
             'peran_pemberi' => $this->peranDosen,
             'tipe_input' => 'berkas',
             'file_penilaian' => $filePath,

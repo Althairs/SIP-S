@@ -18,6 +18,38 @@ class VerifikasiSeminarProposal extends Component
     #[Url(history: true)]
     public $statusFilter = '';
 
+    public $showDetail = false;
+    public $selectedPendaftaran = null;
+    public $isSuperAdmin = false;
+
+    public function mount()
+    {
+        $this->isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+    }
+
+    public function showDetail($id)
+    {
+        $this->selectedPendaftaran = Pendaftaran::with([
+            'mahasiswa',
+            'mahasiswa.jurusan',
+            'mahasiswa.prodi',
+            'bidangKeahlians',
+            'dosens.dosen',
+            'pembimbing1.dosen',
+            'pembimbing2.dosen',
+            'pengujis.dosen',
+            'jurusan',
+            'prodi',
+        ])->findOrFail($id);
+        $this->showDetail = true;
+    }
+
+    public function closeDetail()
+    {
+        $this->showDetail = false;
+        $this->selectedPendaftaran = null;
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -77,6 +109,7 @@ class VerifikasiSeminarProposal extends Component
             'pendaftarans' => $pendaftarans,
             'title' => 'Verifikasi Seminar Proposal',
             'jenisUjian' => 'seminar_proposal',
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

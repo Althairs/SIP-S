@@ -34,6 +34,7 @@ class VerifikasiSidangSkripsi extends VerifikasiSeminarProposal
             'pendaftarans' => $pendaftarans,
             'title' => 'Verifikasi Sidang Skripsi',
             'jenisUjian' => 'sidang_skripsi',
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

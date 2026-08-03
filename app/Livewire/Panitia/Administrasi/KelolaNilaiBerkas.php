@@ -19,6 +19,12 @@ class KelolaNilaiBerkas extends Component
     // --- VISIBILITY STATE ---
     public $showForm = false;
     public $showDetail = false;
+    public $isSuperAdmin = false;
+
+    public function mount()
+    {
+        $this->isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+    }
 
     // --- PROPERTI UNTUK INPUT NILAI ---
     public $inputPenilaianId = null;
@@ -206,6 +212,7 @@ class KelolaNilaiBerkas extends Component
         return view('livewire.panitia.administrasi.kelola-nilai-berkas', [
             'penilaians' => $penilaians,
             'selectedPenilaian' => $selectedPenilaian,
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

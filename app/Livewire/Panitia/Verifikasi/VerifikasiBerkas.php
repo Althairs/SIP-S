@@ -19,9 +19,11 @@ class VerifikasiBerkas extends Component
     public $statusFilter = 'pending';
     public $showDetail = false;
     public $selectedPendaftaran;
+    public $isSuperAdmin = false;
 
     public function mount()
     {
+        $this->isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
         if (request()->has('statusFilter')) {
             $this->statusFilter = request()->get('statusFilter');
         }
@@ -95,6 +97,7 @@ class VerifikasiBerkas extends Component
 
         return view('livewire.panitia.verifikasi.verifikasi-berkas', [
             'pendaftarans' => $pendaftarans,
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

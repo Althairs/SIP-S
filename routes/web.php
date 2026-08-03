@@ -25,6 +25,7 @@ use App\Livewire\Kajur\MahasiswaIndex;
 use App\Livewire\Kajur\PanitiaIndex;
 use App\Livewire\Kajur\KuotaDosen;
 use App\Livewire\Kajur\BidangKeahlians;
+use App\Livewire\Kajur\ImportMahasiswa;
 use App\Livewire\Kajur\Kepakaran;
 use App\Livewire\Kajur\VerifikasiSeminarProposal;
 use App\Livewire\Kajur\VerifikasiSeminarHasil;
@@ -162,6 +163,7 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/kepakaran', Kepakaran::class)->name('kepakaran')->middleware('can:view_kepakaran');
             Route::get('/atur-atribut-dosen', AturAtributDosen::class)->name('atur-atribut-dosen')->middleware('can:view_atribut_dosen');
             Route::get('/pengaturan-reminder', PengaturanReminder::class)->name('pengaturan-reminder')->middleware('can:view_pengaturan_reminder');
+            Route::get('/import-mahasiswa', ImportMahasiswa::class)->name('import-mahasiswa')->middleware('can:import_data');
         });
 
         Route::prefix('verifikasi')->name('verifikasi.')->group(function () {

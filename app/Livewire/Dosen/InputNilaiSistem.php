@@ -12,7 +12,6 @@ class InputNilaiSistem extends Component
 {
     use WithFileUploads;
 
-    // HAPUS type hint Pendaftaran, gunakan public property biasa
     public $pendaftaran;
     public $pendaftaranId;
     public $peranDosen;
@@ -40,8 +39,6 @@ class InputNilaiSistem extends Component
 
     public function mount($pendaftaran)
     {
-        // Jika $pendaftaran adalah model, gunakan langsung
-        // Jika $pendaftaran adalah ID, cari modelnya
         if ($pendaftaran instanceof Pendaftaran) {
             $this->pendaftaran = $pendaftaran;
         } else {
@@ -50,29 +47,31 @@ class InputNilaiSistem extends Component
 
         $this->pendaftaranId = $this->pendaftaran->id;
 
-        // Cek status
         if (!in_array($this->pendaftaran->status, ['dijadwalkan', 'selesai'])) {
             session()->flash('error', 'Ujian ini belum bisa dinilai. Status: ' . $this->pendaftaran->statusLabel);
             $this->redirect(route('dosen.nilai.index'));
             return;
         }
 
-        // Cari peran dosen
+        $isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+
         $peran = UjianPenguji::where('pendaftaran_id', $this->pendaftaran->id)
-            ->where('dosen_id', auth()->id())
+            ->when(!$isSuperAdmin, function ($query) {
+                $query->where('dosen_id', auth()->id());
+            })
             ->first();
 
-        if (!$peran) {
+        if (!$peran && !$isSuperAdmin) {
             session()->flash('error', 'Anda tidak terdaftar sebagai penguji untuk ujian ini.');
             $this->redirect(route('dosen.nilai.index'));
             return;
         }
 
         $this->peranDosen = $peran->peran ?? 'penguji_1';
+        $targetDosenId = $peran ? $peran->dosen_id : auth()->id();
 
-        // Cek existing penilaian
         $this->existingPenilaian = Penilaian::where('pendaftaran_id', $this->pendaftaran->id)
-            ->where('dosen_id', auth()->id())
+            ->where('dosen_id', $targetDosenId)
             ->first();
 
         if ($this->existingPenilaian) {
@@ -94,8 +93,18 @@ class InputNilaiSistem extends Component
         $komponenNilai = ['presentasi', 'penguasaan', 'menjawab', 'deskripsi', 'analisis', 'menyimpulkan', 'implikasi'];
 
         if (in_array($field, $komponenNilai)) {
-            if ($this->$field < 0) $this->$field = 0;
-            if ($this->$field > 100) $this->$field = 100;
+            // PERBAIKAN: Jika input sedang dikosongkan saat mengedit, biarkan sementara agar tidak tereset ke 0
+            if ($this->$field === '' || $this->$field === null) {
+                return;
+            }
+
+            // Pastikan dikonversi ke numerik
+            $val = (float) $this->$field;
+
+            if ($val < 0) $val = 0;
+            if ($val > 100) $val = 100;
+
+            $this->$field = $val;
             $this->hitungNilai();
         }
     }
@@ -103,13 +112,13 @@ class InputNilaiSistem extends Component
     public function hitungNilai()
     {
         $nilaiKomponen = [
-            'presentasi' => $this->presentasi,
-            'penguasaan' => $this->penguasaan,
-            'menjawab' => $this->menjawab,
-            'deskripsi' => $this->deskripsi,
-            'analisis' => $this->analisis,
-            'menyimpulkan' => $this->menyimpulkan,
-            'implikasi' => $this->implikasi,
+            'presentasi' => (float) ($this->presentasi ?: 0),
+            'penguasaan' => (float) ($this->penguasaan ?: 0),
+            'menjawab' => (float) ($this->menjawab ?: 0),
+            'deskripsi' => (float) ($this->deskripsi ?: 0),
+            'analisis' => (float) ($this->analisis ?: 0),
+            'menyimpulkan' => (float) ($this->menyimpulkan ?: 0),
+            'implikasi' => (float) ($this->implikasi ?: 0),
         ];
 
         $this->nilaiAkhir = Penilaian::hitungNilaiAkhir($nilaiKomponen);
@@ -133,9 +142,17 @@ class InputNilaiSistem extends Component
 
         $this->hitungNilai();
 
+        $isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+        $peran = UjianPenguji::where('pendaftaran_id', $this->pendaftaran->id)
+            ->when(!$isSuperAdmin, function ($query) {
+                $query->where('dosen_id', auth()->id());
+            })
+            ->first();
+        $targetDosenId = $peran ? $peran->dosen_id : auth()->id();
+
         $data = [
             'pendaftaran_id' => $this->pendaftaran->id,
-            'dosen_id' => auth()->id(),
+            'dosen_id' => $targetDosenId,
             'peran_pemberi' => $this->peranDosen,
             'tipe_input' => 'sistem',
             'presentasi' => $this->presentasi,
@@ -161,7 +178,6 @@ class InputNilaiSistem extends Component
             session()->flash('success', 'Nilai berhasil disimpan.');
         }
 
-        // Update nilai_total di pendaftaran jika kedua penguji sudah input
         $this->updateNilaiAkhirPendaftaran();
 
         return redirect()->route('dosen.nilai.index');

@@ -15,13 +15,17 @@ class Nilai extends Component
     public $selectedUjian = null;
     public $showDetail = false;
     public $detailPenilaian = [];
+    public $isSuperAdmin = false;
 
     public function mount()
     {
         $userId = auth()->id();
+        $this->isSuperAdmin = auth()->user()->hasRole('super_admin');
 
-        $this->nilais = Pendaftaran::with(['dosens.dosen', 'pengujis.dosen'])
-            ->where('mahasiswa_id', $userId)
+        $this->nilais = Pendaftaran::with(['dosens.dosen', 'pengujis.dosen', 'mahasiswa', 'mahasiswa.jurusan', 'mahasiswa.prodi'])
+            ->when(!$this->isSuperAdmin, function ($query) use ($userId) {
+                $query->where('mahasiswa_id', $userId);
+            })
             ->whereNotNull('nilai_total')
             ->latest()
             ->get();
@@ -38,7 +42,14 @@ class Nilai extends Component
             'pengujis.dosen',
             'pembimbing1.dosen',
             'pembimbing2.dosen',
-        ])->where('mahasiswa_id', auth()->id())->findOrFail($id);
+            'mahasiswa',
+            'mahasiswa.jurusan',
+            'mahasiswa.prodi',
+        ])
+        ->when(!$this->isSuperAdmin, function ($query) {
+            $query->where('mahasiswa_id', auth()->id());
+        })
+        ->findOrFail($id);
 
         // Ambil penilaian dari masing-masing penguji
         $this->detailPenilaian = [];
@@ -115,6 +126,8 @@ class Nilai extends Component
 
     public function render()
     {
-        return view('livewire.mahasiswa.nilai')->layout('components.layouts.app-auth');
+        return view('livewire.mahasiswa.nilai', [
+            'isSuperAdmin' => $this->isSuperAdmin,
+        ])->layout('components.layouts.app-auth');
     }
 }

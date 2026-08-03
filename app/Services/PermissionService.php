@@ -27,11 +27,12 @@ class PermissionService
             // ── Data Master (shared kajur/sekjur) ──
             ['label' => 'Data Dosen', 'route' => ['kajur' => 'kajur.data-master.dosen', 'sekjur' => 'sekjur.data-master.dosen'], 'permission' => 'view_dosen', 'group' => 'Data Master', 'icon' => 'dosen'],
             ['label' => 'Data Mahasiswa', 'route' => ['kajur' => 'kajur.data-master.mahasiswa', 'sekjur' => 'sekjur.data-master.mahasiswa'], 'permission' => 'view_mahasiswa', 'group' => 'Data Master', 'icon' => 'mahasiswa'],
+            // ['label' => 'Import Mahasiswa', 'route' => 'kajur.data-master.import-mahasiswa', 'permission' => 'import_data', 'group' => 'Data Master', 'icon' => 'import'],
             ['label' => 'Data Panitia', 'route' => ['kajur' => 'kajur.data-master.panitia', 'sekjur' => 'sekjur.data-master.panitia'], 'permission' => 'view_panitia', 'group' => 'Data Master', 'icon' => 'panitia'],
             ['label' => 'Kuota Dosen', 'route' => ['kajur' => 'kajur.data-master.kuota-dosen', 'sekjur' => 'sekjur.data-master.kuota-dosen'], 'permission' => 'view_kuota_dosen', 'group' => 'Data Master', 'icon' => 'kuota'],
             ['label' => 'Atribut Dosen', 'route' => 'kajur.data-master.atur-atribut-dosen', 'permission' => 'view_atribut_dosen', 'group' => 'Data Master', 'icon' => 'atribut'],
             ['label' => 'Bidang Keahlian', 'route' => ['kajur' => 'kajur.data-master.bidang-keahlian', 'sekjur' => 'sekjur.data-master.bidang-keahlian'], 'permission' => 'view_bidang_keahlian', 'group' => 'Data Master', 'icon' => 'bidang'],
-            ['label' => 'Kepakaran', 'route' => ['kajur' => 'kajur.data-master.kepakaran', 'sekjur' => 'sekjur.data-master.kepakaran'], 'permission' => 'view_kepakaran', 'group' => 'Data Master', 'icon' => 'kepakaran'],
+            ['label' => 'Jabatan Fungsional', 'route' => ['kajur' => 'kajur.data-master.kepakaran', 'sekjur' => 'sekjur.data-master.kepakaran'], 'permission' => 'view_kepakaran', 'group' => 'Data Master', 'icon' => 'kepakaran'],
             ['label' => 'Pengaturan Reminder', 'route' => 'kajur.data-master.pengaturan-reminder', 'permission' => 'view_pengaturan_reminder', 'group' => 'Data Master', 'icon' => 'reminder'],
             ['label' => 'Penguji', 'route' => 'sekjur.data-master.penguji', 'permission' => 'view_penguji', 'group' => 'Data Master', 'icon' => 'penguji'],
 
@@ -149,18 +150,18 @@ class PermissionService
         return $result;
     }
 
-    public static function jurusanScope(string $column = 'jurusan_id'): \Closure
+    public static function jurusanScope(string $column = 'jurusan_id', $user = null): \Closure
     {
-        $user = Auth::user();
+        $user = $user ?? Auth::user();
         if (!$user || $user->hasRole('super_admin')) {
             return fn($query) => $query;
         }
         return fn($query) => $query->where($column, $user->jurusan_id);
     }
 
-    public static function getJurusanId(): ?int
+    public static function getJurusanId($user = null): ?int
     {
-        $user = Auth::user();
+        $user = $user ?? Auth::user();
         if (!$user || $user->hasRole('super_admin')) {
             return null;
         }

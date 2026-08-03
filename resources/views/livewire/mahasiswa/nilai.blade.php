@@ -81,7 +81,13 @@
             <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         </div>
         <h3 class="text-lg font-medium text-gray-900 mb-2">Belum Ada Nilai</h3>
-        <p class="text-gray-500">Nilai akan muncul setelah Anda menyelesaikan ujian.</p>
+        <p class="text-gray-500">
+            @if($isSuperAdmin)
+                Belum ada data pendaftaran dari mahasiswa.
+            @else
+                Nilai akan muncul setelah Anda menyelesaikan ujian.
+            @endif
+        </p>
     </div>
     @else
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -90,6 +96,9 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">No</th>
+                        @if($isSuperAdmin)
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Mahasiswa</th>
+                        @endif
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Jenis Ujian</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Judul</th>
                         <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase">Nilai Akhir</th>
@@ -102,6 +111,13 @@
                     @foreach($nilais as $index => $nilai)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $index + 1 }}</td>
+                        @if($isSuperAdmin)
+                            <td class="px-6 py-4 text-sm text-gray-700">
+                                <div class="font-semibold">{{ $nilai->mahasiswa?->name ?? '-' }}</div>
+                                <div class="text-xs text-gray-500">{{ $nilai->mahasiswa?->nim ?? '-' }}</div>
+                                <div class="text-xs text-gray-400">{{ $nilai->mahasiswa?->jurusan?->nama_jurusan ?? '-' }}</div>
+                            </td>
+                        @endif
                         <td class="px-6 py-4">
                             <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">{{ ucwords(str_replace('_', ' ', $nilai->jenis_ujian)) }}</span>
                         </td>

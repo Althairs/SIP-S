@@ -24,7 +24,6 @@ Saat ini sistem memiliki beberapa permasalahan terkait hak akses **Super Admin**
 
 | File | Masalah | Solusi |
 |------|---------|--------|
-| `Dashboard.php` | `where('mahasiswa_id', $userId)` hardcode, `where('user_id', $userId)` pada Reminder | Ubah ke `when(!$isSuperAdmin, ...)` pattern |
 | `Nilai.php` | `where('mahasiswa_id', $userId)` hardcode di mount() dan showDetailNilai() | Ubah ke `when(!$isSuperAdmin, ...)` pattern |
 | `DaftarRevisi.php` | `whereHas('pendaftaran', fn => where('mahasiswa_id', auth()->id()))` | Ubah ke `when(!$isSuperAdmin, ...)` conditonal di loadRevisis() |
 
@@ -114,7 +113,6 @@ Implementasi:
 | View | Perubahan |
 |------|-----------|
 | `mahasiswa/pendaftaran-index.blade.php` | ✅ **Sudah** memenuhi syarat (sudah ada `$isSuperAdmin`, mahasiswa info, dynamic actions) |
-| `mahasiswa/dashboard.blade.php` | Tambah `$isSuperAdmin`, tampilkan nama mahasiswa di setiap kartu pendaftaran |
 | `mahasiswa/nilai.blade.php` | Tambah `$isSuperAdmin`, tampilkan identitas mahasiswa |
 | `mahasiswa/jadwal-ujian.blade.php` | ✅ **Sudah** memenuhi syarat |
 | `mahasiswa/daftar-revisi.blade.php` | Tambah `$isSuperAdmin`, tampilkan identitas mahasiswa |
@@ -156,15 +154,15 @@ Super Admin dapat menghapus data **tanpa pengecekan status** (draft/revisi), sed
 ## 5. Prioritas Eksekusi
 
 ### Fase 1 — Core (High Priority)
-1. `Mahasiswa/Dashboard.php` — super_admin bypass
-2. `Mahasiswa/Nilai.php` — super_admin bypass
-3. `Mahasiswa/DaftarRevisi.php` — super_admin bypass
-4. `PermissionService.php` — fix `jurusanScope()` & `getJurusanId()` untuk super_admin
-5. `Panitia/Verifikasi/VerifikasiBerkas.php` — super_admin bypass jurusan
-6. `Panitia/Penjadwalan/JadwalUjians.php` — super_admin bypass jurusan
-7. `Kajur/VerifikasiSeminarProposal.php` (dan turunannya) — super_admin bypass jurusan
-8. `Sekjur/PengujiIndex.php` — super_admin bypass jurusan
-9. `Panitia/Administrasi/KelolaNilaiBerkas.php` — super_admin bypass jurusan
+
+1. `Mahasiswa/Nilai.php` — super_admin bypass
+2. `Mahasiswa/DaftarRevisi.php` — super_admin bypass
+3. `PermissionService.php` — fix `jurusanScope()` & `getJurusanId()` untuk super_admin
+4. `Panitia/Verifikasi/VerifikasiBerkas.php` — super_admin bypass jurusan
+5. `Panitia/Penjadwalan/JadwalUjians.php` — super_admin bypass jurusan
+6. `Kajur/VerifikasiSeminarProposal.php` (dan turunannya) — super_admin bypass jurusan
+7. `Sekjur/PengujiIndex.php` — super_admin bypass jurusan
+8. `Panitia/Administrasi/KelolaNilaiBerkas.php` — super_admin bypass jurusan
 
 ### Fase 2 — Dosen & View (Medium Priority)
 10. `Dosen/BerikanNilai.php` — super_admin bypass
@@ -196,3 +194,5 @@ Super Admin dapat menghapus data **tanpa pengecekan status** (draft/revisi), sed
 - **Modal Detail**: Implementasi bisa menggunakan `$showDetail` state + render kondisional (bukan modal JS overlay, tapi inline card yang menggantikan list — konsisten dengan pattern yang sudah ada di `VerifikasiBerkas`)
 - **Pengiriman State**: Selalu kirimkan `$isSuperAdmin` dari komponen ke view melalui parameter `render()`
 - **Tidak membuat Policy file baru** — gunakan Gate::before yang sudah ada di `AppServiceProvider`
+
+balas dalam bahasa indonesia

@@ -33,8 +33,11 @@ class BerikanRevisi extends Component
             $this->pendaftaran = Pendaftaran::with(['mahasiswa', 'revisis', 'pengujis.dosen'])->findOrFail($pendaftaran);
         }
 
+        $isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
         $peran = UjianPenguji::where('pendaftaran_id', $this->pendaftaran->id)
-            ->where('dosen_id', auth()->id())
+            ->when(!$isSuperAdmin, function ($query) {
+                $query->where('dosen_id', auth()->id());
+            })
             ->first();
 
         $this->peranDosen = $peran?->peran ?? 'penguji_1';
@@ -43,8 +46,11 @@ class BerikanRevisi extends Component
 
     public function loadRevisis()
     {
+        $isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
         $this->existingRevisis = Revisi::where('pendaftaran_id', $this->pendaftaran->id)
-            ->where('dosen_id', auth()->id())
+            ->when(!$isSuperAdmin, function ($query) {
+                $query->where('dosen_id', auth()->id());
+            })
             ->orderByRaw("FIELD(status, 'diperiksa', 'pending', 'selesai', 'disetujui')")
             ->get();
     }

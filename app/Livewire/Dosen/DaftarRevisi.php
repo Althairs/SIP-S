@@ -12,6 +12,12 @@ class DaftarRevisi extends Component
     public $selectedRevisiId = null;
     public $showDetail = false;
     public $catatan_dosen = '';
+    public $isSuperAdmin = false;
+
+    public function mount()
+    {
+        $this->isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+    }
 
     public function selectRevisi($id)
     {
@@ -71,17 +77,23 @@ class DaftarRevisi extends Component
         $dosenId = auth()->id();
 
         // Ujian yang sudah selesai di mana dosen ini jadi penguji
-        $ujianSelesai = UjianPenguji::where('dosen_id', $dosenId)
+        $ujianSelesai = UjianPenguji::when(!$this->isSuperAdmin, function($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId);
+            })
             ->whereHas('pendaftaran', function($q) {
                 $q->where('status', 'selesai');
             })
             ->with(['pendaftaran.mahasiswa', 'pendaftaran.revisis' => function($q) use ($dosenId) {
-                $q->where('dosen_id', $dosenId);
+                if (!auth()->user()->hasRole('super_admin')) {
+                    $q->where('dosen_id', $dosenId);
+                }
             }])
             ->get();
 
         // Revisi yang sudah dibuat (sebagai penguji) - hanya yang sudah disetujui/selesai
-        $revisiSaya = Revisi::byDosen($dosenId)
+        $revisiSaya = Revisi::when(!$this->isSuperAdmin, function($q) use ($dosenId) {
+                $q->byDosen($dosenId);
+            })
             ->where(function($q) {
                 $q->where('is_approved', true)
                   ->orWhereIn('status', ['disetujui', 'selesai']);
@@ -91,11 +103,13 @@ class DaftarRevisi extends Component
             ->get();
 
         // Ujian bimbingan (sebagai pembimbing)
-        $bimbinganUjian = Pendaftaran::where(function($q) use ($dosenId) {
-                $q->whereHas('pembimbing1', function($q2) use ($dosenId) {
-                    $q2->where('dosen_id', $dosenId);
-                })->orWhereHas('pembimbing2', function($q2) use ($dosenId) {
-                    $q2->where('dosen_id', $dosenId);
+        $bimbinganUjian = Pendaftaran::when(!$this->isSuperAdmin, function($q) use ($dosenId) {
+                $q->where(function($q2) use ($dosenId) {
+                    $q2->whereHas('pembimbing1', function($q3) use ($dosenId) {
+                        $q3->where('dosen_id', $dosenId);
+                    })->orWhereHas('pembimbing2', function($q3) use ($dosenId) {
+                        $q3->where('dosen_id', $dosenId);
+                    });
                 });
             })
             ->where('status', 'selesai')
@@ -107,6 +121,7 @@ class DaftarRevisi extends Component
             'ujianSelesai' => $ujianSelesai,
             'revisiSaya' => $revisiSaya,
             'bimbinganUjian' => $bimbinganUjian,
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

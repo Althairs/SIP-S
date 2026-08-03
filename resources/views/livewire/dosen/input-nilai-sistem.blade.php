@@ -2,6 +2,64 @@
     @section('title', 'Input Nilai Ujian')
     @section('page-title', 'Input Nilai via Sistem')
 
+    <!-- Style Kustom untuk Bulatan Penanda & Efek Hijau Menyala -->
+    <style>
+        /* Track dasar slider */
+        .custom-range {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        /* Bulatan Penanda (Thumb) - Webkit (Chrome, Safari, Edge) */
+        .custom-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #15803d; /* Hijau utama */
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out;
+        }
+
+        /* EFEK MENYALA HIJAU saat Di-hover, Di-fokus, atau Di-geser (Active) */
+        .custom-range::-webkit-slider-thumb:hover,
+        .custom-range:active::-webkit-slider-thumb,
+        .custom-range:focus::-webkit-slider-thumb {
+            background: #16a34a; /* Hijau terang */
+            transform: scale(1.3); /* Bulatan membesar */
+            box-shadow: 0 0 12px 4px rgba(22, 163, 74, 0.6); /* Efek Pendaran/Glow Hijau */
+        }
+
+        /* Bulatan Penanda (Thumb) - Firefox */
+        .custom-range::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #15803d;
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out;
+        }
+
+        .custom-range::-moz-range-thumb:hover,
+        .custom-range:active::-moz-range-thumb,
+        .custom-range:focus::-moz-range-thumb {
+            background: #16a34a;
+            transform: scale(1.3);
+            box-shadow: 0 0 12px 4px rgba(22, 163, 74, 0.6);
+        }
+    </style>
+
     @if (session()->has('success'))
     <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)">{{ session('success') }}</div>
     @endif
@@ -28,7 +86,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Tipe Input</p>
-                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs flex items-center">
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs inline-flex items-center">
                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         Input Sistem
                     </span>
@@ -73,18 +131,32 @@
 
                     @foreach($komponen as $key => $k)
                     <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $k['icon'] }}"></path>
                         </svg>
-                        <div class="flex-1">
-                            <label class="block text-sm font-medium text-gray-700">
+                        <div class="flex-1 min-w-0">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
                                 {{ $k['label'] }}
                                 <span class="text-xs text-gray-400">(Bobot {{ $k['bobot'] }})</span>
                             </label>
-                            <div class="flex items-center gap-3 mt-1">
-                                <input type="range" wire:model.live="{{ $key }}" min="0" max="100" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600">
-                                <input type="number" wire:model.live="{{ $key }}" min="0" max="100" class="w-20 px-3 py-1.5 border border-gray-300 rounded-lg text-center text-sm font-bold focus:ring-2 focus:ring-green-500">
-                                <span class="text-xs text-gray-400 w-12 text-right">{{ round($$key * \App\Models\Penilaian::BOBOT[$key], 1) }}</span>
+
+                            <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                                <!-- SLIDER RANGE DENGAN BULATAN HIJAU DAN GLOW EFFECT -->
+                                <input type="range"
+                                       wire:model.live.debounce.150ms="{{ $key }}"
+                                       min="0"
+                                       max="100"
+                                       class="custom-range accent-green-600 flex-1 min-w-[120px]">
+
+                                <input type="number"
+                                       wire:model.blur="{{ $key }}"
+                                       min="0"
+                                       max="100"
+                                       class="w-20 shrink-0 px-3 py-1.5 border border-gray-300 rounded-lg text-center text-sm font-bold focus:ring-2 focus:ring-green-500 focus:border-green-500">
+
+                                <span class="text-xs text-gray-500 shrink-0 w-12 text-right font-semibold">
+                                    {{ round(($$key ?? 0) * \App\Models\Penilaian::BOBOT[$key], 1) }}
+                                </span>
                             </div>
                         </div>
                     </div>

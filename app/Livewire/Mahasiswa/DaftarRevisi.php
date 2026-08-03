@@ -12,6 +12,7 @@ class DaftarRevisi extends Component
     use WithFileUploads;
 
     public $revisis;
+    public $isSuperAdmin = false;
 
     #[Rule('required|file|mimes:pdf,doc,docx|max:10240')]
     public $file_revisi;
@@ -21,14 +22,17 @@ class DaftarRevisi extends Component
 
     public function mount()
     {
+        $this->isSuperAdmin = auth()->user()->hasRole('super_admin');
         $this->loadRevisis();
     }
 
     public function loadRevisis()
     {
-        $this->revisis = Revisi::with(['pendaftaran', 'dosen', 'ujianPenguji'])
-            ->whereHas('pendaftaran', function ($query) {
-                $query->where('mahasiswa_id', auth()->id());
+        $this->revisis = Revisi::with(['pendaftaran', 'pendaftaran.mahasiswa', 'pendaftaran.mahasiswa.jurusan', 'pendaftaran.mahasiswa.prodi', 'dosen', 'ujianPenguji'])
+            ->when(!$this->isSuperAdmin, function ($query) {
+                $query->whereHas('pendaftaran', function ($q) {
+                    $q->where('mahasiswa_id', auth()->id());
+                });
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -70,6 +74,8 @@ class DaftarRevisi extends Component
 
     public function render()
     {
-        return view('livewire.mahasiswa.daftar-revisi')->layout('components.layouts.app-auth');
+        return view('livewire.mahasiswa.daftar-revisi', [
+            'isSuperAdmin' => $this->isSuperAdmin,
+        ])->layout('components.layouts.app-auth');
     }
 }

@@ -19,6 +19,38 @@ class PengujiIndex extends Component
     public $statusFilter = '';
 
 
+    public $showDetail = false;
+    public $selectedPendaftaran = null;
+    public $isSuperAdmin = false;
+
+    public function mount()
+    {
+        $this->isSuperAdmin = auth()->user() && auth()->user()->hasRole('super_admin');
+    }
+
+    public function showDetail($id)
+    {
+        $this->selectedPendaftaran = Pendaftaran::with([
+            'mahasiswa',
+            'mahasiswa.jurusan',
+            'mahasiswa.prodi',
+            'bidangKeahlians',
+            'dosens.dosen',
+            'pembimbing1.dosen',
+            'pembimbing2.dosen',
+            'pengujis.dosen',
+            'jurusan',
+            'prodi',
+        ])->findOrFail($id);
+        $this->showDetail = true;
+    }
+
+    public function closeDetail()
+    {
+        $this->showDetail = false;
+        $this->selectedPendaftaran = null;
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -57,12 +89,12 @@ class PengujiIndex extends Component
             ->paginate(10);
 
         // Count stats
-        $totalMenunggu = Pendaftaran::where('jurusan_id', $jurusanId)
+        $totalMenunggu = Pendaftaran::when($jurusanId, fn($q) => $q->where('jurusan_id', $jurusanId))
             ->whereIn('status', ['disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur'])
             ->doesntHave('pengujis')
             ->count();
 
-        $totalSudahDiatur = Pendaftaran::where('jurusan_id', $jurusanId)
+        $totalSudahDiatur = Pendaftaran::when($jurusanId, fn($q) => $q->where('jurusan_id', $jurusanId))
             ->whereIn('status', ['disetujui_panitia', 'disetujui_sekjur', 'disetujui_kajur', 'dijadwalkan'])
             ->has('pengujis')
             ->count();
@@ -71,6 +103,7 @@ class PengujiIndex extends Component
             'pendaftarans' => $pendaftarans,
             'totalMenunggu' => $totalMenunggu,
             'totalSudahDiatur' => $totalSudahDiatur,
+            'isSuperAdmin' => $this->isSuperAdmin,
         ])->layout('components.layouts.app-auth');
     }
 }

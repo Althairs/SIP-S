@@ -107,7 +107,7 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $roles->firstItem() + $index }}</td>
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-2">
-                                <span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-medium capitalize">
+                                <span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-medium capitalize whitespace-nowrap">
                                     {{ str_replace('_', ' ', $role->name) }}
                                 </span>
                             </div>
@@ -129,7 +129,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                            <span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium whitespace-nowrap">
                                 {{ $role->users_count }} user
                             </span>
                         </td>

@@ -27,7 +27,7 @@
     <!-- Breadcrumb -->
     <nav class="mb-6 text-sm text-gray-500">
         <ol class="flex items-center space-x-2">
-            <li><a href="{{ route('panitia.administrasi.index') }}" class="hover:text-green-600 transition">Administrasi</a></li>
+            <li><a href="{{ route('panitia.administrasi.nilai-berkas') }}" class="hover:text-green-600 transition">Administrasi</a></li>
             <li><span class="mx-1">/</span></li>
             @if($showForm)
             <li><a href="#" wire:click.prevent="closeForm" class="hover:text-green-600 transition">Kelola Nilai</a></li>
