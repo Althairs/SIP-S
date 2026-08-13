@@ -12,10 +12,12 @@ use App\Models\BidangKeahlian;
 use App\Models\Kepakaran;
 use App\Services\KuotaDosenService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Livewire\Traits\WithBulkActions;
+use Illuminate\Support\Facades\DB;
 
 class DosenIndex extends Component
 {
-    use WithPagination, AuthorizesRequests;
+    use WithPagination, AuthorizesRequests, WithBulkActions;
 
     #[Url(history: true)]
     public $search = '';
@@ -231,11 +233,58 @@ class DosenIndex extends Component
         session()->flash('success', 'Dosen berhasil dihapus.');
     }
 
-    public function render()
+    public function getSelectedPageItems(): array
     {
-        $jurusanId = PermissionService::getJurusanId();
+        return $this->getDosenQueryBuilder()
+            ->paginate(10)
+            ->pluck('id')
+            ->map(fn($id) => (string)$id)
+            ->toArray();
+    }
 
-        $dosens = User::role('dosen')
+    public function bulkDelete()
+    {
+        $this->authorize('delete_dosen');
+
+        if (empty($this->selected)) {
+            return;
+        }
+
+        DB::transaction(function () {
+            User::role('dosen')
+                ->where(PermissionService::jurusanScope())
+                ->whereIn('id', $this->selected)
+                ->delete();
+        });
+
+        $this->resetSelection();
+        session()->flash('success', count($this->selected) . ' data dosen terpilih berhasil dihapus.');
+    }
+
+    public function bulkToggleStatus($status)
+    {
+        $this->authorize('edit_dosen');
+
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $boolStatus = (bool)$status;
+
+        DB::transaction(function () use ($boolStatus) {
+            User::role('dosen')
+                ->where(PermissionService::jurusanScope())
+                ->whereIn('id', $this->selected)
+                ->update(['is_active' => $boolStatus]);
+        });
+
+        $this->resetSelection();
+        session()->flash('success', 'Status ' . count($this->selected) . ' dosen terpilih berhasil diperbarui.');
+    }
+
+    private function getDosenQueryBuilder()
+    {
+        return User::role('dosen')
             ->where(PermissionService::jurusanScope())
             ->with(['prodi', 'bidangKeahlians', 'kepakaran', 'kuota'])
             ->when($this->search, function ($query) {
@@ -251,8 +300,14 @@ class DosenIndex extends Component
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('is_active', $this->statusFilter);
             })
-            ->latest()
-            ->paginate(10);
+            ->latest();
+    }
+
+    public function render()
+    {
+        $jurusanId = PermissionService::getJurusanId();
+
+        $dosens = $this->getDosenQueryBuilder()->paginate(10);
 
         $prodis = Prodi::where('jurusan_id', $jurusanId)->active()->get();
 

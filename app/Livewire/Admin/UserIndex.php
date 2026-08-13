@@ -10,10 +10,12 @@ use App\Models\User;
 use App\Models\Jurusan;
 use App\Models\Prodi;
 use Spatie\Permission\Models\Role;
+use App\Livewire\Traits\WithBulkActions;
+use Illuminate\Support\Facades\DB;
 
 class UserIndex extends Component
 {
-    use WithPagination, AuthorizesRequests;
+    use WithPagination, AuthorizesRequests, WithBulkActions;
 
     #[Url(history: true)]
     public $search = '';
@@ -89,9 +91,63 @@ class UserIndex extends Component
         session()->flash('success', 'User berhasil dihapus.');
     }
 
-    public function render()
+    public function getSelectedPageItems(): array
     {
-        $users = User::with(['jurusan', 'prodi', 'roles'])
+        return $this->getUsersQueryBuilder()
+            ->paginate($this->onlyKajurSekjur ? 10 : 15)
+            ->pluck('id')
+            ->map(fn($id) => (string)$id)
+            ->toArray();
+    }
+
+    public function bulkDelete()
+    {
+        abort_unless(auth()->user()->can('delete_users'), 403);
+
+        if (empty($this->selected)) {
+            return;
+        }
+
+        DB::transaction(function () {
+            $usersToDelete = User::whereIn('id', $this->selected)
+                ->whereDoesntHave('roles', function ($q) {
+                    $q->where('name', 'super_admin');
+                })
+                ->where('id', '!=', auth()->id())
+                ->get();
+
+            foreach ($usersToDelete as $user) {
+                $user->delete();
+            }
+        });
+
+        $this->resetSelection();
+        session()->flash('success', count($this->selected) . ' User terpilih berhasil dihapus.');
+    }
+
+    public function bulkToggleStatus($status)
+    {
+        abort_unless(auth()->user()->can('edit_users'), 403);
+
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $boolStatus = (bool)$status;
+
+        DB::transaction(function () use ($boolStatus) {
+            User::whereIn('id', $this->selected)
+                ->where('id', '!=', auth()->id())
+                ->update(['is_active' => $boolStatus]);
+        });
+
+        $this->resetSelection();
+        session()->flash('success', 'Status ' . count($this->selected) . ' user terpilih berhasil diperbarui.');
+    }
+
+    private function getUsersQueryBuilder()
+    {
+        return User::with(['jurusan', 'prodi', 'roles'])
             ->when($this->onlyKajurSekjur, function ($query) {
                 if ($this->roleFilter) {
                     $query->role($this->roleFilter);
@@ -119,7 +175,12 @@ class UserIndex extends Component
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('is_active', $this->statusFilter);
             })
-            ->latest()
+            ->latest();
+    }
+
+    public function render()
+    {
+        $users = $this->getUsersQueryBuilder()
             ->paginate($this->onlyKajurSekjur ? 10 : 15);
 
         $jurusans = Jurusan::active()->get();

@@ -347,7 +347,7 @@
                         @php $pengujiList = \App\Models\UjianPenguji::where('pendaftaran_id', $selectedPendaftaran->id)->with('dosen')->get(); @endphp
                         @if($pengujiList->count() > 0)
                             @foreach($pengujiList as $penguji)
-                                <p class="text-base font-semibold text-gray-900">{{ $penguji->dosen->name ?? '-' }} <span class="text-sm text-gray-400">({{ str_replace('_', ' ', $penguji->peran) }})</span></p>
+                                <p class="text-base font-semibold text-gray-900">{{ $penguji->dosen->name ?? '-' }} <span class="text-sm text-gray-900">({{ str_replace('_', ' ', $penguji->peran) }})</span></p>
                             @endforeach
                         @else
                             <p class="text-base text-gray-400">-</p>
@@ -417,24 +417,72 @@
         </div>
 
         <!-- Filter Bar -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 space-y-3">
             <div class="flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
                     <input type="text" wire:model.live.debounce.300ms="search"
                         placeholder="Cari mahasiswa, NIM, atau judul..."
-                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500">
+                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 text-sm">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <select wire:model.live="jenisFilter" class="px-4 py-2.5 pr-10 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white">
+                <select wire:model.live="jenisFilter" class="px-4 py-2.5 border border-gray-300 rounded-xl appearance-none cursor-pointer bg-white text-sm">
                     <option value="">Semua Jenis Ujian</option>
                     <option value="seminar_proposal">Seminar Proposal</option>
                     <option value="seminar_hasil">Seminar Hasil</option>
                     <option value="sidang_skripsi">Sidang Skripsi</option>
                 </select>
+                @if($search || $jenisFilter || $penguji1Filter || $penguji2Filter || $pembimbing1Filter || $pembimbing2Filter)
+                    <button wire:click="resetFilters" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl text-sm transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Reset Filter
+                    </button>
+                @endif
+            </div>
+
+            <!-- Dosen Filters Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-gray-100">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Dosen Pembimbing 1</label>
+                    <select wire:model.live="pembimbing1Filter" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm cursor-pointer bg-white focus:ring-2 focus:ring-green-500">
+                        <option value="">Semua Pembimbing 1</option>
+                        @foreach($this->dosenOptions as $dosen)
+                            <option value="{{ $dosen->id }}">{{ $dosen->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Dosen Pembimbing 2</label>
+                    <select wire:model.live="pembimbing2Filter" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm cursor-pointer bg-white focus:ring-2 focus:ring-green-500">
+                        <option value="">Semua Pembimbing 2</option>
+                        @foreach($this->dosenOptions as $dosen)
+                            <option value="{{ $dosen->id }}">{{ $dosen->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Dosen Penguji 1</label>
+                    <select wire:model.live="penguji1Filter" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm cursor-pointer bg-white focus:ring-2 focus:ring-green-500">
+                        <option value="">Semua Penguji 1</option>
+                        @foreach($this->dosenOptions as $dosen)
+                            <option value="{{ $dosen->id }}">{{ $dosen->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Dosen Penguji 2</label>
+                    <select wire:model.live="penguji2Filter" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm cursor-pointer bg-white focus:ring-2 focus:ring-green-500">
+                        <option value="">Semua Penguji 2</option>
+                        @foreach($this->dosenOptions as $dosen)
+                            <option value="{{ $dosen->id }}">{{ $dosen->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -493,7 +541,7 @@
                     <div
                         class="bg-white rounded-2xl shadow-sm border {{ $bisaDijadwalkan ? 'border-green-200' : 'border-gray-100' }} p-6 hover:shadow-md transition">
                         <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                            <div class="flex items-start space-x-3">
+                            <div class="flex items-start space-x-3 flex-1">
                                 <input type="checkbox" wire:model.live="selectedIds" value="{{ $p->id }}"
                                     class="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
                                 <div class="flex-1">
@@ -508,7 +556,8 @@
 
                                     <h3 class="font-semibold text-gray-900">{{ Str::limit($p->judul_penelitian, 60) }}</h3>
 
-                                    <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                    {{-- Sejajar Ke Kanan dalam 1 Baris (5 Kolom Flex/Grid) --}}
+                                    <div class="mt-3 grid grid-cols-5 gap-3 text-sm">
                                         <div>
                                             <p class="text-xs text-gray-500">Mahasiswa</p>
                                             <p class="font-medium">{{ $p->mahasiswa->name }}</p>
@@ -527,44 +576,25 @@
                                             <p class="text-xs text-amber-500">{{ $hariTersisa }} hari lagi</p>@endif
                                         </div>
                                         <div>
-                                            <p class="text-xs text-gray-500">Penguji</p>
-                                            @php $pengujiList = \App\Models\UjianPenguji::where('pendaftaran_id', $p->id)->with('dosen.kepakaran')->get(); @endphp
-                                            @if($pengujiList->count() > 0)
-                                                @foreach($pengujiList as $penguji)
-                                                    <div class="flex items-center gap-1">
-                                                        <span class="text-xs font-medium">{{ $penguji->dosen->name ?? '-' }}</span>
-                                                        <span
-                                                            class="text-xs text-gray-400">({{ str_replace('_', ' ', $penguji->peran) }})</span>
-                                                        @if($penguji->is_overload)<svg class="w-4 h-4 text-red-500 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>@endif
-                                                    </div>
-                                                @endforeach
-                                            @else
-                                                <span class="text-xs text-gray-400">-</span>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                                        <div class="md:col-span-2">
                                             <p class="text-xs text-gray-500">Pembimbing</p>
                                             @if($p->pembimbing1 && $p->pembimbing1->dosen)
                                                 <p class="text-xs font-medium">{{ $p->pembimbing1->dosen->name }}</p>
                                             @endif
                                             @if($p->pembimbing2 && $p->pembimbing2->dosen)
-                                                <p class="text-xs text-gray-400">{{ $p->pembimbing2->dosen->name }}</p>
+                                                <p class="text-xs text-medium">{{ $p->pembimbing2->dosen->name }}</p>
                                             @endif
                                             @if(!$p->pembimbing1 && !$p->pembimbing2)
-                                                <span class="text-xs text-gray-400">-</span>
+                                                <span class="text-xs text-medium">-</span>
                                             @endif
                                         </div>
-                                        <div class="md:col-span-2">
+                                        <div>
                                             <p class="text-xs text-gray-500">Penguji</p>
                                             @php $pengujiList = \App\Models\UjianPenguji::where('pendaftaran_id', $p->id)->with('dosen.kepakaran')->get(); @endphp
                                             @if($pengujiList->count() > 0)
                                                 @foreach($pengujiList as $penguji)
                                                     <div class="flex items-center gap-1">
                                                         <span class="text-xs font-medium">{{ $penguji->dosen->name ?? '-' }}</span>
-                                                        <span class="text-xs text-gray-400">({{ str_replace('_', ' ', $penguji->peran) }})</span>
+                                                        {{-- <span class="text-xs text-medium">({{ str_replace('_', ' ', $penguji->peran) }})</span> --}}
                                                         @if($penguji->is_overload)<svg class="w-4 h-4 text-red-500 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>@endif
                                                     </div>
                                                 @endforeach

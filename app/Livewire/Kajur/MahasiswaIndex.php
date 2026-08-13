@@ -12,10 +12,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 use Livewire\WithFileUploads;
+use App\Livewire\Traits\WithBulkActions;
+use Illuminate\Support\Facades\DB;
 
 class MahasiswaIndex extends Component
 {
-    use WithPagination, AuthorizesRequests, WithFileUploads;
+    use WithPagination, AuthorizesRequests, WithFileUploads, WithBulkActions;
 
     #[Url(history: true)]
     public $search = '';
@@ -185,6 +187,76 @@ class MahasiswaIndex extends Component
         session()->flash('success', 'Mahasiswa berhasil dihapus.');
     }
 
+    public function getSelectedPageItems(): array
+    {
+        return $this->getMahasiswaQueryBuilder()
+            ->paginate(10)
+            ->pluck('id')
+            ->map(fn($id) => (string)$id)
+            ->toArray();
+    }
+
+    public function bulkDelete()
+    {
+        $this->authorize('delete_mahasiswa');
+
+        if (empty($this->selected)) {
+            return;
+        }
+
+        DB::transaction(function () {
+            User::role('mahasiswa')
+                ->where(PermissionService::jurusanScope())
+                ->whereIn('id', $this->selected)
+                ->delete();
+        });
+
+        $this->resetSelection();
+        session()->flash('success', count($this->selected) . ' data mahasiswa terpilih berhasil dihapus.');
+    }
+
+    public function bulkToggleStatus($status)
+    {
+        $this->authorize('edit_mahasiswa');
+
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $boolStatus = (bool)$status;
+
+        DB::transaction(function () use ($boolStatus) {
+            User::role('mahasiswa')
+                ->where(PermissionService::jurusanScope())
+                ->whereIn('id', $this->selected)
+                ->update(['is_active' => $boolStatus]);
+        });
+
+        $this->resetSelection();
+        session()->flash('success', 'Status ' . count($this->selected) . ' mahasiswa terpilih berhasil diperbarui.');
+    }
+
+    private function getMahasiswaQueryBuilder()
+    {
+        return User::role('mahasiswa')
+            ->where(PermissionService::jurusanScope())
+            ->with('prodi')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%')
+                      ->orWhere('email', 'like', '%' . $this->search . '%')
+                      ->orWhere('nim', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->prodiFilter, function ($query) {
+                $query->where('prodi_id', $this->prodiFilter);
+            })
+            ->when($this->statusFilter !== '', function ($query) {
+                $query->where('is_active', $this->statusFilter);
+            })
+            ->latest();
+    }
+
     public function toggleImportView()
     {
         $this->showImportView = !$this->showImportView;
@@ -247,24 +319,7 @@ class MahasiswaIndex extends Component
     {
         $jurusanId = PermissionService::getJurusanId();
 
-        $mahasiswas = User::role('mahasiswa')
-            ->where(PermissionService::jurusanScope())
-            ->with('prodi')
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%')
-                      ->orWhere('nim', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->when($this->prodiFilter, function ($query) {
-                $query->where('prodi_id', $this->prodiFilter);
-            })
-            ->when($this->statusFilter !== '', function ($query) {
-                $query->where('is_active', $this->statusFilter);
-            })
-            ->latest()
-            ->paginate(10);
+        $mahasiswas = $this->getMahasiswaQueryBuilder()->paginate(10);
 
         $prodis = Prodi::where('jurusan_id', $jurusanId)->active()->get();
         $angkatans = User::role('mahasiswa')->where('jurusan_id', $jurusanId)

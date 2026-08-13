@@ -2,15 +2,17 @@
 
 namespace App\Livewire\Panitia\Penjadwalan;
 
-use App\Services\PermissionService;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Url;
 use App\Models\Pendaftaran;
 use App\Models\UjianPenguji;
 use App\Models\Ruangan;
 use App\Models\PengaturanJadwal;
+use App\Models\User;
 use App\Services\JadwalConflictService;
+use App\Services\PermissionService;
 use App\Jobs\SendWhatsAppNotification;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
@@ -24,6 +26,18 @@ class JadwalUjians extends Component
 
     #[Url]
     public $jenisFilter = '';
+
+    #[Url]
+    public $penguji1Filter = '';
+
+    #[Url]
+    public $penguji2Filter = '';
+
+    #[Url]
+    public $pembimbing1Filter = '';
+
+    #[Url]
+    public $pembimbing2Filter = '';
 
     #[Url]
     public $tab = 'siap';
@@ -64,9 +78,26 @@ class JadwalUjians extends Component
 
     public function updated($property)
     {
-        if (in_array($property, ['search', 'jenisFilter', 'tab'])) {
+        if (in_array($property, ['search', 'jenisFilter', 'tab', 'penguji1Filter', 'penguji2Filter', 'pembimbing1Filter', 'pembimbing2Filter'])) {
             $this->resetPage();
         }
+    }
+
+    public function resetFilters()
+    {
+        $this->reset(['search', 'jenisFilter', 'penguji1Filter', 'penguji2Filter', 'pembimbing1Filter', 'pembimbing2Filter']);
+        $this->resetPage();
+    }
+
+    #[Computed]
+    public function dosenOptions()
+    {
+        $jurusanId = PermissionService::getJurusanId();
+        return User::role('dosen')
+            ->when($jurusanId, fn($q) => $q->where('jurusan_id', $jurusanId))
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'nip']);
     }
 
     public function updatingSearch()
@@ -418,6 +449,18 @@ class JadwalUjians extends Component
             ->when($this->jenisFilter, function ($query) {
                 $query->where('jenis_ujian', $this->jenisFilter);
             })
+            ->when($this->penguji1Filter, function ($query) {
+                $query->whereHas('pengujis', fn($q) => $q->where('peran', 'penguji_1')->where('dosen_id', $this->penguji1Filter));
+            })
+            ->when($this->penguji2Filter, function ($query) {
+                $query->whereHas('pengujis', fn($q) => $q->where('peran', 'penguji_2')->where('dosen_id', $this->penguji2Filter));
+            })
+            ->when($this->pembimbing1Filter, function ($query) {
+                $query->whereHas('dosens', fn($q) => $q->where('peran', 'pembimbing_1')->where('dosen_id', $this->pembimbing1Filter));
+            })
+            ->when($this->pembimbing2Filter, function ($query) {
+                $query->whereHas('dosens', fn($q) => $q->where('peran', 'pembimbing_2')->where('dosen_id', $this->pembimbing2Filter));
+            })
             ->orderBy('first_registered_at')
             ->get();
     }
@@ -455,6 +498,22 @@ class JadwalUjians extends Component
             $query->where('jenis_ujian', $this->jenisFilter);
         }
 
+        if ($this->penguji1Filter) {
+            $query->whereHas('pengujis', fn($q) => $q->where('peran', 'penguji_1')->where('dosen_id', $this->penguji1Filter));
+        }
+
+        if ($this->penguji2Filter) {
+            $query->whereHas('pengujis', fn($q) => $q->where('peran', 'penguji_2')->where('dosen_id', $this->penguji2Filter));
+        }
+
+        if ($this->pembimbing1Filter) {
+            $query->whereHas('dosens', fn($q) => $q->where('peran', 'pembimbing_1')->where('dosen_id', $this->pembimbing1Filter));
+        }
+
+        if ($this->pembimbing2Filter) {
+            $query->whereHas('dosens', fn($q) => $q->where('peran', 'pembimbing_2')->where('dosen_id', $this->pembimbing2Filter));
+        }
+
         $pendaftarans = $query->paginate(10);
 
         $countSiap = Pendaftaran::when($jurusanId, fn($q) => $q->where('jurusan_id', $jurusanId))->where('status', 'disetujui_kajur')->count();
@@ -466,7 +525,7 @@ class JadwalUjians extends Component
             'countSiap' => $countSiap,
             'countScheduled' => $countScheduled,
             'countCompleted' => $countCompleted,
-            'isSuperAdmin' => $this->isSuperAdmin,
+            'isSuperAdmin' => auth()->user()?->hasRole('super_admin') ?? false,
         ])->layout('components.layouts.app-auth');
     }
 }

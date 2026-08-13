@@ -1,6 +1,7 @@
 buatkan issue.md, berisi planning memebuat ini:
 
-- di pendaftaran index, verifikasi proposal,hasil,skripsi kajur dan lainnya seperti di dosen nilai , panitia penjadwalan ,panitia verifikasi, sekjur tambahkan modal untuk lihat detail masing masing agar bisa meninjau berkas nya
+- ganti komennya di semua tree file saya  menjadi lebih informatif tapi singkata agar tau
+- cek strukturenya apakah sudah konsisten ( kodenya sama alur tidak beda beda konsep)
 - gunakan livewire 4 dan laravel 13
 - gunakan context7
 
